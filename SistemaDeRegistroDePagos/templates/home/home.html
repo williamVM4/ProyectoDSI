@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es">  
+  <head>    
+    <title>Home</title>    
+    <meta charset="UTF-8">
+    <meta name="title" content="Home">
+  </head>  
+  <body>
+      {{request.user.username}}
+      {%if perms.autenticacion.view_group%}
+      {{perms.autenticacion}}
+      {%endif%}
+  </body>  
+</html>
