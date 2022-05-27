@@ -1,10 +1,14 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import FormView
+from django.views.generic import FormView,TemplateView
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LogoutView
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth import login
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from apps.autenticacion.mixins import *
 
 # Create your views here.
 
@@ -27,5 +31,15 @@ class loginForm(FormView):
         context['title'] = 'Iniciar sesion'
         return context
 
-def home(request):
-    return HttpResponse("si sirve el login")
+class home(TemplateView):
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'home/home.html'
+
+class otro(ValidatePermissionRequiredMixin,TemplateView):
+    permission_required = 'autenticacion.view_group'
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'otro.html'
