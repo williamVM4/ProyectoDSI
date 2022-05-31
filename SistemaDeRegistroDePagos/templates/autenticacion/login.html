@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">  
-  <head>    
-    <title>{{title}}</title>    
-    <meta charset="UTF-8">
-    <meta name="title" content="Login">
-  </head>  
-  <body>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %} {% endblock %}
+
+{% block content %} 
       <form action="." method="post">
         <input type="hidden" name="next" value="{{ next }}">
     {% csrf_token %}  
@@ -13,6 +11,9 @@
     {{form.password}}
     <button type="submit"> Entrar </button>
     </form>
+{% endblock content %}   
+
+{% block scripts %}
     <script type= application/javascript>
       {%if form.errors%}
         var errors = '';
@@ -27,5 +28,4 @@
         alert(errors)
       {% endif %}
     </script>
-  </body>  
-</html>
+{% endblock %}

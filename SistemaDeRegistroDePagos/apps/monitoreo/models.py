@@ -17,7 +17,7 @@ class condicionesPago(models.Model):
         return self.detalleVenta
 
 class resumenPago(models.Model):
-    condicionesPago = models.ForeignKey(condicionesPago, on_delete=models.CASCADE)
+    detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, null=True ,on_delete=models.CASCADE)
     fechaUltimoPago = models.DateField()
     fechaUltimoCorte = models.DateField()
     saldoCapital = models.FloatField()
@@ -30,11 +30,10 @@ class resumenPago(models.Model):
     abonosOtros = models.FloatField()
     abonosIntereses = models.FloatField()
     abonosMantenimiento = models.FloatField()
-    def __str__(self):
-        return self.condicionesPago
+
 
 class tablaAmortizacion(models.Model):
-    condicionesPago = models.ForeignKey(condicionesPago, on_delete=models.CASCADE)
+    detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, null=True, on_delete=models.CASCADE)
 
 class cuotaAmortizacion(models.Model):
     numeroCuota = models.IntegerField(primary_key=True)
@@ -51,4 +50,22 @@ class cuotaAmortizacion(models.Model):
     abonoCapital = models.FloatField()
     saldoCapital = models.FloatField()
     saldoInteres = models.FloatField()
+    def __str__(self):
+        return self.numeroCuota
 
+class estadoCuenta(models.Model):
+    detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, null=True, on_delete=models.CASCADE)
+
+class cuotaEstadoCuenta(models.Model):
+    numeroCuota = models.IntegerField(primary_key=True)
+    estadoCuenta = models.ForeignKey(estadoCuenta, on_delete=models.CASCADE)
+    diasInteres = models.IntegerField()
+    tasaInteres = models.FloatField()
+    interesGenerado = models.FloatField()
+    interesPagado = models.FloatField()
+    subTotal = models.FloatField()
+    abonoCapital = models.FloatField()
+    saldoCapital = models.FloatField()
+    saldoInteres = models.FloatField()
+    def __str__(self):
+        return self.numeroCuota
