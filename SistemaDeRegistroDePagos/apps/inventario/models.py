@@ -24,7 +24,7 @@ class lote(models.Model):
     numeroLote = models.IntegerField()
     poligono = models.CharField(max_length=50)
     areaMtCuadrado = models.FloatField()
-    areaMtCuadrado = models.FloatField()
+    areaVCuadrada = models.FloatField()
 
     def __str__(self):
         return self.matriculaLote

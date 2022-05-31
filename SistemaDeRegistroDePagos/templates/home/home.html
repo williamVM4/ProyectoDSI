@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load my_templatetag %}
 
 {% block head %} {% endblock %}
 
@@ -8,6 +9,9 @@
   {%if perms.autenticacion.view_group%}
   {{perms.autenticacion}}
   {%endif%}
+  {% if request.user|has_group:"Configurador del sistema" %} 
+  <p>Holaa</p>
+  {% endif %}
 {% endblock content %}
 
 {% block scripts %}{% endblock %}
