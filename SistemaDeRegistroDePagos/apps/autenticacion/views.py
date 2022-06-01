@@ -29,8 +29,8 @@ class loginForm(FormView):
         context['title'] = 'Iniciar sesion'
         return context
 
-class otro(GroupRequiredMixin,TemplateView):
-    group_required = [u'Configurador del sistema']
+class otro(ValidatePermissionRequiredMixin,TemplateView):
+    permission_required = 'autenticacion.view_group'
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)

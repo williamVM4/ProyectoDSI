@@ -12,6 +12,7 @@
   {% if request.user|has_group:"Configurador del sistema" %} 
   <p>Holaa</p>
   {% endif %}
+  <button><a href="{% url 'logout' %}">Cerrar sesion</a></button>
 {% endblock content %}
 
 {% block scripts %}{% endblock %}
