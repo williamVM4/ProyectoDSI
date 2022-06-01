@@ -1,4 +1,3 @@
-from pyexpat import model
 from django.db import models
 
 class proyectoTuristico(models.Model):
@@ -33,12 +32,13 @@ class propietario(models.Model):
     nombrePropietario = models.CharField(max_length=50, primary_key=True)
     direccion = models.CharField(max_length=50)
     profesion = models.CharField(max_length=50)
-    trabajo = models.CharField(max_length=30,blank=True,null=True)
-    direccionTrabajo = models.CharField(max_length=30,blank=True,null=True)
-    telefonoTrabajo = models.IntegerField(blank=True,null=True)
-    telefonoCasa = models.IntegerField(blank=True,null=True)
-    telefonoCelular = models.IntegerField()
+    trabajo = models.CharField(max_length=50,blank=True,null=True)
+    direccionTrabajo = models.CharField(max_length=50,blank=True,null=True)
+    telefonoTrabajo = models.CharField(max_length=9,blank=True,null=True)
+    telefonoCasa = models.CharField(max_length=9,blank=True,null=True)
+    telefonoCelular = models.CharField(max_length=9)
     correoElectronico = models.EmailField(max_length=254,blank=True,null=True)
+    dui = models.CharField(max_length=10)
     eliminado = models.BooleanField()
 
     def __str__(self):
