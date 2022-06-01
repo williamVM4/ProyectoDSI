@@ -4,8 +4,8 @@
 {% block head %} {% endblock %}
 
 {% block content %}
-<button><a href="{% url 'agregarPropietario' %}">Agregar Propietario</a></button>
-<button><a href="{% url 'seleccionarPropietario' id='hola' %}">Seleccionar Propietario</a></button>
+<button><a href="{% url 'agregarPropietario' id=id %}">Agregar Propietario</a></button>
+<button><a href="{% url 'seleccionarPropietario' id=id %}">Seleccionar Propietario</a></button>
 
 {% endblock content %}
 
