@@ -29,7 +29,8 @@ class lote(models.Model):
         return self.matriculaLote
 
 class propietario(models.Model):
-    nombrePropietario = models.CharField(max_length=50, primary_key=True)
+    dui = models.CharField(max_length=10, primary_key=True)
+    nombrePropietario = models.CharField(max_length=60)
     direccion = models.CharField(max_length=50)
     profesion = models.CharField(max_length=50)
     trabajo = models.CharField(max_length=50,blank=True,null=True)
@@ -38,17 +39,16 @@ class propietario(models.Model):
     telefonoCasa = models.CharField(max_length=9,blank=True,null=True)
     telefonoCelular = models.CharField(max_length=9)
     correoElectronico = models.EmailField(max_length=254,blank=True,null=True)
-    dui = models.CharField(max_length=10)
-    eliminado = models.BooleanField()
 
     def __str__(self):
         return self.nombrePropietario
 
 class detalleVenta(models.Model):
-    lote = models.ForeignKey(lote, on_delete=models.CASCADE)
+    lote = models.ForeignKey(lote, on_delete=models.CASCADE, blank=True)
+    propietarios = models.ManyToManyField(propietario, through='asignacionLote')
     precioVenta = models.FloatField(blank=True,null=True)
     descuento = models.FloatField(blank=True,null=True)
-    estado = models.BooleanField()
+    estado = models.BooleanField(blank=True)
     
     def __str__(self):
         return self.lote
@@ -56,7 +56,8 @@ class detalleVenta(models.Model):
 class asignacionLote(models.Model):
     propietario = models.ForeignKey(propietario, on_delete=models.CASCADE)
     detalleVenta = models.ForeignKey(detalleVenta, on_delete=models.CASCADE)
-
+    eliminado = models.BooleanField()
+    
     class Meta:
         unique_together = ('propietario', 'detalleVenta')
 
