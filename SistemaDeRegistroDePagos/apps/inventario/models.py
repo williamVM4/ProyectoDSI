@@ -33,12 +33,12 @@ class propietario(models.Model):
     nombrePropietario = models.CharField(max_length=60)
     direccion = models.CharField(max_length=50)
     profesion = models.CharField(max_length=50)
-    trabajo = models.CharField(max_length=50,blank=True,null=True)
-    direccionTrabajo = models.CharField(max_length=50,blank=True,null=True)
-    telefonoTrabajo = models.CharField(max_length=9,blank=True,null=True)
-    telefonoCasa = models.CharField(max_length=9,blank=True,null=True)
+    trabajo = models.CharField(max_length=50,blank=True,default="")
+    direccionTrabajo = models.CharField(max_length=50,blank=True,default="")
+    telefonoTrabajo = models.CharField(max_length=9,blank=True,default="")
+    telefonoCasa = models.CharField(max_length=9,blank=True,default="")
     telefonoCelular = models.CharField(max_length=9)
-    correoElectronico = models.EmailField(max_length=254,blank=True,null=True)
+    correoElectronico = models.EmailField(max_length=254,blank=True,default="")
 
     def __str__(self):
         return self.nombrePropietario
@@ -46,9 +46,9 @@ class propietario(models.Model):
 class detalleVenta(models.Model):
     lote = models.ForeignKey(lote, on_delete=models.CASCADE, blank=True)
     propietarios = models.ManyToManyField(propietario, through='asignacionLote')
-    precioVenta = models.FloatField(blank=True,null=True)
-    descuento = models.FloatField(blank=True,null=True)
-    estado = models.BooleanField(blank=True)
+    precioVenta = models.FloatField(default=0)
+    descuento = models.FloatField(default=0)
+    estado = models.BooleanField(default=True)
     
     def __str__(self):
         return self.lote

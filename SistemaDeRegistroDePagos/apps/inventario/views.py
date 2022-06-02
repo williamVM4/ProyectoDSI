@@ -44,9 +44,10 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
          # recojo el parametro 
         id = self.kwargs.get('id', None) 
         propietario = form.save(commit=False)
-        #propietario.eliminado = "False"
         propietario.save()
+        #propietario.eliminado = "False"
         detalle = detalleVenta.objects.get(pk = id)
+        detalle.propietarios.add(propietario,through_defaults={'eliminado': False})
         #asignacion = asignacionLote(propietario = propietario, detalleVenta = detalle)
         #asignacion.save()
         return HttpResponseRedirect(self.success_url)

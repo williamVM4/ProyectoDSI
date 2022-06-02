@@ -17,7 +17,7 @@ class condicionesPago(models.Model):
         return self.detalleVenta
 
 class resumenPago(models.Model):
-    detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, null=True ,on_delete=models.CASCADE)
+    detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, on_delete=models.CASCADE)
     fechaUltimoPago = models.DateField()
     fechaUltimoCorte = models.DateField()
     saldoCapital = models.FloatField()
@@ -33,7 +33,7 @@ class resumenPago(models.Model):
 
 
 class tablaAmortizacion(models.Model):
-    detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, null=True, on_delete=models.CASCADE)
+    detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, on_delete=models.CASCADE)
 
 class cuotaAmortizacion(models.Model):
     numeroCuota = models.IntegerField(primary_key=True)
@@ -54,7 +54,7 @@ class cuotaAmortizacion(models.Model):
         return self.numeroCuota
 
 class estadoCuenta(models.Model):
-    detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, null=True, on_delete=models.CASCADE)
+    detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, on_delete=models.CASCADE)
 
 class cuotaEstadoCuenta(models.Model):
     numeroCuota = models.IntegerField(primary_key=True)
