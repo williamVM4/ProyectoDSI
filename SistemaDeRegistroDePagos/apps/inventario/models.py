@@ -56,7 +56,7 @@ class detalleVenta(models.Model):
 class asignacionLote(models.Model):
     propietario = models.ForeignKey(propietario, on_delete=models.CASCADE)
     detalleVenta = models.ForeignKey(detalleVenta, on_delete=models.CASCADE)
-    eliminado = models.BooleanField()
+    eliminado = models.BooleanField(default=False)
     
     class Meta:
         unique_together = ('propietario', 'detalleVenta')

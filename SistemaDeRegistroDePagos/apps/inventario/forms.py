@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
-from .models import propietario
+from .models import propietario, detalleVenta
 
 class PropietarioForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -35,3 +35,8 @@ class PropietarioForm(ModelForm):
                 'max_length': _("El dato ingresado es demasiado largo"),
             },
         }
+
+class detalleVentaPropietarioForm(ModelForm):
+    class Meta:
+        model=detalleVenta
+        fields=('propietarios',)

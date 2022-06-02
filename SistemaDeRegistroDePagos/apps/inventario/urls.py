@@ -5,5 +5,5 @@ from apps.inventario.views import *
 urlpatterns = [
     path('asignarpropietario/<str:id>/',asignarPropietario.as_view(),name='asignarPropietario'),
     path('agregarpropietario/<str:id>/',agregarPropietario.as_view(),name='agregarPropietario'),
-    path('seleccionarpropietario/<str:id>/',seleccionarPropietario.as_view(),name='seleccionarPropietario'),
+    path('seleccionarpropietario/<str:pk>/',seleccionarPropietario.as_view(),name='seleccionarPropietario'),
 ]

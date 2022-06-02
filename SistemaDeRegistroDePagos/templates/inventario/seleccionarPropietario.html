@@ -4,7 +4,13 @@
 {% block head %} {% endblock %}
 
 {% block content %} 
-{{id}}
+<form action="." method="POST">
+    {% csrf_token %}
+    <table>
+        {{form}}
+    </table>
+    <button type="submit">SUBMIT</button>
+    </form>
 {% endblock content %}
 
 {% block scripts %}{% endblock %}
