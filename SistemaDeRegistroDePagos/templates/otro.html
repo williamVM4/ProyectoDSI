@@ -1,10 +1,28 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load my_templatetag %}
 
 {% block head %} {% endblock %}
 
 {% block content %} 
-  aaaaa
+{% include 'navbar.html' %}
+<div id="page-wrapper">
+  <div class="container-fluid">
+      <div class="row">
+          <div class="col-lg-12">
+              <h1 class="page-header">Page Title</h1>
+          </div>
+      </div>
+      {{request.user.username}}
+      {%if perms.autenticacion.view_group%}
+      {{perms.autenticacion}}
+      {%endif%}
+      {% if request.user|has_group:"Configurador del sistema" %} 
+      <p>Holaa</p>
+      {% endif %}
+      <button><a href="{% url 'logout' %}">Cerrar sesion</a></button>
+  </div>
+</div>
 {% endblock content %}
 
 {% block scripts %}{% endblock %}
