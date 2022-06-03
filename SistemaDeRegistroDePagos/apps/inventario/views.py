@@ -9,7 +9,12 @@ from apps.autenticacion.mixins import *
 from .forms import *
 
 # Views de lote
-
+class gestionarLotes(GroupRequiredMixin,TemplateView):
+    group_required = [u'Configurador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'inventario/gestionarLotes.html'
 
 
 # Views de asignar propietario

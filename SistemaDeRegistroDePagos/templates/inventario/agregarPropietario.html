@@ -1,16 +1,89 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block head %} {% endblock %}
 
 {% block content %} 
-<form action="." method="POST">
-    {% csrf_token %}
-    <table>
-        {{form}}
-    </table>
-    <button type="submit">SUBMIT</button>
-    </form>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="form-panel panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Agregar propietario</h3>
+                </div>
+                <div class="panel-body">
+                    <form role="form" action="." method="post">
+                        {% csrf_token %}  
+                        <fieldset>
+                            <div class="row">
+                            <div class="col-md-6">
+                            <div class="form-group">
+                                {{form.dui|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el dui'}}
+                              </div>
+                              <div class="form-group">
+                                {{form.nombrePropietario|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el nombre completo'}}
+                              </div>
+                              <div class="form-group">
+                                {{form.direccion|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su direccion'}}
+                              </div>
+                              <div class="form-group">
+                                {{form.profesion|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su profesion'}}
+                              </div>
+                              <div class="form-group">
+                                {{form.trabajo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su trabajo'}}
+                              </div>
+                            </div>
+                              <div class="col-md-6">
+                              <div class="form-group">
+                                {{form.direccionTrabajo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su direccion de trabajo'}}
+                              </div>
+                              <div class="form-group">
+                                {{form.telefonoTrabajo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su telefono de trabajo'}}
+                              </div>
+                              <div class="form-group">
+                                {{form.telefonoCasa|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su telefono de casa'}}
+                              </div>
+                              <div class="form-group">
+                                {{form.telefonoCelular|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su telefono celular'}}
+                              </div>
+                              <div class="form-group">
+                                {{form.correoElectronico|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su correo electronico'}}
+                              </div>
+                            </div>
+                        </div>
+                        </fieldset>
+                        <div class="row">
+                            <div class="col-md-8">
+                            </div>
+                            <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+                            </div>
+                            <div class="col-md-2">
+                            <button class="btn btn-danger btn-block"> Cancelar </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
 {% endblock content %}
 
-{% block scripts %}{% endblock %}
+{% block scripts %}
+<script type= application/javascript>
+    {%if form.errors%}
+      var errors = '';
+      {%for field in form%}
+        {% for error in field.errors %}
+          errors += '{{ error }}\n';
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+      errors += '{{ error }}\n';
+      {% endfor %}
+      alert(errors)
+    {% endif %}
+  </script>
+  {% endblock %}
