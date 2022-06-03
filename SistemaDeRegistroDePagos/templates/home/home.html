@@ -23,4 +23,16 @@
 </div>
 {% endblock content %}
 
-{% block scripts %}{% endblock %}
+{% block scripts %}
+<script type= application/javascript>
+    {%if messages%}
+        var msg = '';
+        {%for message in messages%}
+          {% if message.tags %}
+            msg += '{{ message }}\n';
+          {% endif %}
+        {% endfor %}
+          alert(msg)
+    {% endif %}
+  </script>
+{% endblock %}

@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .models import asignacionLote, detalleVenta, propietario
 from apps.autenticacion.mixins import *
+from django.contrib import messages
 from .forms import *
 
 # Views de lote
@@ -44,17 +45,26 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
     form_class = PropietarioForm
     success_url = reverse_lazy('home')
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('id', None) 
+        context['id'] = id         
+        return context
+
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
          # recojo el parametro 
         id = self.kwargs.get('id', None) 
         propietario = form.save(commit=False)
         #poner try
-        detalle = detalleVenta.objects.get(pk = id)
-        propietario.save()
-        detalle.propietarios.add(propietario,through_defaults={'eliminado': False})
-        #asignacion = asignacionLote(propietario = propietario, detalleVenta = detalle)
-        #asignacion.save()
+        try:
+            detalle = detalleVenta.objects.get(pk = id)
+            propietario.save()
+            detalle.propietarios.add(propietario,through_defaults={'eliminado': False})
+            messages.success(self.request, 'Propietario guardado con exito')
+        except Exception:
+            propietario.delete()
+            messages.error(self.request, 'Ocurrió un error al guardar el propietario, el detalle de venta no es valido')
         return HttpResponseRedirect(self.success_url)
 
 class seleccionarPropietario(GroupRequiredMixin,UpdateView):

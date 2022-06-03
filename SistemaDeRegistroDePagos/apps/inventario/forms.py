@@ -13,6 +13,7 @@ class PropietarioForm(ModelForm):
         model=propietario
         fields=('dui','nombrePropietario','direccion','profesion','trabajo','direccionTrabajo','telefonoTrabajo','telefonoCasa','telefonoCelular','correoElectronico')
         labels = {
+            'dui': _('DUI:'),
             'nombrePropietario': _('Nombre:'),
             'direccion': _('Dirección:'),
             'profesion': _('Profesión:'),
@@ -29,6 +30,12 @@ class PropietarioForm(ModelForm):
             'direccion': _('Campo Obligatorio'),
             'profesion': _('Campo Obligatorio'),
             'telefonoCelular': _('Campo Obligatorio'),
+            'trabajo': _('Campo Opcional'),
+            'direccionTrabajo': _('Campo Opcional'),
+            'telefonoTrabajo': _('Campo Opcional'),
+            'telefonoCasa': _('Campo Opcional'),
+            'telefonoCelular': _('Campo Opcional'),
+            'correoElectronico': _('Campo Opcional'),
         }
         error_messages = {
             'nombrePropietario': {
