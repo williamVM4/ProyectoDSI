@@ -1,39 +1,30 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, UpdateView
+from django.views.generic import TemplateView, CreateView, FormView, ListView, DetailView
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .models import asignacionLote, detalleVenta, propietario
+from .models import asignacionLote, detalleVenta, propietario, lote
 from apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
 
 # Views de lote
-class gestionarLotes(GroupRequiredMixin,TemplateView):
+class gestionarLotes(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/gestionarLotes.html'
+    model = detalleVenta
 
-
-# Views de asignar propietario
-class asignarPropietario(GroupRequiredMixin,TemplateView):
+class detalleLote(GroupRequiredMixin,DetailView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
-        
-    def get_context_data(self, **kwargs):
-         #obtengo el contexto actual
-        context=super().get_context_data(**kwargs)
-         # recojo el parametro 
-        id = self.kwargs.get('id', None) 
-         #agrego parametro al diccionario de contexto
-        context['id'] = id         
-        return context
-    template_name = 'inventario/asignarPropietario.html'
+    template_name = 'inventario/detalleLote.html'
+    model = detalleVenta
 
 class agregarPropietario(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']
@@ -43,7 +34,15 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
     
     template_name = 'inventario/agregarPropietario.html'
     form_class = PropietarioForm
-    success_url = reverse_lazy('home')
+    #success_url = reverse_lazy('detalleLote')
+    def get_url_redirect(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('id', None) 
+        try:
+            detalleVenta.objects.get(pk = id)
+            return reverse_lazy('detalleLote', kwargs={'pk': id})
+        except Exception:
+            return reverse_lazy('gestionarLotes')
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
@@ -65,21 +64,44 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
         except Exception:
             propietario.delete()
             messages.error(self.request, 'Ocurrió un error al guardar el propietario, el detalle de venta no es valido')
-        return HttpResponseRedirect(self.success_url)
+        return HttpResponseRedirect(self.get_url_redirect())
 
-class seleccionarPropietario(GroupRequiredMixin,UpdateView):
+class seleccionarPropietario(GroupRequiredMixin,FormView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
-    #para pasar el parametro por contexto
-    def get_context_data(self, **kwargs):
-        context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('pk', None) 
-        context['id'] = id         
-        return context
 
     template_name = 'inventario/seleccionarPropietario.html'
     form_class = detalleVentaPropietarioForm
-    success_url = reverse_lazy('home')
+    #success_url = reverse_lazy('detalleLote')
     model = detalleVenta
+    def get_url_redirect(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('id', None) 
+        try:
+            detalleVenta.objects.get(pk = id)
+            return reverse_lazy('detalleLote', kwargs={'pk': id})
+        except Exception:
+            return reverse_lazy('gestionarLotes')
+        
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('id', None) 
+        context['id'] = id         
+        return context
+
+    def form_valid(self, form, **kwargs):
+        context=super().get_context_data(**kwargs)
+         # recojo el parametro 
+        id = self.kwargs.get('id', None) 
+        propietariosf = form.cleaned_data.get("propietarios")
+        #poner try
+        try:
+            detalle = detalleVenta.objects.get(pk = id)
+            for propietario in propietariosf:
+                detalle.propietarios.add(propietario,through_defaults={'eliminado': False})
+            messages.success(self.request, 'Propietarios guardado con exito')
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error al guardar el propietario, el detalle de venta no es valido')  
+        return HttpResponseRedirect(self.get_url_redirect())

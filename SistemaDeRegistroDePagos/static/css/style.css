@@ -5,3 +5,18 @@
 .label-help-form{
     font-size: 11px;
 }
+.multiple{
+    height: 17em !important;
+    margin-bottom: 3em;
+}
+
+#myInput {
+    width: 100%;
+    font-size: 14px; 
+    padding: 0.8em 0.5em 0.5em 1em; 
+    border: 1px solid #ddd; 
+    margin-bottom: 1em; 
+  }
+  
+
+  

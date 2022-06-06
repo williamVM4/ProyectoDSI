@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_templatetag %}
+
+{% block head %} {% endblock %}
+
+{% block content %}
+<div id="wrapper">
+    {% include 'navbar.html' %}
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">{{object.lote.matriculaLote}}</h1>
+                </div>
+            </div>
+            <!-- Contenido aqui -->
+            <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#myModal">
+              Asignar Propietario
+           </button>
+          <!-- Modal -->
+          <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                          <h4 class="modal-title" id="myModalLabel">Elija una opción</h4>
+                      </div>
+                      <div class="modal-body">
+                        <a class="btn btn-default btn-block" href="{% url 'agregarPropietario' id=object.id %}"> Agregar propietario </a>
+                        <a class="btn btn-default btn-block" href="{% url 'seleccionarPropietario' id=object.id %}"> Seleccionar propietario </a>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                      </div>
+                  </div>
+                  <!-- /.modal-content -->
+              </div>
+              <!-- /.modal-dialog -->
+          </div>
+          <!-- /.modal -->
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script type= application/javascript>
+    {%if messages%}
+        var msg = '';
+        {%for message in messages%}
+          {% if message.tags %}
+            msg += '{{ message }}\n';
+          {% endif %}
+        {% endfor %}
+          alert(msg)
+    {% endif %}
+  </script>
+{% endblock %}

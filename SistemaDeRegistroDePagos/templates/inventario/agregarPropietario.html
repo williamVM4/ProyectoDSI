@@ -20,7 +20,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <p class="label-form">{{form.dui.label}}</p>
-                  {{form.dui|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el dui'}}
+                  {{form.dui|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000-0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.dui.help_text}}</p></div>
                 </div>
                 <div class="form-group">
@@ -30,44 +30,44 @@
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.direccion.label}}</p>
-                  {{form.direccion|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su direccion'}}
+                  {{form.direccion|add_class:'form-control'|attr:'autocomplete:off'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.direccion.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.profesion.label}}</p>
-                  {{form.profesion|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su profesion'}}
+                  {{form.profesion|add_class:'form-control'|attr:'autocomplete:off'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.profesion.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.trabajo.label}}</p>
-                  {{form.trabajo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su trabajo'}}
+                  {{form.trabajo|add_class:'form-control'|attr:'autocomplete:off'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.trabajo.help_text}}</p></div>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
                   <p class="label-form">{{form.direccionTrabajo.label}}</p>
-                  {{form.direccionTrabajo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su direccion de trabajo'}}
+                  {{form.direccionTrabajo|add_class:'form-control'|attr:'autocomplete:off'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.direccionTrabajo.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.telefonoTrabajo.label}}</p>
-                  {{form.telefonoTrabajo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su telefono de trabajo'}}
+                  {{form.telefonoTrabajo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.telefonoTrabajo.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.telefonoCasa.label}}</p>
-                  {{form.telefonoCasa|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su telefono de casa'}}
+                  {{form.telefonoCasa|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.telefonoCasa.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.telefonoCelular.label}}</p>
-                  {{form.telefonoCelular|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su telefono celular'}}
+                  {{form.telefonoCelular|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.telefonoCelular.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.correoElectronico.label}}</p>
-                  {{form.correoElectronico|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su correo electronico'}}
+                  {{form.correoElectronico|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:ejemplo@ejemplo.com'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.correoElectronico.help_text}}</p></div>
                 </div>
               </div>
@@ -79,7 +79,7 @@
                 <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
               </div>
               <div class="col-md-2">
-                <a class="btn btn-danger btn-block" href="{% url 'asignarPropietario' id=id %}"> Cancelar </a>
+                <a class="btn btn-danger btn-block" href="{% url 'detalleLote' id %}"> Cancelar </a>
                 </div>
             </div>
           </form>

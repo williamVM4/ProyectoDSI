@@ -1,6 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
 from .models import propietario, detalleVenta
+from django.contrib.admin.widgets import FilteredSelectMultiple
 
 class PropietarioForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -34,7 +35,7 @@ class PropietarioForm(ModelForm):
             'direccionTrabajo': _('Campo Opcional'),
             'telefonoTrabajo': _('Campo Opcional'),
             'telefonoCasa': _('Campo Opcional'),
-            'telefonoCelular': _('Campo Opcional'),
+            'telefonoCelular': _('Campo Obligatorio'),
             'correoElectronico': _('Campo Opcional'),
         }
         error_messages = {
@@ -44,6 +45,7 @@ class PropietarioForm(ModelForm):
         }
 
 class detalleVentaPropietarioForm(ModelForm):
+
     class Meta:
         model=detalleVenta
         fields=('propietarios',)

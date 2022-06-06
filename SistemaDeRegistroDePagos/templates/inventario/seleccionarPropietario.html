@@ -1,16 +1,66 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
-{% block head %} {% endblock %}
+{% block head %}
+{% endblock %}
 
-{% block content %} 
-<form action="." method="POST">
-    {% csrf_token %}
-    <table>
-        {{form}}
-    </table>
-    <button type="submit">SUBMIT</button>
-    </form>
+{% block content %}
+<div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="form-panel panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Seleccionar propietario</h3>
+          </div>
+          <div class="panel-body">
+            <form role="form" action="." method="post">
+              {% csrf_token %}  
+              <fieldset>
+                <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Filtra por DUI">
+                    {{form.propietarios|add_class:'form-control'|add_class:'multiple'}}
+                </div>
+                <div class="col-md-2"></div>
+                </div>
+              </fieldset>
+              <div class="row">
+                <div class="col-md-6"></div>
+                <div class="col-md-2">
+                  <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+                </div>
+                <div class="col-md-2">
+                    <button type="reset" class="btn btn-primary btn-block"> Limpiar </button>
+                </div>
+                <div class="col-md-2">
+                  <a class="btn btn-danger btn-block" href="{% url 'detalleLote' id %}"> Cancelar </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
 
-{% block scripts %}{% endblock %}
+{% block scripts %}
+
+<script type= application/javascript>
+    {%if form.errors%}
+        var errors = '';
+        {%for field in form%}
+          {% for error in field.errors %}
+            errors += '{{ error }}\n';
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          errors += '{{ error }}\n';
+        {% endfor %}
+          alert(errors)
+    {% endif %}
+  </script>
+  <script src="{% static 'js/main.js'%}"></script>
+{% endblock %}
