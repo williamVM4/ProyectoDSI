@@ -41,6 +41,7 @@
                                             <th>Area (m cuadrado)</th>
                                             <th>Area (v cuadrada)</th>
                                             <th>Detalle de la venta del lote</th>
+                                            <th>Historico de ventas</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -54,6 +55,7 @@
                                             <td>{{ object.lote.areaMtCuadrado}}</td>
                                             <td>{{ object.lote.areaVCuadrada}}</td>
                                             <td><a class="btn btn-default btn-block" href="{% url 'detalleLote' object.id %}"> Ver detalle </a></td>
+                                            <td><a class="btn btn-default btn-block" href="{% url 'asignacionesLote' object.lote.matriculaLote %}"> Ver detalle </a></td>
                                         </tr>
                                         {% endif %}
                                         {%endfor%}

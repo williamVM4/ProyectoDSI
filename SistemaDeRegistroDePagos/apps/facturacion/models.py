@@ -30,8 +30,8 @@ class pagoMantenimiento(models.Model):
     numeroCuotaEstadoCuenta = models.ForeignKey('monitoreo.cuotaEstadoCuenta',blank=True, on_delete=models.CASCADE)
     fechaPago = models.DateField()
     monto = models.FloatField()
-    conceptoOtros = models.CharField(max_length=50)
-    montoOtros = models.FloatField()
+    conceptoOtros = models.CharField(max_length=50,blank=True)
+    montoOtros = models.FloatField(blank=True)
 
     def __str__(self):
         return self.numeroReciboFinanciamiento

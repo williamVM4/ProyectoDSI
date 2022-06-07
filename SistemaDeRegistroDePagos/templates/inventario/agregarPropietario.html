@@ -91,6 +91,7 @@
 {% endblock content %}
 
 {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 <script type= application/javascript>
   {%if form.errors%}
       var errors = '';
@@ -104,5 +105,26 @@
       {% endfor %}
         alert(errors)
   {% endif %}
+</script>
+<script type= application/javascript>
+  Inputmask("9{8}[-]9{1}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_dui');
+
+  Inputmask("9{4}[-]9{4}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_telefonoTrabajo');
+
+  Inputmask("9{4}[-]9{4}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_telefonoCasa');
+
+  Inputmask("9{4}[-]9{4}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_telefonoCelular');
 </script>
   {% endblock %}

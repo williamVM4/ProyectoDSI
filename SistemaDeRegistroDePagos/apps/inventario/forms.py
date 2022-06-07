@@ -6,9 +6,11 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 class PropietarioForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(PropietarioForm, self).__init__(*args, **kwargs)
+            self.fields['dui'].widget.attrs['pattern'] = "[0-9]{8}[ -][0-9]{1}"
             self.fields['telefonoTrabajo'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
             self.fields['telefonoCasa'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
             self.fields['telefonoCelular'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
+            self.fields['correoElectronico'].widget.attrs['pattern'] = "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 4}$"
 
     class Meta:
         model=propietario

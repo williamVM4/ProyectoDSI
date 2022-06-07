@@ -20,7 +20,7 @@ class cuentaBancaria(models.Model):
 class lote(models.Model):
     matriculaLote = models.CharField(max_length=50, primary_key=True)
     proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE)
-    numeroLote = models.IntegerField()
+    numeroLote = models.CharField(max_length=2)
     poligono = models.CharField(max_length=50)
     areaMtCuadrado = models.FloatField()
     areaVCuadrada = models.FloatField()
@@ -41,7 +41,7 @@ class propietario(models.Model):
     correoElectronico = models.EmailField(max_length=254,blank=True,default="")
 
     def __str__(self):
-        return self.nombrePropietario
+        return '%s %s' % (self.dui, self.nombrePropietario)
 
 class detalleVenta(models.Model):
     lote = models.ForeignKey(lote, on_delete=models.CASCADE, blank=True)

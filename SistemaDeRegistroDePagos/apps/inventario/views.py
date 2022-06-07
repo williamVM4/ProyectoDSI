@@ -26,6 +26,15 @@ class detalleLote(GroupRequiredMixin,DetailView):
     template_name = 'inventario/detalleLote.html'
     model = detalleVenta
 
+class asignacionesLote(GroupRequiredMixin,ListView):
+    group_required = [u'Configurador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'inventario/asignacionLote.html'
+    model = detalleVenta
+
+# Views de propietario
 class agregarPropietario(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
