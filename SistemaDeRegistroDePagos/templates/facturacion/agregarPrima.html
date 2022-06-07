@@ -1,16 +1,73 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block head %} {% endblock %}
 
 {% block content %} 
-    <form method="POST">
-        {% csrf_token %}
-        <table>
-            {{form}}
-        </table>
-        <button type="submit">SUBMIT</button>
-    </form>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="form-panel panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Agregar Prima</h3>
+                </div>
+                <div class="panel-body"></div>
+                    <form role="form" action="." method="POST">
+                        {% csrf_token %}
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p class="label-form">{{form.numeroReciboPrima.label}}</p>
+                                        {{form.numeroReciboPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo de la Prima'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboPrima.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">{{form.fechaPrima.label}}</p>
+                                        {{form.fechaPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la fecha de Pago de la Prima'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboPrima.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">{{form.montoPrima.label}}</p>
+                                        {{form.montoPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el Monto de la Prima'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboPrima.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">{{form.conceptoPrima.label}}</p>
+                                        {{form.conceptoPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el concepto de la Prima'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboPrima.help_text}}</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+                            </div>
+                            <div class="col-md-2">
+                                <a class="btn btn-danger btn-block" href=""> Cancelar </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
 
-{% block scripts %}{% endblock %}
+{% block scripts %}
+<script type= application/javascript>
+    {%if messages%}
+        var msg = '';
+        {%for message in messages%}
+          {% if message.tags %}
+            msg += '{{ x }}\n';
+          {% endif %}
+        {% endfor %}
+          alert(msg)
+    {% endif %}
+  </script>
+{% endblock %}
