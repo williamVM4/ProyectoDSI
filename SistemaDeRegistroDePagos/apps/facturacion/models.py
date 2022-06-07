@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class prima(models.Model):
@@ -12,29 +13,30 @@ class prima(models.Model):
     def __str__(self):
         return self.numeroReciboPrima
 
-class pagoFinanciamiento(models.Model):
-    numeroReciboFinanciamiento = models.CharField(max_length=30, primary_key=True)
-    numeroCuotaEstadoCuenta = models.ForeignKey('monitoreo.cuotaEstadoCuenta',blank=True, on_delete=models.CASCADE)
+class BasePagoModel(models.Model):
+    usuarioCreacion = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,blank=True, null = True)
+    conceptoOtros = models.CharField(max_length=100,blank=True)
+    montoOtros = models.FloatField(blank=True)
     fechaPago = models.DateField()
+    numeroCuotaEstadoCuenta = models.ForeignKey('monitoreo.cuotaEstadoCuenta',blank=True, on_delete=models.CASCADE)
     monto = models.FloatField()
+    tipoPago = models.CharField(max_length=100)
+    class Meta:
+        abstract = True
+
+class pagoFinanciamiento(BasePagoModel):
+    numeroReciboFinanciamiento = models.CharField(max_length=30, primary_key=True)
     mantenimiento = models.FloatField()
     comision = models.FloatField()
-    conceptoOtros = models.CharField(max_length=50)
-    montoOtros = models.FloatField()
-
+    
     def __str__(self):
         return self.numeroReciboFinanciamiento
 
-class pagoMantenimiento(models.Model):
+class pagoMantenimiento(BasePagoModel):
     numeroReciboMantenimiento = models.CharField(max_length=30, primary_key=True)
-    numeroCuotaEstadoCuenta = models.ForeignKey('monitoreo.cuotaEstadoCuenta',blank=True, on_delete=models.CASCADE)
-    fechaPago = models.DateField()
-    monto = models.FloatField()
-    conceptoOtros = models.CharField(max_length=50,blank=True)
-    montoOtros = models.FloatField(blank=True)
 
     def __str__(self):
-        return self.numeroReciboFinanciamiento
+        return self.numeroReciboMantenimiento
 
 
 
