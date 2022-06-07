@@ -57,7 +57,7 @@ class estadoCuenta(models.Model):
     detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, on_delete=models.CASCADE)
 
 class cuotaEstadoCuenta(models.Model):
-    numeroCuota = models.IntegerField(primary_key=True)
+    numeroCuota = models.IntegerField()
     estadoCuenta = models.ForeignKey(estadoCuenta, on_delete=models.CASCADE)
     diasInteres = models.IntegerField()
     tasaInteres = models.FloatField()
