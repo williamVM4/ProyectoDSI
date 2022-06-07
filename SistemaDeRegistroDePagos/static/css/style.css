@@ -17,6 +17,17 @@
     border: 1px solid #ddd; 
     margin-bottom: 1em; 
   }
+
+.centrar{
+    align-self: center;
+}
   
+.boton-registrar-caja{
+    max-width: 90%;
+}
+
+.pt-3{
+    padding-top: 3em;
+}
 
   
