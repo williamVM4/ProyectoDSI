@@ -23,17 +23,37 @@
                                         {{form.numeroReciboPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo de la Prima'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboPrima.help_text}}</p></div>
                                     </div>
-
+                                    <div class="form-group">
+                                        <p class="label-form">{{form2.fechaPago.label}}</p>
+                                        {{form2.fechaPago|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la fecha de pago'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.fechaPago.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">{{form2.monto.label}}</p>
+                                        {{form2.monto|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto de la Prima'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.monto.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">{{form2.tipoPago.label}}</p>
+                                        {{form2.tipoPago|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.tipoPago.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">{{form2.referencia.label}}</p>
+                                        {{form2.referencia|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la referencia'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.referencia.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">{{form3.banco.label}}</p>
+                                        {{form3.banco|add_class:'form-control'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">Campo obligatorio</p></div>
+                                    </div>
                                     <div class="form-group">
                                         <p class="label-form">{{form.conceptoPrima.label}}</p>
                                         {{form.conceptoPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el concepto de la Prima'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.conceptoPrima.help_text}}</p></div>
                                     </div>
-                                    <div class="form-group">
-                                        <p class="label-form">{{form2.matriculaLote.label}}</p>
-                                        {{form2.conceptoPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder: Matricula Lote'}}
-                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.matriculaLote.help_text}}</p></div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </fieldset>
