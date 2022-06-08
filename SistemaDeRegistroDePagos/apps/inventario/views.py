@@ -66,7 +66,7 @@ class agregarLote(GroupRequiredMixin,CreateView):
     template_name = 'inventario/agregarLote.html'
     form_class = LoteForm
     #success_url = reverse_lazy('asignacionLote')
-    def get_url_redirect(self, **kwargs):
+    """def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('id', None) 
         try:
