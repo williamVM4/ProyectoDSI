@@ -54,8 +54,8 @@
                                             <td>{{ object.lote.poligono}}</td>
                                             <td>{{ object.lote.areaMtCuadrado}}</td>
                                             <td>{{ object.lote.areaVCuadrada}}</td>
-                                            <td><a class="btn btn-default btn-block" href="{% url 'detalleLote' object.id %}"> Ver detalle </a></td>
-                                            <td><a class="btn btn-default btn-block" href="{% url 'asignacionesLote' object.lote.matriculaLote %}"> Ver detalle </a></td>
+                                            <td><a class="btn btn-default btn-block" href="{% url 'detalleLote' idp=idp pk=object.id %}"> Ver detalle </a></td>
+                                            <td><a class="btn btn-default btn-block" href="{% url 'asignacionesLote' idp=idp pk=object.lote.matriculaLote %}"> Ver detalle </a></td>
                                         </tr>
                                         {% endif %}
                                         {%endfor%}

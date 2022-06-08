@@ -18,6 +18,12 @@ class gestionarLotes(GroupRequiredMixin,ListView):
     template_name = 'inventario/gestionarLotes.html'
     model = detalleVenta
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('idp', None) 
+        context['idp'] = id         
+        return context
+
 class detalleLote(GroupRequiredMixin,DetailView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
@@ -26,6 +32,12 @@ class detalleLote(GroupRequiredMixin,DetailView):
     template_name = 'inventario/detalleLote.html'
     model = detalleVenta
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp        
+        return context
+
 class asignacionesLote(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
@@ -33,6 +45,12 @@ class asignacionesLote(GroupRequiredMixin,ListView):
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/asignacionLote.html'
     model = detalleVenta
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp        
+        return context
 
 # Views de propietario
 class agregarPropietario(GroupRequiredMixin,CreateView):
@@ -55,7 +73,9 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
+        id = self.kwargs.get('id', None)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp  
         context['id'] = id         
         return context
 
@@ -96,7 +116,9 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
         
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
+        id = self.kwargs.get('id', None)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp  
         context['id'] = id         
         return context
 
