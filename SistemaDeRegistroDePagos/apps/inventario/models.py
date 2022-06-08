@@ -22,7 +22,7 @@ class lote(models.Model):
     proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE)
     numeroLote = models.IntegerField()
     poligono = models.CharField(max_length=5)
-    areaMtCuadrado = models.FloatField()
+    areaMCuadrado = models.FloatField()
     areaVCuadrada = models.FloatField()
 
     def __str__(self):
