@@ -66,15 +66,24 @@ class agregarLote(GroupRequiredMixin,CreateView):
     template_name = 'inventario/agregarLote.html'
     form_class = LoteForm
     #success_url = reverse_lazy('asignacionLote')
-    """def get_url_redirect(self, **kwargs):
+    def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
         id = self.kwargs.get('id', None) 
         try:
-            asignacionLote.objects.get(pk = id)
-            return reverse_lazy('asignacionLote', kwargs={'pk': id})
+            detalleVenta.objects.get(pk = id)
+            return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})
         except Exception:
-            return reverse_lazy('asigancionLote')
+            return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
+
     def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('id', None)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp  
+        context['id'] = id         
+        return context
+    """def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('id', None) 
         context['id'] = id         

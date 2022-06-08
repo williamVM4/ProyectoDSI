@@ -66,12 +66,12 @@ class LoteForm(ModelForm):
         model=lote
         fields=('matriculaLote','proyectoTuristico','numeroLote','poligono','areaMCuadrado','areaVCuadrada')
         labels = {
-            'matriculaLote': _('Matricula:'),
-            'proyectoTuristico': _('Proyecto Turistico:'),
-            'numeroLote': _('Numero:'),
-            'poligono': _('Poligono:'),
-            'areaMCuadrado': _('{Area en metros cuadrados:'),
-            'areaVCuadrada': _('Area en varas cuadradas:'),
+            'matriculaLote': _('Matrícula:'),
+            'proyectoTuristico': _('Proyecto Turístico:'),
+            'numeroLote': _('Número de lote:'),
+            'poligono': _('Polígono:'),
+            'areaMCuadrado': _('Área en metros cuadrados:'),
+            'areaVCuadrada': _('Área en varas cuadradas:'),
         }
         help_texts = {
             'matriculaLote': _('Campo Obligatorio'),
