@@ -30,7 +30,7 @@ class caja(GroupRequiredMixin,TemplateView):
 
         
 
-"""class agregarPrima(GroupRequiredMixin,CreateView):
+class agregarPrima(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -38,6 +38,9 @@ class caja(GroupRequiredMixin,TemplateView):
   
     template_name = 'facturacion/agregarPrima.html'
     form_class = agregarPrimaForm
+    second_form_class = lote
+
+
     #success_url = reverse_lazy('')
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
@@ -73,7 +76,7 @@ class caja(GroupRequiredMixin,TemplateView):
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
         return HttpResponseRedirect(self.get_url_redirect())
 
-class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
+""" class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
