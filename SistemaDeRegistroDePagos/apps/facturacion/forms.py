@@ -6,7 +6,7 @@ from .models import pagoMantenimiento, prima
 """class agregarPrimaForm(ModelForm):
     class Meta:
         model = prima
-        fields = ('numeroReciboPrima','fechaPrima','montoPrima','conceptoPrima')
+        fields = ('numeroReciboPrima','fechaPrima','montoPrima','conceptoPrima','tipoPago','referencia','cuentaBancaria',)
         label= {
             'numeroReciboPrima':('Numero de Recibo de la Prima: '),
             'fechaPrima': ('Fecha Prima'),
