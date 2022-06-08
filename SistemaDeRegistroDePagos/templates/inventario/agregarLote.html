@@ -15,33 +15,33 @@
         <div class="panel-body">
           <form role="form" action="." method="post">
             {% csrf_token %}  
-            <fieldset>
+            <!--<fieldset>
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
                   <p class="label-form">{{form.matriculaLote.label}}</p>
-                  {{form.dui|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000-0'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.dui.help_text}}</p></div>
+                  {{form.matriculaLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000-0'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.matriculaLote.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.numeroLote.label}}</p>
-                  {{form.nombrePropietario|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el nombre completo'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.nombrePropietario.help_text}}</p></div>
+                  {{form.numeroLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el nombre completo'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroLote.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.poligono.label}}</p>
-                  {{form.direccion|add_class:'form-control'|attr:'autocomplete:off'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.direccion.help_text}}</p></div>
+                  {{form.poligono|add_class:'form-control'|attr:'autocomplete:off'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.poligono.help_text}}</p></div>
                 </div>
                 <div class="form-group">
-                  <p class="label-form">{{form.areaMtCuadrado.label}}</p>
-                  {{form.profesion|add_class:'form-control'|attr:'autocomplete:off'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.profesion.help_text}}</p></div>
+                  <p class="label-form">{{form.areaMCuadrado.label}}</p>
+                  {{form.areaMCuadrado|add_class:'form-control'|attr:'autocomplete:off'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.areaMCuadrado.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.areaVCuadrada.label}}</p>
-                  {{form.trabajo|add_class:'form-control'|attr:'autocomplete:off'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.trabajo.help_text}}</p></div>
+                  {{form.areaVCuadrada|add_class:'form-control'|attr:'autocomplete:off'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.areaVCuadrada.help_text}}</p></div>
                 </div>
               </div>
             </div>
@@ -52,9 +52,9 @@
                 <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
               </div>
               <div class="col-md-2">
-                <a class="btn btn-danger btn-block" href="{% url 'detalleLote' id %}"> Cancelar </a>
+                <a class="btn btn-danger btn-block" href="{% url 'asignacionLote' id %}"> Cancelar </a>
                 </div>
-            </div>
+            </div>-->
           </form>
         </div>
       </div>
@@ -83,7 +83,7 @@
   Inputmask("9{8}", {
     placeholder: "",
     greedy: false
-  }).mask('#id_matricula');
+  }).mask('#id_matriculaLote');
 
   Inputmask("9{4}", {
     placeholder: "",
@@ -93,7 +93,7 @@
   Inputmask("9{4}", {
     placeholder: "",
     greedy: false
-  }).mask('#id_areaMtCuadrado');
+  }).mask('#id_areaMCuadrado');
 
   Inputmask("9{4}", {
     placeholder: "",
