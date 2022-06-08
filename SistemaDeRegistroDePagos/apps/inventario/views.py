@@ -4,7 +4,7 @@ from django.views.generic import TemplateView, CreateView, FormView, ListView, D
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .models import asignacionLote, detalleVenta, propietario, lote
+from .models import asignacionLote, detalleVenta, propietario, lote, proyectoTuristico
 from apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
@@ -64,12 +64,13 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
     #success_url = reverse_lazy('detalleLote')
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
         id = self.kwargs.get('id', None) 
         try:
             detalleVenta.objects.get(pk = id)
-            return reverse_lazy('detalleLote', kwargs={'pk': id})
+            return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})
         except Exception:
-            return reverse_lazy('gestionarLotes')
+            return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
@@ -107,12 +108,13 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
     model = detalleVenta
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
+        id = self.kwargs.get('id', None)
+        idp = self.kwargs.get('idp', None)
         try:
             detalleVenta.objects.get(pk = id)
-            return reverse_lazy('detalleLote', kwargs={'pk': id})
+            return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})
         except Exception:
-            return reverse_lazy('gestionarLotes')
+            return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
         
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
