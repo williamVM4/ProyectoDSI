@@ -2,16 +2,21 @@ from django.db import models
 from django.conf import settings
 from crum import get_current_user
 
+class pago(models.Model):
+    monto = models.FloatField()
+    prima = models.ForeignKey('prima', on_delete=models.CASCADE, null=True)
+    pagoFinanciamiento = models.ForeignKey('pagoFinanciamiento', on_delete=models.CASCADE, null=True)
+    pagoMantenimiento = models.ForeignKey('pagoMantenimiento', on_delete=models.CASCADE, null=True)
+    tipoPago = models.CharField(max_length=100)
+    referencia = models.CharField(max_length=100, blank=True)
+    cuentaBancaria = models.ForeignKey('inventario.cuentaBancaria',blank=True, null = True, on_delete=models.CASCADE)
+    fechaPago = models.DateField()
+    
 # Create your models here.
 class prima(models.Model):
     numeroReciboPrima = models.CharField(max_length=10, primary_key=True)
     detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, on_delete=models.CASCADE)
-    tipoPago = models.CharField(max_length=100)
-    referencia = models.CharField(max_length=100, blank=True)
-    cuentaBancaria = models.ForeignKey('inventario.cuentaBancaria',blank=True, null = True, on_delete=models.CASCADE)
     usuarioCreacion = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,blank=True, null = True, related_name='user_creation_prima')
-    fechaPrima = models.DateField()
-    montoPrima = models.FloatField()
     conceptoPrima = models.CharField(max_length=50)
 
     def __str__(self):
@@ -27,12 +32,8 @@ class prima(models.Model):
 class BasePagoModel(models.Model):
     conceptoOtros = models.CharField(max_length=100,blank=True)
     montoOtros = models.FloatField(blank=True)
-    fechaPago = models.DateField()
     numeroCuotaEstadoCuenta = models.ForeignKey('monitoreo.cuotaEstadoCuenta',blank=True, on_delete=models.CASCADE)
-    monto = models.FloatField()
-    tipoPago = models.CharField(max_length=100)
-    referencia = models.CharField(max_length=100, blank=True)
-    cuentaBancaria = models.ForeignKey('inventario.cuentaBancaria',blank=True, null = True, on_delete=models.CASCADE)
+    
     class Meta:
         abstract = True
 

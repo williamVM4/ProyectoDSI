@@ -30,7 +30,7 @@ class caja(GroupRequiredMixin,TemplateView):
 
         
 
-class agregarPrima(GroupRequiredMixin,CreateView):
+"""class agregarPrima(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -81,7 +81,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
 
     model = pagoMantenimiento
     form_class = agregarPagoMantenimientoForm
-    template_name = 'facturacion/agregarPagoMantenimiento.html'
+    template_name = 'facturacion/agregarPagoMantenimiento.html'"""
     
     
 
