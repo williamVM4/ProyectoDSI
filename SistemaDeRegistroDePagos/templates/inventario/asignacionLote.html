@@ -38,15 +38,15 @@
                                   <tbody>
                                       {% for detalleVenta in detalles %}
                                       <tr>
-                                          <td>
+                                            <td>
                                             {% for asignacion in asignaciones %}
                                           {%if asignacion.detalleVenta.id == detalleVenta.id%}
                                           {{asignacion.propietario.nombrePropietario}}
                                           {%else%}
-                                          <td></td>
+                                          
                                           {%endif%}  
                                           {% endfor %}
-                                          </td>
+                                        </td>
                                           <td></td>
                                           <td></td>
                                           {%if detalleVenta.estado == True%}
