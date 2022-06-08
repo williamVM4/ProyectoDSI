@@ -79,7 +79,7 @@ class LoteForm(ModelForm):
             'numeroLote': _('Campo Obligatorio'),
             'poligono': _('Campo Obligatorio'),
             'areaMtCuadrado': _('Campo Obligatorio'),
-            'areaVCuadrada': _('Campo Opcional'),
+            'areaVCuadrada': _('Campo Obligatorio'),
         }
         error_messages = {
             'proyectoTuristico': {
