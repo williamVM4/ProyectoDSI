@@ -5,5 +5,5 @@ from apps.facturacion.views import *
 urlpatterns = [
     path('caja/<str:idp>/',caja.as_view(),name='caja'),
     path('agregarPagoMantenimiento/<str:idp>/',agregarPagoMantenimiento.as_view(),name='agregarPagoMantenimineto'),
-    path('agregarPrima/<str:idp>/<str:id>/',agregarPrima.as_view(),name='agregarPrima'),
+    path('agregarPrima/<str:idp>/',agregarPrima.as_view(),name='agregarPrima'),
 ]

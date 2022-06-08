@@ -29,8 +29,10 @@
                           <h3>Resumen ingresos</h3>
                           </div>
                           <div class="col-md-2">
-                            <a class="btn btn-default btn-block boton-registrar-caja" > Registrar </a>
-                            </div>
+                            <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#primaModal">
+                                Registrar
+                               </button>
+                          </div>
                         </div>
                           <div class="table-responsive">
                               <table class="table table-bordered table-striped">
@@ -100,6 +102,27 @@
         </div>
     </div>
 </div>
+<!-- /.modal -->
+<div class="modal fade" id="primaModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Elija una opción</h4>
+            </div> 
+            <div class="modal-body">
+                <a class="btn btn-default btn-block" href="{% url 'agregarPrima' idp=idp %}"> Gestionar Prima </a>
+                <a class="btn btn-default btn-block" > Siguiente opcion</a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 {% endblock content %}
 
 {% block scripts %}
