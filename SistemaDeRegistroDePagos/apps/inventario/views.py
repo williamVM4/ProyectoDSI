@@ -16,14 +16,15 @@ class gestionarLotes(GroupRequiredMixin,ListView):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/gestionarLotes.html'
-    model = detalleVenta
+    model = lote
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('idp', None) 
-        context['idp'] = id         
+        context['idp'] = id
+        context['lotes'] = lote.objects.filter(proyectoTuristico__id=id)
         return context
-
+    
 class detalleLote(GroupRequiredMixin,DetailView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
@@ -48,8 +49,12 @@ class asignacionesLote(GroupRequiredMixin,ListView):
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        idp = self.kwargs.get('idp', None) 
-        context['idp'] = idp        
+        idp = self.kwargs.get('idp', None)
+        id = self.kwargs.get('pk', None)
+        context['idp'] = idp
+        context['id'] = id
+        context['detalles'] = detalleVenta.objects.filter(lote=id)
+        context['asignaciones'] = asignacionLote.objects.filter()   
         return context
 
 # Views de propietario
