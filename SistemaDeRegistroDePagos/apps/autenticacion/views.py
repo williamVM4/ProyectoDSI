@@ -11,7 +11,7 @@ from apps.autenticacion.mixins import *
 
 class loginForm(LoginView):
     template_name = 'autenticacion/login.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('homeProyecto')
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
