@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block head %} {% endblock %}
+
+{% block content %} 
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+      <div class="form-panel panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Agregar lote</h3>
+        </div>
+        <div class="panel-body">
+          <form role="form" action="." method="post">
+            {% csrf_token %}  
+            <!--<fieldset>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <p class="label-form">{{form.matriculaLote.label}}</p>
+                  {{form.matriculaLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000-0'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.matriculaLote.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.numeroLote.label}}</p>
+                  {{form.numeroLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el nombre completo'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroLote.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.poligono.label}}</p>
+                  {{form.poligono|add_class:'form-control'|attr:'autocomplete:off'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.poligono.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.areaMCuadrado.label}}</p>
+                  {{form.areaMCuadrado|add_class:'form-control'|attr:'autocomplete:off'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.areaMCuadrado.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.areaVCuadrada.label}}</p>
+                  {{form.areaVCuadrada|add_class:'form-control'|attr:'autocomplete:off'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.areaVCuadrada.help_text}}</p></div>
+                </div>
+              </div>
+            </div>
+            </fieldset>
+            <div class="row">
+              <div class="col-md-8"></div>
+              <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+              </div>
+              <div class="col-md-2">
+                <a class="btn btn-danger btn-block" href="{% url 'asignacionLote' id %}"> Cancelar </a>
+                </div>
+            </div>-->
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+<script type= application/javascript>
+  {%if form.errors%}
+      var errors = '';
+      {%for field in form%}
+        {% for error in field.errors %}
+          errors += '{{ error }}\n';
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        errors += '{{ error }}\n';
+      {% endfor %}
+        alert(errors)
+  {% endif %}
+</script>
+<script type= application/javascript>
+  Inputmask("9{8}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_matriculaLote');
+
+  Inputmask("9{4}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_numeroLote');
+
+  Inputmask("9{4}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_areaMCuadrado');
+
+  Inputmask("9{4}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_areaVCuadrada');
+</script>
+  {% endblock %}
