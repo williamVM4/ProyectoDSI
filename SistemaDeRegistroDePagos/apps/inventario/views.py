@@ -56,36 +56,33 @@ class asignacionesLote(GroupRequiredMixin,ListView):
         context['detalles'] = detalleVenta.objects.filter(lote__matriculaLote=id)
         context['asignaciones'] = asignacionLote.objects.filter()   
         return context
-        
+
 # Views de lote
 class agregarLote(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
-    
     template_name = 'inventario/agregarLote.html'
     form_class = LoteForm
-    #success_url = reverse_lazy('detalleLote')
-    def get_url_redirect(self, **kwargs):
+    #success_url = reverse_lazy('asignacionLote')
+    """def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('id', None) 
         try:
-            detalleVenta.objects.get(pk = id)
-            return reverse_lazy('detalleLote', kwargs={'pk': id})
+            asignacionLote.objects.get(pk = id)
+            return reverse_lazy('asignacionLote', kwargs={'pk': id})
         except Exception:
-            return reverse_lazy('gestionarLotes')
-
+            return reverse_lazy('asigancionLote')
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('id', None) 
         context['id'] = id         
         return context
-
     #def form_valid(self, form, **kwargs):
-        context=super().get_context_data(**kwargs)
-         # recojo el parametro 
-        id = self.kwargs.get('id', None) 
+        #context=super().get_context_data(**kwargs)
+        # recojo el parametro 
+        #id = self.kwargs.get('id', None) 
         #propietario = form.save(commit=False)
         #poner try
         #try:
@@ -96,7 +93,7 @@ class agregarLote(GroupRequiredMixin,CreateView):
         #except Exception:
         #    propietario.delete()
         #    messages.error(self.request, 'Ocurrió un error al guardar el propietario, el detalle de venta no es valido')
-        #return HttpResponseRedirect(self.get_url_redirect())
+        #return HttpResponseRedirect(self.get_url_redirect())"""
 
 # Views de propietario
 class agregarPropietario(GroupRequiredMixin,CreateView):

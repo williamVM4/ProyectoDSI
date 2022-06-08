@@ -17,7 +17,7 @@ class ValidatePermissionRequiredMixin(View):
 
     def get_url_redirect(self):
         if self.url_redirect is None:
-            return reverse_lazy('home')
+            return reverse_lazy('login')
         return self.url_redirect
 
     def dispatch(self, request, *args, **kwargs):
