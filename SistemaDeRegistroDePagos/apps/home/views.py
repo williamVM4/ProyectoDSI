@@ -9,7 +9,8 @@ from django.contrib.auth.decorators import login_required
 from apps.autenticacion.mixins import *
 
 # Create your views here.
-class homeProyecto(TemplateView):
+class homeProyecto(GroupRequiredMixin,TemplateView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
