@@ -35,13 +35,22 @@ class agregarPrima(GroupRequiredMixin,CreateView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
-  
+    
+    model = prima
     template_name = 'facturacion/agregarPrima.html'
     form_class = agregarPrimaForm
-    second_form_class = lote
+    second_form_class = pagoForm
+    third_form_class = bancoPagoForm
+    def get_context_data(self, **kwargs): 
+        context = super(agregarPrima, self).get_context_data(**kwargs)
+        if 'form2' not in context:
+            context['form2'] = self.second_form_class()
+        if 'form3' not in context:
+            context['form3'] = self.third_form_class(initial={'id':self.kwargs.get('id',None)})    
+        return context
 
 
-    #success_url = reverse_lazy('')
+"""    #success_url = reverse_lazy('')
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('id', None) 
@@ -74,7 +83,7 @@ class agregarPrima(GroupRequiredMixin,CreateView):
         except Exception:
             prima.delete()
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
-        return HttpResponseRedirect(self.get_url_redirect())
+        return HttpResponseRedirect(self.get_url_redirect())"""
 
 """ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']

@@ -1,13 +1,23 @@
+from math import fabs
 from django.db import models
 from django.conf import settings
 from crum import get_current_user
+
+pago_tipo = [
+    (1, 'Efectivo'),
+    (2, 'Banco')
+]
 
 class pago(models.Model):
     monto = models.FloatField()
     prima = models.ForeignKey('prima', on_delete=models.CASCADE, null=True)
     pagoFinanciamiento = models.ForeignKey('pagoFinanciamiento', on_delete=models.CASCADE, null=True)
     pagoMantenimiento = models.ForeignKey('pagoMantenimiento', on_delete=models.CASCADE, null=True)
-    tipoPago = models.CharField(max_length=100)
+    tipoPago = models.IntegerField(
+        null=False, blank=False,
+        choices=pago_tipo
+    )
+
     referencia = models.CharField(max_length=100, blank=True)
     cuentaBancaria = models.ForeignKey('inventario.cuentaBancaria',blank=True, null = True, on_delete=models.CASCADE)
     fechaPago = models.DateField()
