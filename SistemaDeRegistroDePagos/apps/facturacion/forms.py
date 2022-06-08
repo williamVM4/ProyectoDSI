@@ -4,6 +4,7 @@ from statistics import mode
 from django.forms import ModelForm
 from .models import *
 from apps.inventario.models import lote
+from django import forms
 
 class agregarPrimaForm(ModelForm):
     class Meta:
@@ -20,7 +21,7 @@ class agregarPrimaForm(ModelForm):
 
 
 
-class pago(ModelForm):
+class pagoForm(ModelForm):
     class Meta:
         model = pago
         fields = {'monto','tipoPago','referencia','fechaPago'}
@@ -37,7 +38,10 @@ class pago(ModelForm):
             'fechaPago':(''),
         }
 
-"""class agregarPagoMantenimientoForm(ModelForm):
+class agregarPagoMantenimientoForm(ModelForm):
     class Meta:
         model = pagoMantenimiento
-        fields = ('numeroReciboMantenimiento','fechaPago','monto','conceptoOtros','montoOtros')"""
+        fields = {'numeroReciboMantenimiento','conceptoOtros','montoOtros'}
+
+class lotePagoForm(forms.Form):
+    matricula = forms.CharField(label='Matricula', max_length=100)

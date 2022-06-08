@@ -13,7 +13,7 @@ from apps.inventario.models import detalleVenta
 # Create your views here.
 
 class caja(GroupRequiredMixin,TemplateView):
-    group_required = [u'Configurador del sistema']
+    group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -76,15 +76,25 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
         return HttpResponseRedirect(self.get_url_redirect())
 
-""" class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
-    group_required = [u'Configurador del sistema']
+class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
     model = pagoMantenimiento
     form_class = agregarPagoMantenimientoForm
-    template_name = 'facturacion/agregarPagoMantenimiento.html'"""
+    second_form_class = pagoForm
+    third_form_class = lotePagoForm
+    template_name = 'facturacion/agregarPagoMantenimiento.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(agregarPagoMantenimiento, self).get_context_data(**kwargs)
+        if 'form2' not in context:
+            context['form2'] = self.second_form_class()
+        if 'form3' not in context:
+            context['form3'] = self.third_form_class()
+        return context   
     
     
 

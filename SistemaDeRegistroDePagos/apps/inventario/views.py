@@ -53,7 +53,7 @@ class asignacionesLote(GroupRequiredMixin,ListView):
         id = self.kwargs.get('pk', None)
         context['idp'] = idp
         context['id'] = id
-        context['detalles'] = detalleVenta.objects.filter(lote=id)
+        context['detalles'] = detalleVenta.objects.filter(lote__matriculaLote=id)
         context['asignaciones'] = asignacionLote.objects.filter()   
         return context
 
