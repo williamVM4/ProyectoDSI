@@ -34,30 +34,22 @@
                                 <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                     <thead>
                                         <tr>
+                                            <th>Lote</th>
                                             <th>Matricula</th>
-                                            <th>Proyecto Turistico</th>
-                                            <th>Numero</th>
-                                            <th>Poligono</th>
-                                            <th>Area (m cuadrado)</th>
-                                            <th>Area (v cuadrada)</th>
-                                            <th>Detalle de la venta del lote</th>
+                                            <th>Area en metros cuadrados</th>
+                                            <th>Area en varas cuadrados</th>
                                             <th>Historico de ventas</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for object in object_list %}
-                                        {%if object.estado == True%}
+                                        {% for lote in lotes %}
                                         <tr>
-                                            <td>{{ object.lote.matriculaLote}}</td>
-                                            <td>{{ object.lote.proyectoTuristico.nombreProyectoTuristico}}</td>
-                                            <td>{{ object.lote.numeroLote}}</td>
-                                            <td>{{ object.lote.poligono}}</td>
-                                            <td>{{ object.lote.areaMtCuadrado}}</td>
-                                            <td>{{ object.lote.areaVCuadrada}}</td>
-                                            <td><a class="btn btn-default btn-block" href="{% url 'detalleLote' object.id %}"> Ver detalle </a></td>
-                                            <td><a class="btn btn-default btn-block" href="{% url 'asignacionesLote' object.lote.matriculaLote %}"> Ver detalle </a></td>
+                                            <td>{{ lote.poligono}}{{ lote.numeroLote}}</td>
+                                            <td>{{ lote.matriculaLote}}</td>
+                                            <td>{{ lote.areaMtCuadrado}}</td>
+                                            <td>{{ lote.areaVCuadrada}}</td>
+                                            <td><a class="btn btn-default btn-block" href="{% url 'asignacionesLote' idp=idp pk=lote.matriculaLote %}"> Ver detalle </a></td>
                                         </tr>
-                                        {% endif %}
                                         {%endfor%}
                                     </tbody>
                                 </table>

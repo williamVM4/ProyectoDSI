@@ -20,8 +20,8 @@ class cuentaBancaria(models.Model):
 class lote(models.Model):
     matriculaLote = models.CharField(max_length=50, primary_key=True)
     proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE)
-    numeroLote = models.CharField(max_length=10)
-    poligono = models.CharField(max_length=50)
+    numeroLote = models.IntegerField()
+    poligono = models.CharField(max_length=5)
     areaMtCuadrado = models.FloatField()
     areaVCuadrada = models.FloatField()
 

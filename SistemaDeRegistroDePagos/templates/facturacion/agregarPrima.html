@@ -23,20 +23,16 @@
                                         {{form.numeroReciboPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo de la Prima'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboPrima.help_text}}</p></div>
                                     </div>
-                                    <div class="form-group">
-                                        <p class="label-form">{{form.fechaPrima.label}}</p>
-                                        {{form.fechaPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la fecha de Pago de la Prima'}}
-                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.fechaPrima.help_text}}</p></div>
-                                    </div>
-                                    <div class="form-group">
-                                        <p class="label-form">{{form.montoPrima.label}}</p>
-                                        {{form.montoPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el Monto de la Prima'}}
-                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.montoPrima.help_text}}</p></div>
-                                    </div>
+
                                     <div class="form-group">
                                         <p class="label-form">{{form.conceptoPrima.label}}</p>
                                         {{form.conceptoPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el concepto de la Prima'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.conceptoPrima.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">{{form2.matriculaLote.label}}</p>
+                                        {{form2.conceptoPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder: Matricula Lote'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.matriculaLote.help_text}}</p></div>
                                     </div>
                                 </div>
                             </div>
@@ -47,7 +43,7 @@
                                 <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
                             </div>
                             <div class="col-md-2">
-                                <a class="btn btn-danger btn-block" href="{% url 'detalleLote' id %}"> Cancelar </a>
+                                <a class="btn btn-danger btn-block" href=""> Cancelar </a>
                             </div>
                         </div>
                     </form>

@@ -32,8 +32,8 @@
                           <h4 class="modal-title" id="myModalLabel">Elija una opción</h4>
                       </div>
                       <div class="modal-body">
-                        <a class="btn btn-default btn-block" href="{% url 'agregarPropietario' id=object.id %}"> Agregar propietario </a>
-                        <a class="btn btn-default btn-block" href="{% url 'seleccionarPropietario' id=object.id %}"> Seleccionar propietario </a>
+                        <a class="btn btn-default btn-block" href="{% url 'agregarPropietario' idp=idp id=object.id %}"> Agregar propietario </a>
+                        <a class="btn btn-default btn-block" href="{% url 'seleccionarPropietario' idp=idp id=object.id %}"> Seleccionar propietario </a>
                       </div>
                       <div class="modal-footer">
                           <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -52,7 +52,7 @@
                         <h4 class="modal-title" id="myModalLabel">Elija una opción</h4>
                     </div> 
                     <div class="modal-body">
-                      <a class="btn btn-default btn-block" href="{% url 'agregarPrima' id=object.id %}"> Agregar Prima </a>
+                      <a class="btn btn-default btn-block" href=""> Agregar Prima </a>
                       <a class="btn btn-default btn-block" > Modificar Prima </a>
                     </div>
                     <div class="modal-footer">

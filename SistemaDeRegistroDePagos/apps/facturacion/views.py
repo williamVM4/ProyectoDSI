@@ -21,9 +21,14 @@ class caja(GroupRequiredMixin,TemplateView):
     template_name = 'facturacion/caja.html'
 
     def get_context_data(self, *args, **kwargs):
-        pagosM = pagoMantenimiento.objects.all()
-        pagosF = pagoFinanciamiento.objects.all()
-        return {'pagosM': pagosM, 'pagosF': pagosF}
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('idp', None) 
+        context['idp'] = id
+        context['pagosM'] = pagoMantenimiento.objects.all()
+        context['pagosF'] = pagoFinanciamiento.objects.all()     
+        return context
+
+        
 
 class agregarPrima(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']
@@ -33,6 +38,9 @@ class agregarPrima(GroupRequiredMixin,CreateView):
   
     template_name = 'facturacion/agregarPrima.html'
     form_class = agregarPrimaForm
+    second_form_class = lote
+
+
     #success_url = reverse_lazy('')
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
@@ -45,7 +53,9 @@ class agregarPrima(GroupRequiredMixin,CreateView):
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
+        id = self.kwargs.get('id', None)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp
         context['id'] = id         
         return context
 
@@ -66,7 +76,7 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
         return HttpResponseRedirect(self.get_url_redirect())
 
-class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
+""" class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -74,7 +84,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
 
     model = pagoMantenimiento
     form_class = agregarPagoMantenimientoForm
-    template_name = 'facturacion/agregarPagoMantenimiento.html'
+    template_name = 'facturacion/agregarPagoMantenimiento.html'"""
     
     
 

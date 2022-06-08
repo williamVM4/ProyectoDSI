@@ -4,20 +4,27 @@ from django.views.generic import TemplateView, CreateView, FormView, ListView, D
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .models import asignacionLote, detalleVenta, propietario, lote
+from .models import asignacionLote, detalleVenta, propietario, lote, proyectoTuristico
 from apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
 
 # Views de lote
 class gestionarLotes(GroupRequiredMixin,ListView):
-    group_required = [u'Configurador del sistema']
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/gestionarLotes.html'
-    model = detalleVenta
+    model = lote
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('idp', None) 
+        context['idp'] = id
+        context['lotes'] = lote.objects.filter(proyectoTuristico__id=id)
+        return context
+    
 class detalleLote(GroupRequiredMixin,DetailView):
     group_required = [u'Configurador del sistema']
     @method_decorator(login_required)
@@ -25,6 +32,12 @@ class detalleLote(GroupRequiredMixin,DetailView):
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/detalleLote.html'
     model = detalleVenta
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp        
+        return context
 
 class asignacionesLote(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema']
@@ -34,6 +47,16 @@ class asignacionesLote(GroupRequiredMixin,ListView):
     template_name = 'inventario/asignacionLote.html'
     model = detalleVenta
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None)
+        id = self.kwargs.get('pk', None)
+        context['idp'] = idp
+        context['id'] = id
+        context['detalles'] = detalleVenta.objects.filter(lote=id)
+        context['asignaciones'] = asignacionLote.objects.filter()   
+        return context
+        
 # Views de lote
 class agregarLote(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']
@@ -87,16 +110,19 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
     #success_url = reverse_lazy('detalleLote')
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
         id = self.kwargs.get('id', None) 
         try:
             detalleVenta.objects.get(pk = id)
-            return reverse_lazy('detalleLote', kwargs={'pk': id})
+            return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})
         except Exception:
-            return reverse_lazy('gestionarLotes')
+            return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
+        id = self.kwargs.get('id', None)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp  
         context['id'] = id         
         return context
 
@@ -128,16 +154,19 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
     model = detalleVenta
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
+        id = self.kwargs.get('id', None)
+        idp = self.kwargs.get('idp', None)
         try:
             detalleVenta.objects.get(pk = id)
-            return reverse_lazy('detalleLote', kwargs={'pk': id})
+            return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})
         except Exception:
-            return reverse_lazy('gestionarLotes')
+            return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
         
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
+        id = self.kwargs.get('id', None)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp  
         context['id'] = id         
         return context
 
