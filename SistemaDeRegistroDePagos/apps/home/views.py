@@ -9,8 +9,14 @@ from django.contrib.auth.decorators import login_required
 from apps.autenticacion.mixins import *
 
 # Create your views here.
-class home(TemplateView):
+class homeProyecto(TemplateView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
-    template_name = 'home/home.html'
+    template_name = 'home/homeProyecto.html'
+    
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('idp', None) 
+        context['idp'] = id         
+        return context

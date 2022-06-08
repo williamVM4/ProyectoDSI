@@ -21,9 +21,14 @@ class caja(GroupRequiredMixin,TemplateView):
     template_name = 'facturacion/caja.html'
 
     def get_context_data(self, *args, **kwargs):
-        pagosM = pagoMantenimiento.objects.all()
-        pagosF = pagoFinanciamiento.objects.all()
-        return {'pagosM': pagosM, 'pagosF': pagosF}
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('idp', None) 
+        context['idp'] = id
+        context['pagosM'] = pagoMantenimiento.objects.all()
+        context['pagosF'] = pagoFinanciamiento.objects.all()     
+        return context
+
+        
 
 class agregarPrima(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema']
@@ -45,7 +50,9 @@ class agregarPrima(GroupRequiredMixin,CreateView):
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
+        id = self.kwargs.get('id', None)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp
         context['id'] = id         
         return context
 
