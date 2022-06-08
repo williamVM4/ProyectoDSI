@@ -22,11 +22,12 @@ class lote(models.Model):
     proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE)
     numeroLote = models.IntegerField()
     poligono = models.CharField(max_length=5)
+    identificador = models.CharField(max_length=4)
     areaMCuadrado = models.FloatField()
     areaVCuadrada = models.FloatField()
 
     def __str__(self):
-        return self.matriculaLote
+        return self.identificador
 
 class propietario(models.Model):
     dui = models.CharField(max_length=10, primary_key=True)

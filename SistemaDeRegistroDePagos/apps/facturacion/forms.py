@@ -23,7 +23,7 @@ class agregarPrimaForm(ModelForm):
 class pagoForm(ModelForm):
     class Meta:
         model = pago
-        fields = {'monto','tipoPago','referencia','fechaPago'}
+        fields = {'monto','tipoPago','referencia','fechaPago','cuentaBancaria'}
         label = {
             'monto':('Monto de la prima'),
             'tipoPago':('Tipo de Pago'),
@@ -49,7 +49,19 @@ class bancoPagoForm(forms.Form):
             self.fields('banco').queryset = cuentaBancaria.objects.filter(cuentaBancaria__banco=id)
         
 
-"""class agregarPagoMantenimientoForm(ModelForm):
+class agregarPagoMantenimientoForm(ModelForm):
     class Meta:
         model = pagoMantenimiento
-        fields = ('numeroReciboMantenimiento','fechaPago','monto','conceptoOtros','montoOtros')"""
+        fields = {'numeroReciboMantenimiento','conceptoOtros','montoOtros'}
+    
+
+class lotePagoForm(forms.Form):
+    matricula = forms.ModelChoiceField(queryset=lote.objects.all(),label='Matricula')
+    def __init__(self, *args, **kwargs): 
+        id = kwargs.pop('id', None) 
+        super(lotePagoForm, self).__init__(*args, **kwargs)
+        if id: 
+            self.fields['matricula'].queryset = lote.objects.filter(lote__proyectoTuristico=id)
+
+
+
