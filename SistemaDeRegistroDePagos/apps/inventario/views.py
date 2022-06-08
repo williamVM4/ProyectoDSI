@@ -82,11 +82,11 @@ class agregarLote(GroupRequiredMixin,CreateView):
         context['id'] = id         
         return context
 
-    def form_valid(self, form, **kwargs):
+    #def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
          # recojo el parametro 
         id = self.kwargs.get('id', None) 
-        propietario = form.save(commit=False)
+        #propietario = form.save(commit=False)
         #poner try
         #try:
         #    detalle = detalleVenta.objects.get(pk = id)

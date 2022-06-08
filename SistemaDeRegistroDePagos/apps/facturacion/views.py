@@ -93,7 +93,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
         if 'form2' not in context:
             context['form2'] = self.second_form_class()
         if 'form3' not in context:
-            context['form3'] = self.third_form_class()
+            context['form3'] = self.third_form_class(initial={'id': self.kwargs.get('id', None)})
         return context   
     
     
