@@ -3,7 +3,7 @@ from dataclasses import fields
 from django.forms import ModelForm
 from .models import pagoMantenimiento, prima
 
-class agregarPrimaForm(ModelForm):
+"""class agregarPrimaForm(ModelForm):
     class Meta:
         model = prima
         fields = ('numeroReciboPrima','fechaPrima','montoPrima','conceptoPrima')
@@ -23,4 +23,4 @@ class agregarPrimaForm(ModelForm):
 class agregarPagoMantenimientoForm(ModelForm):
     class Meta:
         model = pagoMantenimiento
-        fields = ('numeroReciboMantenimiento','fechaPago','monto','conceptoOtros','montoOtros')
+        fields = ('numeroReciboMantenimiento','fechaPago','monto','conceptoOtros','montoOtros')"""
