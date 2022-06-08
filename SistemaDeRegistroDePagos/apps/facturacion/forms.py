@@ -25,28 +25,24 @@ class pagoForm(ModelForm):
         model = pago
         fields = {'monto','tipoPago','referencia','fechaPago','cuentaBancaria'}
         label = {
+            'cuentaBancaria':('Cuenta Bancaria'),
             'monto':('Monto de la prima'),
             'tipoPago':('Tipo de Pago'),
             'referencia':('Referencia'),
             'fechaPago':('Fecha de pago de prima'),
         }
         help_texts = {
+            'cuentaBancaria':('Campo Obligatorio'),
             'monto':('Campo Obligatorio'),
             'tipoPago':('Campo Obligatorio'),
             'referencia':('Campo Obligatorio'),
             'fechaPago':('Campo Obligatorio'),
         }
-class bancoPagoForm(forms.Form):
-    banco = forms.ModelChoiceField(queryset = cuentaBancaria.objects.all(), label = 'banco')
-    ields = {'bancox',}
-    help_texts = {
-            'bancox':('Campo Obligatorio'),
-        }
     def __init__(self, *args, **kwargs):
         id = kwargs.pop('id', None)
-        super(bancoPagoForm, self).__init__(*args, **kwargs)
+        super(pagoForm, self).__init__(*args, **kwargs)
         if id:
-            self.fields('banco').queryset = cuentaBancaria.objects.filter(cuentaBancaria__banco=id)
+            self.fields('cuentaBancaria').queryset = cuentaBancaria.objects.filter(cuentaBancaria__banco=id)
         
 
 class agregarPagoMantenimientoForm(ModelForm):
