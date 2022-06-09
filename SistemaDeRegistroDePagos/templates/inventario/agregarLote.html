@@ -7,7 +7,7 @@
 {% block content %} 
 <div class="container">
   <div class="row">
-    <div class="col-md-10 col-md-offset-1">
+    <div class="col-md-6 col-md-offset-3">
       <div class="form-panel panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">Agregar lote</h3>
@@ -15,9 +15,8 @@
         <div class="panel-body">
           <form role="form" action="." method="post">
             {% csrf_token %}  
-            <!--<fieldset>
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div class="form-group">
                   <p class="label-form">{{form.matriculaLote.label}}</p>
                   {{form.matriculaLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000-0'}}
@@ -25,36 +24,35 @@
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.numeroLote.label}}</p>
-                  {{form.numeroLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el nombre completo'}}
+                  {{form.numeroLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el número de lote'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroLote.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.poligono.label}}</p>
-                  {{form.poligono|add_class:'form-control'|attr:'autocomplete:off'}}
+                  {{form.poligono|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el polígono'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.poligono.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.areaMCuadrado.label}}</p>
-                  {{form.areaMCuadrado|add_class:'form-control'|attr:'autocomplete:off'}}
+                  {{form.areaMCuadrado|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el área en metros cuadrados'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.areaMCuadrado.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.areaVCuadrada.label}}</p>
-                  {{form.areaVCuadrada|add_class:'form-control'|attr:'autocomplete:off'}}
+                  {{form.areaVCuadrada|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el área en varas cuadradas'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.areaVCuadrada.help_text}}</p></div>
                 </div>
               </div>
             </div>
-            </fieldset>
             <div class="row">
-              <div class="col-md-8"></div>
-              <div class="col-md-2">
+              <div class="col-md-6"></div>
+              <div class="col-md-3">
                 <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
               </div>
-              <div class="col-md-2">
-                <a class="btn btn-danger btn-block" href="{% url 'asignacionLote' id %}"> Cancelar </a>
-                </div>
-            </div>-->
+              <div class="col-md-3">
+                <a class="btn btn-danger btn-block" href="{% url 'gestionarLotes' idp=idp %}"> Cancelar </a>
+              </div>
+            </div>
           </form>
         </div>
       </div>
