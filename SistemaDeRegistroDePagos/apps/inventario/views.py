@@ -181,3 +181,56 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
         except Exception:
             messages.error(self.request, 'Ocurrió un error al guardar el propietario, el detalle de venta no es valido')  
         return HttpResponseRedirect(self.get_url_redirect())
+
+# Views de proyecto
+
+class proyectoTuristico(GroupRequiredMixin,ListView):
+    group_required = [u'Configurador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'home.html'
+    model = proyectoTuristico
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        #id = self.kwargs.get('idp', None) 
+        context['idp'] = id         
+        return context
+
+class agregarProyectoTuristico(GroupRequiredMixin,CreateView):
+    group_required = [u'Configurador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    template_name = 'inventario/agregarProyecto.html'
+    form_class = agregarProyectoForm
+    #success_url = reverse_lazy('')
+    def get_url_redirect(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        id = self.kwargs.get('id', None) 
+        return reverse_lazy('caja', kwargs={'idp': idp})
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('id', None)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp  
+        context['id'] = id         
+        return context
+
+    def form_valid(self, form, **kwargs):
+        context=  super().get_context_data(**kwargs)
+         # recojo el parametro 
+        id = self.kwargs.get('id', None) 
+        proyecto = form.save(commit=False)
+        #poner try
+        try:
+            proyecto.save()
+            messages.success(self.request, 'Proyecto guardado con exito')
+        except Exception:
+            proyecto.delete()
+            messages.error(self.request, 'Ocurrió un error al guardar el proyecto el detalle de venta no es valido')
+        return HttpResponseRedirect(self.get_url_redirect())
