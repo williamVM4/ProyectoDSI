@@ -59,6 +59,7 @@ class estadoCuenta(models.Model):
 class cuotaEstadoCuenta(models.Model):
     numeroCuota = models.IntegerField()
     estadoCuenta = models.ForeignKey(estadoCuenta, on_delete=models.CASCADE)
+    cuotaAmortizacion = models.ForeignKey(cuotaAmortizacion, on_delete=models.CASCADE, null=True)
     diasInteres = models.IntegerField()
     tasaInteres = models.FloatField()
     interesGenerado = models.FloatField()

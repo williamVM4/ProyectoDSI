@@ -19,7 +19,7 @@ class cuentaBancaria(models.Model):
 
 class lote(models.Model):
     matriculaLote = models.CharField(max_length=50, primary_key=True)
-    proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE)
+    proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE,blank=True)
     numeroLote = models.IntegerField()
     poligono = models.CharField(max_length=5)
     identificador = models.CharField(max_length=4)

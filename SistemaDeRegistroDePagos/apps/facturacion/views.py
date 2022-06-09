@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView
-from apps.monitoreo.models import estadoCuenta
+from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
 from apps.autenticacion.mixins import *
 from .forms import *
 from .models import *
@@ -106,13 +106,25 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
 
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
-        lote = self.third_form_class(self.request.POST)
-        detalle = detalleVenta.objects.filter(lote = lote.cleaned_data['lote']).filter(estado = 'True')
-        estaC = estadoCuenta.objects.filter(detalleVenta = detalle)
+        lotef = self.third_form_class(self.request.POST)
+        print(lotef.data['matricula'] + 'aaaa')
+        detalle = detalleVenta.objects.get(lote = lotef.data['matricula'], estado = True)
+        estaC = estadoCuenta.objects.get(detalleVenta = detalle)
         pagoM = form.save(commit=False)
         pago = self.second_form_class(self.request.POST)
-        pago.fields['pagoMantenimiento'] = pagoM
+        pago.pagoMantenimiento = pagoM
+        
+        cuotaE = cuotaEstadoCuenta(estadoCuenta = estaC,numeroCuota= 0, diasInteres= 0, 
+                                    tasaInteres = 0, interesGenerado = 0, interesPagado = 0, 
+                                    subTotal = 0, abonoCapital = 0, saldoCapital = 0, saldoInteres = 0,)                            
+        cuotaE.save()
+        pagoM.numeroCuotaEstadoCuenta = cuotaE
+        pagoM.conceptoOtros = ''
+        pagoM.montoOtros = 0
+        pagoM.save()
         pago.save()
+        return HttpResponseRedirect(self.get_url_redirect())
+        
 
     
     

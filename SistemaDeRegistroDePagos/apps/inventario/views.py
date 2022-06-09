@@ -66,34 +66,34 @@ class agregarLote(GroupRequiredMixin,CreateView):
     template_name = 'inventario/agregarLote.html'
     form_class = LoteForm
     #success_url = reverse_lazy('asignacionLote')
-    """def get_url_redirect(self, **kwargs):
+    def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
-        try:
-            asignacionLote.objects.get(pk = id)
-            return reverse_lazy('asignacionLote', kwargs={'pk': id})
-        except Exception:
-            return reverse_lazy('asigancionLote')
+        idp = self.kwargs.get('idp', None) 
+        return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
+
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
-        context['id'] = id         
+        idp = self.kwargs.get('idp', None)
+        context['idp'] = idp         
         return context
-    #def form_valid(self, form, **kwargs):
-        #context=super().get_context_data(**kwargs)
-        # recojo el parametro 
-        #id = self.kwargs.get('id', None) 
-        #propietario = form.save(commit=False)
+
+    def form_valid(self, form, **kwargs):
+        context=super().get_context_data(**kwargs)
+         # recojo el parametro 
+        idp = self.kwargs.get('idp', None) 
+        lote = form.save(commit=False)
         #poner try
-        #try:
-        #    detalle = detalleVenta.objects.get(pk = id)
-        #    propietario.save()
-        #    detalle.propietarios.add(propietario,through_defaults={'eliminado': False})
-        #    messages.success(self.request, 'Propietario guardado con exito')
-        #except Exception:
-        #    propietario.delete()
-        #    messages.error(self.request, 'Ocurrió un error al guardar el propietario, el detalle de venta no es valido')
-        #return HttpResponseRedirect(self.get_url_redirect())"""
+        try:
+            print('aaa')
+            lote.proyectoTuristico = proyectoTuristico.objects.get(id=idp)
+            lote.identificador = str(lote.poligono) + str(lote.numeroLote)
+            lote.save()
+            #detalle.propietarios.add(propietario,through_defaults={'eliminado': False})
+            messages.success(self.request, 'Lote guardado con éxito')
+        except Exception:
+            lote.delete()
+            messages.error(self.request, 'Ocurrió un error al guardar el lote, el lote no es válido')
+        return HttpResponseRedirect(self.get_url_redirect())
 
 # Views de propietario
 class agregarPropietario(GroupRequiredMixin,CreateView):
