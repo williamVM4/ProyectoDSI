@@ -78,15 +78,8 @@ class LoteForm(ModelForm):
             'areaMCuadrado': _('Campo Obligatorio'),
             'areaVCuadrada': _('Campo Obligatorio'),
         }
-        error_messages = {
-            'proyectoTuristico': {
-                'max_length': _("El dato ingresado es demasiado largo"),
-            },
-        }
 
 class agregarProyectoForm(ModelForm):
-
-
     class Meta:
         model= proyectoTuristico
         fields=('nombreProyectoTuristico','empresa')
@@ -102,4 +95,31 @@ class agregarProyectoForm(ModelForm):
             'nombreProyectoTuristico': {
                 'max_length': _("El dato ingresado es demasiado largo"),
             },
+        }
+
+class CondicionDePagoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(LoteForm, self).__init__(*args, **kwargs)
+            self.fields['matriculaLote'].widget.attrs['pattern'] = "[0-9]{8}"
+            self.fields['numeroLote'].widget.attrs['pattern'] = "[0-9]{3}"
+            self.fields['poligono'].widget.attrs['pattern'] = "[A-Z]{1}"
+            self.fields['areaMCuadrado'].widget.attrs['pattern'] = "[0-9]{5}"
+            self.fields['areaVCuadrada'].widget.attrs['pattern'] = "[0-9]{5}"
+
+    class Meta:
+        model=lote
+        fields=('matriculaLote','proyectoTuristico','numeroLote','poligono','areaMCuadrado','areaVCuadrada')
+        labels = {
+            'matriculaLote': _('Matrícula:'),
+            'numeroLote': _('Número de lote:'),
+            'poligono': _('Polígono:'),
+            'areaMCuadrado': _('Área en metros cuadrados:'),
+            'areaVCuadrada': _('Área en varas cuadradas:'),
+        }
+        help_texts = {
+            'matriculaLote': _('Campo Obligatorio'),
+            'numeroLote': _('Campo Obligatorio'),
+            'poligono': _('Campo Obligatorio'),
+            'areaMCuadrado': _('Campo Obligatorio'),
+            'areaVCuadrada': _('Campo Obligatorio'),
         }
