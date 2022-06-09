@@ -1,4 +1,5 @@
 from email.headerregistry import Group
+from multiprocessing import context
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -50,39 +51,29 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             context['form3'] = self.third_form_class(initial={'id': self.kwargs.get('id', None)})
         return context
 
-
-"""    #success_url = reverse_lazy('')
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
-        try:
-            detalleVenta.objects.get(pk = id)
-            return reverse_lazy('detalleLote', kwargs={'pk': id})
-        except Exception:
-            return reverse_lazy('gestionarLotes')
+        idp = self.kwargs.get('idp', None)
+        return reverse_lazy('caja', kwargs={'idp': idp})
 
-    def get_context_data(self, **kwargs):
-        context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None)
-        idp = self.kwargs.get('idp', None) 
-        context['idp'] = idp
-        context['id'] = id         
-        return context
 
-    def form_valid(self, form, **kwargs):
-        context=super().get_context_data(**kwargs)
-         # recojo el parametro 
-        id = self.kwargs.get('id', None) 
-        prima = form.save(commit=False)
-        #poner try
-        try:
-            detalle = detalleVenta.objects.get(pk = id)
-            prima.detalleVenta = detalle 
-            prima.save()
+    def form_valid(self, request, *arg, **kwargs):
+        self.object = self.get_object
+        form = self.form_class(request.POST)
+        form2 = self.second_form_class(request.POST)
+        form3 = self.third_form_class(request.POST)
+        detalle = detalleVenta.objects.filter(lote = form3).filter(estado = 'True')
+        estaC = estadoCuenta.objects.get(detalleVenta = detalle)
+        form.detalleVenta = estaC
+        form.save() 
+
+
+"""        try:
+            
             
             messages.success(self.request, 'La prima fue registrada con exito')
         except Exception:
-            prima.delete()
+            primaP.delete()
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
         return HttpResponseRedirect(self.get_url_redirect())"""
 
