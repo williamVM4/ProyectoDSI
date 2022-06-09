@@ -1,4 +1,5 @@
 from email.headerregistry import Group
+from multiprocessing import context
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -26,7 +27,8 @@ class caja(GroupRequiredMixin,TemplateView):
         id = self.kwargs.get('idp', None) 
         context['idp'] = id
         context['pagosM'] = pagoMantenimiento.objects.all()
-        context['pagosF'] = pagoFinanciamiento.objects.all()     
+        context['pagosF'] = pagoFinanciamiento.objects.all()
+        context['prima'] = prima.objects.all()     
         return context
 
         
@@ -41,47 +43,39 @@ class agregarPrima(GroupRequiredMixin,CreateView):
     template_name = 'facturacion/agregarPrima.html'
     form_class = agregarPrimaForm
     second_form_class = pagoForm
+    third_form_class = lotePagoForm
     def get_context_data(self, **kwargs): 
         context = super(agregarPrima, self).get_context_data(**kwargs)
         if 'form2' not in context:
             context['form2'] = self.second_form_class(initial={'id':self.kwargs.get('id',None)})
+        if 'form3' not in context:
+            context['form3'] = self.third_form_class(initial={'id': self.kwargs.get('id', None)})
         return context
 
-
-"""    #success_url = reverse_lazy('')
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None) 
-        try:
-            detalleVenta.objects.get(pk = id)
-            return reverse_lazy('detalleLote', kwargs={'pk': id})
-        except Exception:
-            return reverse_lazy('gestionarLotes')
+        idp = self.kwargs.get('idp', None)
+        return reverse_lazy('caja', kwargs={'idp': idp})
 
-    def get_context_data(self, **kwargs):
-        context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None)
-        idp = self.kwargs.get('idp', None) 
-        context['idp'] = idp
-        context['id'] = id         
-        return context
 
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
-         # recojo el parametro 
-        id = self.kwargs.get('id', None) 
+        lote = self.third_form_class(self.request.POST)
+        
         prima = form.save(commit=False)
-        #poner try
+        pago = self.second_form_class(self.request.POST)
         try:
-            detalle = detalleVenta.objects.get(pk = id)
-            prima.detalleVenta = detalle 
+            detalle = detalleVenta.objects.get(lote = lote.data['matricula'], estado = True)
+            pago.prima = prima
+            prima.detalleVenta = detalle
             prima.save()
-            
+            pago.save()
             messages.success(self.request, 'La prima fue registrada con exito')
+            return HttpResponseRedirect(self.get_url_redirect()) 
         except Exception:
             prima.delete()
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
-        return HttpResponseRedirect(self.get_url_redirect())"""
+        return HttpResponseRedirect(self.get_url_redirect())
 
 class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
