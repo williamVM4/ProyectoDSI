@@ -34,40 +34,6 @@
                                </button>
                           </div>
                         </div>
-                          <div class="table-responsive">
-                              <table class="table table-bordered table-striped">
-                                  <thead>
-                                      <tr>
-                                          <th></th>
-                                          <th>
-                                              Extra small devices
-                                              <small>Phones (&lt;768px)</small>
-                                          </th>
-                                          <th>
-                                              Small devices
-                                              <small>Tablets (&ge;768px)</small>
-                                          </th>
-                                          <th>
-                                              Medium devices
-                                              <small>Desktops (&ge;992px)</small>
-                                          </th>
-                                          <th>
-                                              Large devices
-                                              <small>Desktops (&ge;1200px)</small>
-                                          </th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                      <tr>
-                                          <th>Max container width</th>
-                                          <td>None (auto)</td>
-                                          <td>750px</td>
-                                          <td>970px</td>
-                                          <td>1170px</td>
-                                      </tr>
-                                  </tbody>
-                              </table>
-                          </div>
                       </div>
                   </div>
               </div>
@@ -83,16 +49,61 @@
                               <th>Fecha</th>
                               <th>Monto</th>
                               <th>Recibo</th>
+                              <th>Prima</th>
                               <th>Mantenimiento</th>
+                              <th>Imprimir recibo</th>
                           </tr>
                       </thead>
                       <tbody>
-                          <tr>
+                              {% for pago in pagos%}
+                              <tr>
+                              <td>{{pago.fechaPago}}</td>
+                              <td>{{pago.monto}}</td>
+                              {% if pago.pagoMantenimiento%}
+                                <td>{{pago.pagoMantenimiento.numeroReciboMantenimiento}}</td>
+                              {% else %}
+                                {% if pago.prima%}
+                                    <td>{{pago.prima.numeroReciboPrima}}</td>
+                                {% else %}
+                                    {% if pago.pagoFinanciamiento%}
+                                        <td>{{pago.pagoFinanciamiento.numeroReciboFinanciamiento}}</td>
+                                    {% else %}
+                                        <td></td>
+                                    {% endif %}
+                                {% endif %}
+                              {% endif %}
+
+                              {% if pago.pagoMantenimiento%}
                               <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                          </tr>
+                            {% else %}
+                              {% if pago.prima%}
+                                  <td>{{pago.monto}}</td>
+                              {% else %}
+                                  {% if pago.pagoFinanciamiento%}
+                                      <td></td>
+                                  {% else %}
+                                      <td></td>
+                                  {% endif %}
+                              {% endif %}
+                            {% endif %}
+
+                              {% if pago.pagoMantenimiento%}
+                                <td>{{pago.monto}}</td>
+                              {% else %}
+                                {% if pago.prima%}
+                                    <td></td>
+                                {% else %}
+                                    {% if pago.pagoFinanciamiento%}
+                                        <td>{{pago.pagoFinanciamiento.mantenimiento}}</td>
+                                    {% else %}
+                                        <td></td>
+                                    {% endif %}
+                                {% endif %}
+                              {% endif %}
+
+                              <td><a class="btn btn-default btn-block"> Imprimir </a></td>
+                            </tr>
+                                {% endfor %}
                       </tbody>
                   </table>
                 </div>
@@ -129,7 +140,6 @@
 <!-- DataTables JavaScript -->
 <script src="{% static 'js/dataTables/jquery.dataTables.min.js'%}"></script>
 <script src="{% static 'js/dataTables/dataTables.bootstrap.min.js'%}"></script>
-<script src="{% static 'js/main.js'%}"></script>
 <script type= application/javascript>
     {%if messages%}
         var msg = '';
