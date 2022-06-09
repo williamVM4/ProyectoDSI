@@ -16,20 +16,28 @@
     <!-- Page Content -->
     <div id="page-wrapper">
         <div class="container-fluid">
-
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Aqui debe de ir la lista de todos los lotes y al presionar uno que te lleve al detalle del lote con todas las opciones</h1>
+                    <h1 class="page-header">Cátalogo de los lotes disponibles</h1>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-13">
-                    <div class="col-md-11"></div>
-                    <div class="col-md-1">
-                      <a class="btn btn-primary btn-block" href="{% url 'agregarLote' idp=idp %}"> Agregar lote </a>
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                          <div class="row centrar">
+                            <div class="col-md-11">
+                            <h3></h3>
+                            </div>
+                            <div class="col-md-1">
+                                <a class="btn btn-primary btn-block" href="{% url 'agregarLote' idp=idp %}"> Agregar </a>
+                            </div>
+                          </div>
+                        </div>
                     </div>
                 </div>
-                <br>
+            </div>
+            <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">

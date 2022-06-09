@@ -70,13 +70,11 @@ class agregarLote(GroupRequiredMixin,CreateView):
         context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None) 
         return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
-
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None)
         context['idp'] = idp         
         return context
-
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
          # recojo el parametro 
@@ -84,7 +82,6 @@ class agregarLote(GroupRequiredMixin,CreateView):
         lote = form.save(commit=False)
         #poner try
         try:
-            print('aaa')
             lote.proyectoTuristico = proyectoTuristico.objects.get(id=idp)
             lote.identificador = str(lote.poligono) + str(lote.numeroLote)
             lote.save()
@@ -184,7 +181,7 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
 
 # Views de proyecto
 
-class proyectoTuristico(ListView):
+class proyectoTuristicoView(ListView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
