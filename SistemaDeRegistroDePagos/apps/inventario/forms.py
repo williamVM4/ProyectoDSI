@@ -86,8 +86,7 @@ class LoteForm(ModelForm):
         }
 
 class agregarProyectoForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-            super(agregarProyectoForm, self).__init__(*args, **kwargs)
+
 
     class Meta:
         model= proyectoTuristico
