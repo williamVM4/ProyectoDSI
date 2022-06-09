@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView
+from apps.monitoreo.models import estadoCuenta
 from apps.autenticacion.mixins import *
 from .forms import *
 from .models import *
@@ -96,11 +97,29 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(agregarPagoMantenimiento, self).get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None)
         if 'form2' not in context:
-            context['form2'] = self.second_form_class()
+            context['form2'] = self.second_form_class(id = idp)
         if 'form3' not in context:
-            context['form3'] = self.third_form_class(initial={'id': self.kwargs.get('id', None)})
-        return context   
+            context['form3'] = self.third_form_class(id = idp)
+        context['idp'] = idp
+        return context 
+    
+    def get_url_redirect(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None)
+        return reverse_lazy('caja', kwargs={'idp': idp})
+
+    def form_valid(self, form, **kwargs):
+        context=super().get_context_data(**kwargs)
+        lote = self.third_form_class(self.request.POST)
+        detalle = detalleVenta.objects.filter(lote = lote.cleaned_data['lote']).filter(estado = 'True')
+        estaC = estadoCuenta.objects.filter(detalleVenta = detalle)
+        pagoM = form.save(commit=False)
+        pago = self.second_form_class(self.request.POST)
+        pago.fields['pagoMantenimiento'] = pagoM
+        pago.save()
+
     
     
 

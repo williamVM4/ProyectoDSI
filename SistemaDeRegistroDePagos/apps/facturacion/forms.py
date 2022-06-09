@@ -41,23 +41,33 @@ class pagoForm(ModelForm):
     def __init__(self, *args, **kwargs):
         id = kwargs.pop('id', None)
         super(pagoForm, self).__init__(*args, **kwargs)
-        if id:
-            self.fields('cuentaBancaria').queryset = cuentaBancaria.objects.filter(cuentaBancaria__banco=id)
+        if id:  
+            self.fields['cuentaBancaria'].queryset = cuentaBancaria.objects.filter(proyectoTuristico__id=id)
         
 
 class agregarPagoMantenimientoForm(ModelForm):
     class Meta:
         model = pagoMantenimiento
         fields = {'numeroReciboMantenimiento','conceptoOtros','montoOtros'}
+        label= {
+            'numeroReciboMantenimiento':('Numero de Recibo'),
+            'conceptoOtros': ('Concepto Otros'),
+            'montoOtros': ('Monto Otros'),
+        }
+        help_texts = {
+            'numeroReciboMantenimiento':('Campo Obligatorio'),
+            'conceptoOtros': ('Campo Opcional'),
+            'montoOtros': ('Campo Opcional'),
+        }
     
 
 class lotePagoForm(forms.Form):
-    matricula = forms.ModelChoiceField(queryset=lote.objects.all(),label='Matricula')
-    def __init__(self, *args, **kwargs): 
-        id = kwargs.pop('id', None) 
-        super(lotePagoForm, self).__init__(*args, **kwargs)
-        if id: 
-            self.fields['matricula'].queryset = lote.objects.filter(lote__proyectoTuristico=id)
+    matricula = forms.ModelChoiceField(queryset=lote.objects.all(),label='Matricula',help_text = 'Campo Obligatorio')
+    def __init__(self, *args, **kwargs):
+        id = kwargs.pop('id', None)
+        super().__init__(*args, **kwargs)
+        if id:        
+            self.fields['matricula'].queryset = lote.objects.filter(proyectoTuristico__id=id)
 
 
 
