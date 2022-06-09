@@ -1,5 +1,6 @@
 from email.headerregistry import Group
 from multiprocessing import context
+from django.forms import NullBooleanField
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -10,6 +11,7 @@ from .forms import *
 from .models import *
 from django.shortcuts import redirect, render
 from django.contrib import messages
+from crum import get_current_user
 
 from apps.inventario.models import detalleVenta
 # Create your views here.
@@ -26,9 +28,7 @@ class caja(GroupRequiredMixin,TemplateView):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('idp', None) 
         context['idp'] = id
-        context['pagosM'] = pagoMantenimiento.objects.all()
-        context['pagosF'] = pagoFinanciamiento.objects.all()
-        context['prima'] = prima.objects.all()     
+        context['pagos'] = pago.objects.all().order_by('-fechaPago')
         return context
 
         
@@ -107,21 +107,21 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
         lotef = self.third_form_class(self.request.POST)
-        print(lotef.data['matricula'] + 'aaaa')
         detalle = detalleVenta.objects.get(lote = lotef.data['matricula'], estado = True)
         estaC = estadoCuenta.objects.get(detalleVenta = detalle)
         pagoM = form.save(commit=False)
-        pago = self.second_form_class(self.request.POST)
-        pago.pagoMantenimiento = pagoM
+        pago = self.second_form_class(self.request.POST).save(commit=False)
         
         cuotaE = cuotaEstadoCuenta(estadoCuenta = estaC,numeroCuota= 0, diasInteres= 0, 
                                     tasaInteres = 0, interesGenerado = 0, interesPagado = 0, 
                                     subTotal = 0, abonoCapital = 0, saldoCapital = 0, saldoInteres = 0,)                            
         cuotaE.save()
         pagoM.numeroCuotaEstadoCuenta = cuotaE
-        pagoM.conceptoOtros = ''
-        pagoM.montoOtros = 0
+        user = get_current_user()
+        if user is not None:
+            pagoM.usuarioCreacion = user
         pagoM.save()
+        pago.pagoMantenimiento = pagoM
         pago.save()
         return HttpResponseRedirect(self.get_url_redirect())
         

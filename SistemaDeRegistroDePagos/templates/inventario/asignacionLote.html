@@ -2,7 +2,11 @@
 {% load static %}
 {% load my_templatetag %}
 
-{% block head %} {% endblock %}
+{% block head %} 
+ <!-- DataTables CSS -->
+ <link rel="stylesheet" href="{% static 'css/dataTables/dataTables.bootstrap.css'%}" type="text/css">
+ <!-- DataTables Responsive CSS -->
+ <link rel="stylesheet" href="{% static 'css/dataTables/dataTables.responsive.css'%}" type="text/css">{% endblock %}
 
 {% block content %}
 <div id="wrapper">
@@ -74,6 +78,8 @@
 {% endblock content %}
 
 {% block scripts %}
+<script src="{% static 'js/dataTables/jquery.dataTables.min.js'%}"></script>
+<script src="{% static 'js/dataTables/dataTables.bootstrap.min.js'%}"></script>
 <script type= application/javascript>
     {%if messages%}
         var msg = '';
