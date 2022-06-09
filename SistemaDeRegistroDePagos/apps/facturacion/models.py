@@ -18,7 +18,7 @@ class pago(models.Model):
         choices=pago_tipo
     )
 
-    referencia = models.CharField(max_length=100, blank=True)
+    referencia = models.CharField(max_length=100, blank=True, null = True)
     cuentaBancaria = models.ForeignKey('inventario.cuentaBancaria',blank=True, null = True, on_delete=models.CASCADE)
     fechaPago = models.DateField()
     
