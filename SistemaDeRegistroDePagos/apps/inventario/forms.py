@@ -57,16 +57,15 @@ class LoteForm(ModelForm):
             super(LoteForm, self).__init__(*args, **kwargs)
             self.fields['matriculaLote'].widget.attrs['pattern'] = "[0-9]{8}"
             self.fields['numeroLote'].widget.attrs['pattern'] = "[0-9]{3}"
-            self.fields['poligono'].widget.attrs['pattern'] = "[a-zA-Z]{1}"
-            self.fields['areaMCuadrado'].widget.attrs['pattern'] = "[0-9]{10}"
-            self.fields['areaVCuadrada'].widget.attrs['pattern'] = "[0-9]{10}"
+            self.fields['poligono'].widget.attrs['pattern'] = "[A-Z]{1}"
+            self.fields['areaMCuadrado'].widget.attrs['pattern'] = "[0-9]{5}"
+            self.fields['areaVCuadrada'].widget.attrs['pattern'] = "[0-9]{5}"
 
     class Meta:
         model=lote
         fields=('matriculaLote','proyectoTuristico','numeroLote','poligono','areaMCuadrado','areaVCuadrada')
         labels = {
             'matriculaLote': _('Matrícula:'),
-            'proyectoTuristico': _('Proyecto Turístico:'),
             'numeroLote': _('Número de lote:'),
             'poligono': _('Polígono:'),
             'areaMCuadrado': _('Área en metros cuadrados:'),
