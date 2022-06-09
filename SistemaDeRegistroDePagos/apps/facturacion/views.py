@@ -61,9 +61,8 @@ class agregarPrima(GroupRequiredMixin,CreateView):
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
         lote = self.third_form_class(self.request.POST)
-        
         prima = form.save(commit=False)
-        pago = self.second_form_class(self.request.POST)
+        pago = self.second_form_class(self.request.POST).save(commit=False)
         try:
             detalle = detalleVenta.objects.get(lote = lote.data['matricula'], estado = True)
             pago.prima = prima
