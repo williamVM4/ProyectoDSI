@@ -27,7 +27,8 @@ class caja(GroupRequiredMixin,TemplateView):
         id = self.kwargs.get('idp', None) 
         context['idp'] = id
         context['pagosM'] = pagoMantenimiento.objects.all()
-        context['pagosF'] = pagoFinanciamiento.objects.all()     
+        context['pagosF'] = pagoFinanciamiento.objects.all()
+        context['prima'] = prima.objects.all()     
         return context
 
         
@@ -57,25 +58,24 @@ class agregarPrima(GroupRequiredMixin,CreateView):
         return reverse_lazy('caja', kwargs={'idp': idp})
 
 
-    def form_valid(self, request, *arg, **kwargs):
-        self.object = self.get_object
-        form = self.form_class(request.POST)
-        form2 = self.second_form_class(request.POST)
-        form3 = self.third_form_class(request.POST)
-        detalle = detalleVenta.objects.filter(lote = form3).filter(estado = 'True')
-        estaC = estadoCuenta.objects.get(detalleVenta = detalle)
-        form.detalleVenta = estaC
-        form.save() 
-
-
-"""        try:
-            
-            
+    def form_valid(self, form, **kwargs):
+        context=super().get_context_data(**kwargs)
+        lote = self.third_form_class(self.request.POST)
+        
+        prima = form.save(commit=False)
+        pago = self.second_form_class(self.request.POST)
+        try:
+            detalle = detalleVenta.objects.get(lote = lote.data['matricula'], estado = True)
+            pago.prima = prima
+            prima.detalleVenta = detalle
+            prima.save()
+            pago.save()
             messages.success(self.request, 'La prima fue registrada con exito')
+            return HttpResponseRedirect(self.get_url_redirect()) 
         except Exception:
-            primaP.delete()
+            prima.delete()
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
-        return HttpResponseRedirect(self.get_url_redirect())"""
+        return HttpResponseRedirect(self.get_url_redirect())
 
 class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
