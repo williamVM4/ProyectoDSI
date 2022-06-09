@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
-from .models import propietario, detalleVenta, lote
+from .models import propietario, detalleVenta, lote, proyectoTuristico
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
 class PropietarioForm(ModelForm):
@@ -81,6 +81,26 @@ class LoteForm(ModelForm):
         }
         error_messages = {
             'proyectoTuristico': {
+                'max_length': _("El dato ingresado es demasiado largo"),
+            },
+        }
+
+class agregarProyectoForm(ModelForm):
+
+
+    class Meta:
+        model= proyectoTuristico
+        fields=('nombreProyectoTuristico','empresa')
+        labels = {
+            'nombreProyectoTuristico': _('Nombre Proyecto Turistico:'),
+            'empresa': _('Empresa:'),
+        }
+        help_texts = {
+            'nombreProyectoTuristico': _('Campo Obligatorio'),
+            'empresa': _('Campo Obligatorio'),
+        }
+        error_messages = {
+            'nombreProyectoTuristico': {
                 'max_length': _("El dato ingresado es demasiado largo"),
             },
         }

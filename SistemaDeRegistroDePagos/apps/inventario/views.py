@@ -181,3 +181,36 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
         except Exception:
             messages.error(self.request, 'Ocurrió un error al guardar el propietario, el detalle de venta no es valido')  
         return HttpResponseRedirect(self.get_url_redirect())
+
+# Views de proyecto
+
+class proyectoTuristico(ListView):
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'home.html'
+    model = proyectoTuristico
+
+
+class agregarProyectoTuristico(GroupRequiredMixin,CreateView):
+    group_required = [u'Configurador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    template_name = 'inventario/agregarProyecto.html'
+    form_class = agregarProyectoForm
+    #success_url = reverse_lazy('')
+    def get_url_redirect(self, **kwargs):
+        return reverse_lazy('home')
+
+
+    def form_valid(self, form, **kwargs): 
+        proyecto = form.save(commit=False)
+        #poner try
+        try:
+            proyecto.save()
+            messages.success(self.request, 'Proyecto guardado con exito')
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error al guardar el proyecto')
+        return HttpResponseRedirect(self.get_url_redirect())

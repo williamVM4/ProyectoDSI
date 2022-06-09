@@ -9,4 +9,6 @@ urlpatterns = [
     path('seleccionarpropietario/<str:idp>/<str:id>/',seleccionarPropietario.as_view(),name='seleccionarPropietario'),
     path('gestionarlotes/<str:idp>/',gestionarLotes.as_view(),name='gestionarLotes'),
     path('agregarlote/<str:idp>/',agregarLote.as_view(),name='agregarLote'),
+    path('',proyectoTuristico.as_view(),name='home'),
+    path('agregarproyecto/',agregarProyectoTuristico.as_view(),name='agregarproyecto'),
 ]

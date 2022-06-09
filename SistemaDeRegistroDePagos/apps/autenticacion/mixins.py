@@ -2,6 +2,7 @@ from tokenize import group
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.views.generic import View
+from django.contrib import messages
 
 
 class ValidatePermissionRequiredMixin(View):
@@ -39,6 +40,7 @@ class GroupRequiredMixin(View):
         for group in request.user.groups.values_list('name', flat=True):
             user_groups.append(group)
         if len(set(user_groups).intersection(self.group_required)) <= 0:
+            messages.error(self.request, 'Ocurrió un error, su usuario no tiene los permisos para ver esta página')
             return HttpResponseRedirect(self.get_url_redirect())
         return super().dispatch(request,*args,**kwargs)
 
