@@ -15,7 +15,7 @@
 
     <!-- Top Navigation: Left Menu -->
     <ul class="nav navbar-nav navbar-left navbar-top-links">
-        <li><a href="#"><i class="fa fa-home fa-fw"></i> Website</a></li>
+        <li><a href="{% url 'home' %}"><i class="fa fa-home fa-fw"></i> Inicio</a></li>
     </ul>
 
     <!-- Top Navigation: Right Menu -->
@@ -45,21 +45,13 @@
                     <a class="active"></i> Poner algo aqui</a>
                 </li>
                 <li>
-                    <a href="{% url 'homeProyecto' idp=idp %}" class="active"><i class="fa fa-dashboard fa-fw"></i> Inicio</a>
+                    <a href="{% url 'homeProyecto' idp=idp %}" class="active"><i class="fa fa-dashboard fa-fw"></i> Proyecto</a>
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-sitemap fa-fw"></i>Inventario<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
                             <a href="{% url 'gestionarLotes' idp=idp%}">Gestionar Lotes</a>
-                        </li>
-                        <li>
-                            <a href="#">Third Level <span class="fa arrow"></span></a>
-                            <ul class="nav nav-third-level">
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                            </ul>
                         </li>
                     </ul>
                 </li>
