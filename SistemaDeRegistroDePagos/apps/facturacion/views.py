@@ -40,10 +40,13 @@ class agregarPrima(GroupRequiredMixin,CreateView):
     template_name = 'facturacion/agregarPrima.html'
     form_class = agregarPrimaForm
     second_form_class = pagoForm
+    third_form_class = lotePagoForm
     def get_context_data(self, **kwargs): 
         context = super(agregarPrima, self).get_context_data(**kwargs)
         if 'form2' not in context:
             context['form2'] = self.second_form_class(initial={'id':self.kwargs.get('id',None)})
+        if 'form3' not in context:
+            context['form3'] = self.third_form_class(initial={'id': self.kwargs.get('id', None)})
         return context
 
 

@@ -19,6 +19,11 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
+                                        <p class="label-form">{{form3.matricula.label}}</p>
+                                        {{form3.matricula|add_class:'form-control'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form"></p></div>
+                                    </div>
+                                    <div class="form-group">
                                         <p class="label-form">{{form.numeroReciboPrima.label}}</p>
                                         {{form.numeroReciboPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo de la Prima'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboPrima.help_text}}</p></div>
