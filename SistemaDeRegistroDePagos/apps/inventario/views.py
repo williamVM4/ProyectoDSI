@@ -84,8 +84,9 @@ class agregarLote(GroupRequiredMixin,CreateView):
         lote = form.save(commit=False)
         #poner try
         try:
-            #proyectoTuristico = proyectoTuristico.objects.get(id=idp)
-            #lote.proyectoTuristico=proyectoTuristico
+            print('aaa')
+            lote.proyectoTuristico = proyectoTuristico.objects.get(id=idp)
+            lote.identificador = str(lote.poligono) + str(lote.numeroLote)
             lote.save()
             #detalle.propietarios.add(propietario,through_defaults={'eliminado': False})
             messages.success(self.request, 'Lote guardado con éxito')
