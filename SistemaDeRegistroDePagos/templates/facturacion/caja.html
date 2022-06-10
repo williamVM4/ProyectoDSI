@@ -49,8 +49,8 @@
                               <th>Fecha</th>
                               <th>Monto</th>
                               <th>Recibo</th>
-                              <th>Prima</th>
-                              <th>Mantenimiento</th>
+                              <th>Concepto</th>
+                              <th>Lote</th>
                               <th>Imprimir recibo</th>
                           </tr>
                       </thead>
@@ -74,32 +74,33 @@
                               {% endif %}
 
                               {% if pago.pagoMantenimiento%}
-                              <td></td>
+                              <td>Mantenimiento</td>
                             {% else %}
                               {% if pago.prima%}
-                                  <td>{{pago.monto}}</td>
+                                  <td>Prima</td>
                               {% else %}
                                   {% if pago.pagoFinanciamiento%}
-                                      <td></td>
+                                      <td>Financiamiento</td>
                                   {% else %}
                                       <td></td>
                                   {% endif %}
                               {% endif %}
                             {% endif %}
-
-                              {% if pago.pagoMantenimiento%}
-                                <td>{{pago.monto}}</td>
+                                
+                            {% if pago.pagoMantenimiento%}
+                            <td>{{pago.pagoMantenimiento.numeroCuotaEstadoCuenta.estadoCuenta.detalleVenta.lote.identificador}}</td>
+                            {% else %}
+                              {% if pago.prima%}
+                              <td>{{pago.prima.detalleVenta.lote.identificador}}</td>
                               {% else %}
-                                {% if pago.prima%}
-                                    <td></td>
-                                {% else %}
-                                    {% if pago.pagoFinanciamiento%}
-                                        <td>{{pago.pagoFinanciamiento.mantenimiento}}</td>
-                                    {% else %}
-                                        <td></td>
-                                    {% endif %}
-                                {% endif %}
+                                  {% if pago.pagoFinanciamiento%}
+                                  <td>{{pago.pagoFinanciamiento.numeroCuotaEstadoCuenta.estadoCuenta.detalleVenta.lote.identificador}}</td>
+                                  {% else %}
+                                      <td></td>
+                                  {% endif %}
                               {% endif %}
+                            {% endif %}
+                            
 
                               <td><a class="btn btn-default btn-block" href="{% url 'recibo' idp=idp pk=pago.id  %}"> Imprimir </a></td>
                             </tr>

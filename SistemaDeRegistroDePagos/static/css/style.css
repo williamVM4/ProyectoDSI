@@ -34,3 +34,18 @@
     background-color: #00a65a;
     color: white;
   }
+
+.oculto{
+	display: none;
+}
+.mostrar{
+    display: block !important;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+input[type=number] { -moz-appearance:textfield; }
