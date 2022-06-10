@@ -30,6 +30,11 @@ class caja(GroupRequiredMixin,TemplateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
 
     template_name = 'facturacion/caja.html'
@@ -47,6 +52,11 @@ class agregarPrima(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
     
     model = prima
@@ -90,6 +100,11 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
 
     model = pagoMantenimiento
@@ -139,9 +154,15 @@ class gestionarCuentasBancarias(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
     template_name = 'facturacion/CuentasBancarias/gestionarCuentasBancarias.html'
     model = cuentaBancaria
+
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
@@ -154,6 +175,11 @@ class agregarCuentaBancaria(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
     template_name = 'facturacion/CuentasBancarias/agregarCuentaBancaria.html'
     form_class = agregarCuentaBancariaForm

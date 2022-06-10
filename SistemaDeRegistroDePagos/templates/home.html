@@ -51,6 +51,7 @@
 <!-- Page Content -->
     <div id="">
         <div class="container">
+            {% if request.user|has_group:"Configurador del sistema" or request.user|has_group:"Administrador del sistema" or request.user|has_group:"Operador del sistema"%}   
             <div class="row">
                 <div class="col-md-12">
                     <h1 class="page-header">Proyectos Turísticos </h1>
@@ -64,9 +65,11 @@
                             <div class="col-md-10">
                                 <h3></h3>
                             </div>
+                            {% if request.user|has_group:"Configurador del sistema" or request.user|has_group:"Administrador del sistema"%} 
                             <div class="col-md-2">
                                 <a class="btn btn-primary btn-block" href="{% url 'agregarproyecto' %}" > Agregar </a>
                             </div>
+                            {% endif %}
                           </div>
                         </div>
                     </div>
@@ -103,6 +106,7 @@
                   </div>
               </div>
             </div>
+            {% endif %}
         </div>
     </div>
 

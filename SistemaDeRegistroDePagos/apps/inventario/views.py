@@ -14,6 +14,11 @@ class gestionarLotes(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/gestionarLotes.html'
     model = lote
@@ -29,6 +34,16 @@ class detalleLote(GroupRequiredMixin,DetailView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        try:
+            lot = detalleVenta.objects.get(pk=self.kwargs['pk'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
+            return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/detalleLote.html'
     model = detalleVenta
@@ -45,6 +60,16 @@ class asignacionesLote(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        try:
+            lot = lote.objects.get(pk=self.kwargs['pk'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el lote existe')
+            return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/asignacionLote.html'
     model = detalleVenta
@@ -64,6 +89,11 @@ class agregarLote(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/agregarLote.html'
     form_class = LoteForm
@@ -95,9 +125,19 @@ class agregarLote(GroupRequiredMixin,CreateView):
 
 # Views de detalle de venta
 class agregarDetalleVenta(GroupRequiredMixin,CreateView):
-    group_required = [u'Configurador del sistema']
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        try:
+            lot = lote.objects.get(pk=self.kwargs['idl'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el lote existe')
+            return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/agregarDetalleVenta.html'
     form_class = DetalleVentaForm
@@ -107,6 +147,7 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
         idp = self.kwargs.get('idp', None)
         idl = self.kwargs.get('idl', None)  
         return reverse_lazy('asignacionesLote', kwargs={'idp': idp,'pk': idl})
+
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None)
@@ -134,6 +175,16 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        try:
+            lot = detalleVenta.objects.get(pk=self.kwargs['id'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
+            return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
     
     template_name = 'inventario/agregarPropietario.html'
@@ -177,6 +228,16 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        try:
+            lot = detalleVenta.objects.get(pk=self.kwargs['id'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
+            return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
 
     template_name = 'inventario/seleccionarPropietario.html'
