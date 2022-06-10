@@ -46,6 +46,7 @@ class propietario(models.Model):
 
 class detalleVenta(models.Model):
     lote = models.ForeignKey(lote, on_delete=models.CASCADE, blank=True)
+    propietarios = models.ManyToManyField(propietario, through='asignacionLote')
     precioVenta = models.FloatField(default=0)
     descuento = models.FloatField(default=0)
     estado = models.BooleanField(default=True)
