@@ -11,4 +11,5 @@ urlpatterns = [
     path('agregarlote/<str:idp>/',agregarLote.as_view(),name='agregarLote'),
     path('',proyectoTuristicoView.as_view(),name='home'),
     path('agregarproyecto/',agregarProyectoTuristico.as_view(),name='agregarproyecto'),
+    path('agregardetalleventa/<str:idp>/<str:pk>',agregarDetalleVenta.as_view(),name='agregarDetalleVenta'),
 ]
