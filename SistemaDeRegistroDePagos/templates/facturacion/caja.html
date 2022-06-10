@@ -86,8 +86,21 @@
                                   {% endif %}
                               {% endif %}
                             {% endif %}
-
+                                
+                            {% if pago.pagoMantenimiento%}
                             <td>{{pago.pagoMantenimiento.numeroCuotaEstadoCuenta.estadoCuenta.detalleVenta.lote.identificador}}</td>
+                            {% else %}
+                              {% if pago.prima%}
+                              <td>{{pago.prima.detalleVenta.lote.identificador}}</td>
+                              {% else %}
+                                  {% if pago.pagoFinanciamiento%}
+                                  <td>{{pago.pagoFinanciamiento.numeroCuotaEstadoCuenta.estadoCuenta.detalleVenta.lote.identificador}}</td>
+                                  {% else %}
+                                      <td></td>
+                                  {% endif %}
+                              {% endif %}
+                            {% endif %}
+                            
 
                               <td><a class="btn btn-default btn-block" href="{% url 'recibo' idp=idp pk=pago.id  %}"> Imprimir </a></td>
                             </tr>

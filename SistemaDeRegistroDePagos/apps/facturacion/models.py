@@ -9,7 +9,7 @@ pago_tipo = [
 ]
 
 class pago(models.Model):
-    monto = models.FloatField()
+    monto = models.DecimalField(max_digits=8, decimal_places=6)
     prima = models.ForeignKey('prima', on_delete=models.CASCADE, null=True)
     pagoFinanciamiento = models.ForeignKey('pagoFinanciamiento', on_delete=models.CASCADE, null=True)
     pagoMantenimiento = models.ForeignKey('pagoMantenimiento', on_delete=models.CASCADE, null=True)
@@ -40,7 +40,7 @@ class prima(models.Model):
 
 class BasePagoModel(models.Model):
     conceptoOtros = models.CharField(max_length=100,blank=True, default="")
-    montoOtros = models.FloatField(blank=True,default=0)
+    montoOtros = models.DecimalField(blank=True,default=0,max_digits=8, decimal_places=6)
     numeroCuotaEstadoCuenta = models.ForeignKey('monitoreo.cuotaEstadoCuenta',blank=True, on_delete=models.CASCADE)
     
     class Meta:
@@ -49,8 +49,8 @@ class BasePagoModel(models.Model):
 class pagoFinanciamiento(BasePagoModel):
     numeroReciboFinanciamiento = models.CharField(max_length=30, primary_key=True)
     usuarioCreacion = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null = True, related_name='user_creation_financiamiento')
-    mantenimiento = models.FloatField()
-    comision = models.FloatField()
+    mantenimiento = models.DecimalField(max_digits=8, decimal_places=6)
+    comision = models.DecimalField(max_digits=8, decimal_places=6)
     
     def __str__(self):
         return self.numeroReciboFinanciamiento
