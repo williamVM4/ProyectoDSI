@@ -12,6 +12,7 @@ from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
 from apps.autenticacion.mixins import *
 from .forms import *
 from .models import *
+from apps.inventario.models import *
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from crum import get_current_user
@@ -151,23 +152,21 @@ class Recibo(TemplateView):
         idp = self.kwargs.get('idp', None) 
         id = self.kwargs.get('pk', None)
         pagoRecibo = pago.objects.get(pk = id)
-
-        primaRecibo = prima.objects.get(numeroReciboPrima = pagoRecibo.prima_id )
-        """pagoMRecibo = pagoMantenimiento.objects.get(numeroReciboMantenimiento = pagoRecibo.pagoMantenimiento_id)"""
-        
         wb = Workbook()
         ws = wb.active
         ws.title = "Recibo"
-        ws['B1'] = "Nº "+primaRecibo.numeroReciboPrima
 
-
-
-        ws.cell(row = 5,column = 2).value = 100
-        ws.merge_cells('B6:F6')
+        if pagoRecibo.prima_id:
+            primaRecibo = prima.objects.get(numeroReciboPrima = pagoRecibo.prima_id )
+            ws['B1'] = "Nº "+primaRecibo.numeroReciboPrima
+            ws.merge_cells('B6:F6')
         
+        else:
+            if pagoRecibo.pagoMantenimiento_id:
+                pagoMRecibo = pagoMantenimiento.objects.get(numeroReciboMantenimiento = pagoRecibo.pagoMantenimiento_id)
+                ws['B1'] = "Nº "+pagoMRecibo.numeroReciboMantenimiento
         
-
-        
+       
 
         nombre_archivo = "Recibo.xlsx"
         response = HttpResponse()
