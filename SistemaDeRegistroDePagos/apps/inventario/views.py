@@ -184,7 +184,7 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
 
 # Views de proyecto
 
-class proyectoTuristico(ListView):
+class proyectoTuristicoView(ListView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
