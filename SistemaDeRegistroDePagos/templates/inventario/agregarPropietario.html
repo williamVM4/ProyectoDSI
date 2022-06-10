@@ -102,7 +102,10 @@
       {% for error in form.non_field_errors %}
         errors += '{{ error }}\n';
       {% endfor %}
-        alert(errors)
+      Swal.fire({
+        icon: 'error',
+        text: errors,
+      })
   {% endif %}
 
   Inputmask("9{8}[-]9{1}", {

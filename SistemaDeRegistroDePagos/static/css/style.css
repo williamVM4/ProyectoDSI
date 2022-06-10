@@ -30,4 +30,7 @@
     padding-top: 3em;
 }
 
-  
+.customClass .confirmButton{
+    background-color: #00a65a;
+    color: white;
+  }
