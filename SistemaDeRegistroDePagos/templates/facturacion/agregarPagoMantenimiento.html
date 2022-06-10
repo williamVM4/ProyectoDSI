@@ -63,7 +63,11 @@
                                         {{form.montoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por otros pagos'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.montoOtros.help_text}}</p></div>
                                     </div>
-                                    
+                                    <div class="form-group">
+                                        <p class="label-form">{{form2.observaciones.label}}</p>
+                                        {{form2.observaciones|add_class:'form-control'|attr:'rows:3' |attr:'colm:40'|attr:'autocomplete:off'|attr:'placeholder:'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.observaciones.help_text}}</p></div>
+                                    </div>
                                 </div>
                             </div>
                         </fieldset>
