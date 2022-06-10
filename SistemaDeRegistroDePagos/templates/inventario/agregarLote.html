@@ -19,7 +19,7 @@
               <div class="col-md-12">
                 <div class="form-group">
                   <p class="label-form">{{form.matriculaLote.label}}</p>
-                  {{form.matriculaLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000-0'}}
+                  {{form.matriculaLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.matriculaLote.help_text}}</p></div>
                 </div>
                 <div class="form-group">
@@ -73,7 +73,10 @@
       {% for error in form.non_field_errors %}
         errors += '{{ error }}\n';
       {% endfor %}
-        alert(errors)
+      Swal.fire({
+        icon: 'error',
+        text: errors,
+      })
   {% endif %}
 </script>
 <script type= application/javascript>
@@ -81,18 +84,17 @@
     placeholder: "",
     greedy: false
   }).mask('#id_matriculaLote');
-
-  Inputmask("9{4}", {
+  Inputmask("9{3}", {
     placeholder: "",
     greedy: false
   }).mask('#id_numeroLote');
 
-  Inputmask("9{4}", {
+  Inputmask("9{5}", {
     placeholder: "",
     greedy: false
   }).mask('#id_areaMCuadrado');
 
-  Inputmask("9{4}", {
+  Inputmask("9{5}", {
     placeholder: "",
     greedy: false
   }).mask('#id_areaVCuadrada');

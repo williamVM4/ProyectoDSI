@@ -1,10 +1,9 @@
-from cProfile import label
-from dataclasses import fields
-from statistics import mode
+from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
 from .models import *
 from apps.inventario.models import cuentaBancaria, lote
 from django import forms
+from django.core.exceptions import NON_FIELD_ERRORS
 class agregarPrimaForm(ModelForm):
     class Meta:
         model = prima
@@ -17,7 +16,6 @@ class agregarPrimaForm(ModelForm):
             'numeroReciboPrima':('Campo Obligatorio'),
             'conceptoPrima': ('Campo Obligatorio'),
         }
-
 
 
 class pagoForm(ModelForm):
@@ -46,6 +44,10 @@ class pagoForm(ModelForm):
         
 
 class agregarPagoMantenimientoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(agregarPagoMantenimientoForm, self).__init__(*args, **kwargs)
+            #self.fields['numeroReciboMantenimiento'].widget.error_messages = {'required': 'aaa'}
+
     class Meta:
         model = pagoMantenimiento
         fields = {'numeroReciboMantenimiento','conceptoOtros','montoOtros'}
@@ -59,6 +61,7 @@ class agregarPagoMantenimientoForm(ModelForm):
             'conceptoOtros': ('Campo Opcional'),
             'montoOtros': ('Campo Opcional'),
         }
+        #error_messages={'required':_("First name is required.")}
     
 
 class lotePagoForm(forms.Form):

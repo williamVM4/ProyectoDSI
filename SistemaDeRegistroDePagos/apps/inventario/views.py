@@ -4,7 +4,7 @@ from django.views.generic import TemplateView, CreateView, FormView, ListView, D
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .models import asignacionLote, detalleVenta, propietario, lote, proyectoTuristico
+from apps.inventario.models import asignacionLote, detalleVenta, lote, proyectoTuristico
 from apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
@@ -26,7 +26,7 @@ class gestionarLotes(GroupRequiredMixin,ListView):
         return context
     
 class detalleLote(GroupRequiredMixin,DetailView):
-    group_required = [u'Configurador del sistema']
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -40,7 +40,7 @@ class detalleLote(GroupRequiredMixin,DetailView):
         return context
 
 class asignacionesLote(GroupRequiredMixin,ListView):
-    group_required = [u'Configurador del sistema']
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -59,7 +59,7 @@ class asignacionesLote(GroupRequiredMixin,ListView):
 
 # Views de lote
 class agregarLote(GroupRequiredMixin,CreateView):
-    group_required = [u'Configurador del sistema']
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -70,13 +70,11 @@ class agregarLote(GroupRequiredMixin,CreateView):
         context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None) 
         return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
-
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None)
         context['idp'] = idp         
         return context
-
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
          # recojo el parametro 
@@ -84,11 +82,9 @@ class agregarLote(GroupRequiredMixin,CreateView):
         lote = form.save(commit=False)
         #poner try
         try:
-            print('aaa')
             lote.proyectoTuristico = proyectoTuristico.objects.get(id=idp)
             lote.identificador = str(lote.poligono) + str(lote.numeroLote)
             lote.save()
-            #detalle.propietarios.add(propietario,through_defaults={'eliminado': False})
             messages.success(self.request, 'Lote guardado con éxito')
         except Exception:
             lote.delete()
@@ -97,7 +93,7 @@ class agregarLote(GroupRequiredMixin,CreateView):
 
 # Views de propietario
 class agregarPropietario(GroupRequiredMixin,CreateView):
-    group_required = [u'Configurador del sistema']
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -120,7 +116,7 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
         id = self.kwargs.get('id', None)
         idp = self.kwargs.get('idp', None) 
         context['idp'] = idp  
-        context['id'] = id         
+        context['id'] = id  
         return context
 
     def form_valid(self, form, **kwargs):
@@ -140,7 +136,7 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
         return HttpResponseRedirect(self.get_url_redirect())
 
 class seleccionarPropietario(GroupRequiredMixin,FormView):
-    group_required = [u'Configurador del sistema']
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -193,7 +189,7 @@ class proyectoTuristicoView(ListView):
 
 
 class agregarProyectoTuristico(GroupRequiredMixin,CreateView):
-    group_required = [u'Configurador del sistema']
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
