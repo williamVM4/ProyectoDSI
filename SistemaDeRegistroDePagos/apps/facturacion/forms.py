@@ -82,5 +82,22 @@ class lotePagoForm(forms.Form):
         if id:        
             self.fields['matricula'].queryset = lote.objects.filter(proyectoTuristico__id=id)
 
+class agregarCuentaBancariaForm(ModelForm):
+    class Meta:
+        model = cuentaBancaria
+        fields = ('numeroCuentaBancaria','nombreCuentaBancaria','tipoCuenta','banco')
+        label= {
+            'numeroCuentaBancaria':('Número de cuenta: '),
+            'nombreCuentaBancaria': ('Nombre de cuenta: '),
+            'tipoCuenta':('Tipo de cuenta:  '),
+            'banco': ('Banco: '),
+        }
+        help_texts = {
+            'numeroCuentaBancaria':('Campo Obligatorio'),
+            'nombreCuentaBancaria': ('Campo Obligatorio'),
+            'tipoCuenta':('Campo Obligatorio'),
+            'banco': ('Campo Obligatorio'),
+        }
+
 
 
