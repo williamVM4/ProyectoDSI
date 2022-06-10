@@ -1,5 +1,8 @@
 from email.headerregistry import Group
+from importlib.resources import contents
 from multiprocessing import context
+from urllib import response
+from xml.dom.minidom import Identified
 from django.forms import NullBooleanField
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -9,9 +12,14 @@ from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
 from apps.autenticacion.mixins import *
 from .forms import *
 from .models import *
+from apps.inventario.models import *
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from crum import get_current_user
+from django.http.response import HttpResponse
+from openpyxl import Workbook
+from openpyxl.styles import *
+
 
 from apps.inventario.models import detalleVenta
 # Create your views here.
@@ -61,9 +69,8 @@ class agregarPrima(GroupRequiredMixin,CreateView):
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
         lote = self.third_form_class(self.request.POST)
-        
         prima = form.save(commit=False)
-        pago = self.second_form_class(self.request.POST)
+        pago = self.second_form_class(self.request.POST).save(commit=False)
         try:
             detalle = detalleVenta.objects.get(lote = lote.data['matricula'], estado = True)
             pago.prima = prima
@@ -128,7 +135,45 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
 
     
     
+class Recibo(TemplateView):
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        id = self.kwargs.get('pk', None)
+        context['idp'] = idp
+        context['id'] = id
+        return context
+
+    
+    def get(self,request,*args,**kwargs):
+        context=super().get_context_data(**kwargs)
+         # recojo el parametro 
+        idp = self.kwargs.get('idp', None) 
+        id = self.kwargs.get('pk', None)
+        pagoRecibo = pago.objects.get(pk = id)
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Recibo"
+
+        if pagoRecibo.prima_id:
+            primaRecibo = prima.objects.get(numeroReciboPrima = pagoRecibo.prima_id )
+            ws['B1'] = "Nº "+primaRecibo.numeroReciboPrima
+            ws.merge_cells('B6:F6')
+        
+        else:
+            if pagoRecibo.pagoMantenimiento_id:
+                pagoMRecibo = pagoMantenimiento.objects.get(numeroReciboMantenimiento = pagoRecibo.pagoMantenimiento_id)
+                ws['B1'] = "Nº "+pagoMRecibo.numeroReciboMantenimiento
+        
+       
+
+        nombre_archivo = "Recibo.xlsx"
+        response = HttpResponse()
+        contenido = "attachment; filename = {0}".format(nombre_archivo)
+        response["Content-Disposition"]= contenido
+        wb.save(response)
+        return response
     
     
 

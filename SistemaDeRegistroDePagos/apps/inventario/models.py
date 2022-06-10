@@ -65,17 +65,7 @@ class asignacionLote(models.Model):
     def __str__(self):
         return '%s %s' % (self.propietario, self.detalleVenta)
 
-class condicionPago(models.Model):
-    matriculaLote = models.CharField(max_length=50, primary_key=True)
-    proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE,blank=True)
-    numeroLote = models.IntegerField()
-    poligono = models.CharField(max_length=5)
-    identificador = models.CharField(max_length=4)
-    areaMCuadrado = models.FloatField()
-    areaVCuadrada = models.FloatField()
 
-    def __str__(self):
-        return self.identificador
 
 
 
