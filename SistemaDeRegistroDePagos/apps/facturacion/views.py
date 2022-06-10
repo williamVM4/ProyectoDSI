@@ -1,11 +1,13 @@
+from asyncio import current_task
 from email.headerregistry import Group
 from multiprocessing import context
 from django.forms import NullBooleanField
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView
 from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
+from apps.inventario.models import cuentaBancaria,proyectoTuristico
 from apps.autenticacion.mixins import *
 from .forms import *
 from .models import *
@@ -125,7 +127,54 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
         pago.save()
         return HttpResponseRedirect(self.get_url_redirect())
         
+# Views de cuentas Bancarias
+class gestionarCuentasBancarias(GroupRequiredMixin,ListView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'facturacion/CuentasBancarias/gestionarCuentasBancarias.html'
+    model = cuentaBancaria
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('idp', None) 
+        context['idp'] = id
+        context['cuentaBancaria'] = cuentaBancaria.objects.filter(proyectoTuristico__id=id)
+        return context
+
+class agregarCuentaBancaria(GroupRequiredMixin,CreateView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'facturacion/CuentasBancarias/agregarCuentaBancaria.html'
+    form_class = agregarCuentaBancariaForm
+    
+    def get_url_redirect(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        return reverse_lazy('cuentas', kwargs={'idp': idp})
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None)
+        context['idp'] = idp         
+        return context
+
+    def form_valid(self, form, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        cuentaBancaria = form.save(commit=False)
+        try:
+            cuentaBancaria.proyectoTuristico = proyectoTuristico.objects.get(id=idp)
+            cuentaBancaria.identificador = str(cuentaBancaria.numeroCuentaBancaria)
+            cuentaBancaria.save()
+            messages.success(self.request, 'La cuenta bancaria se ha guardado con éxito')
+        except Exception:
+            cuentaBancaria.delete()
+            messages.error(self.request, 'Ocurrió un error al guardar la cuenta bancaria, la cuenta bancaria no es válido')
+        return HttpResponseRedirect(self.get_url_redirect())
     
     
 
