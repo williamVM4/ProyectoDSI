@@ -105,27 +105,27 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None)
-        pk = self.kwargs.get('pk', None)  
-        return reverse_lazy('asignacionesLote', kwargs={'idp': idp,'pk': pk})
+        idl = self.kwargs.get('idl', None)  
+        return reverse_lazy('asignacionesLote', kwargs={'idp': idp,'pk': idl})
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None)
-        pk = self.kwargs.get('pk', None)
+        idl = self.kwargs.get('idl', None)
         context['idp'] = idp
-        context['pk'] = pk           
+        context['idl'] = idl           
         return context
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
          # recojo el parametro 
-        pk = self.kwargs.get('pk', None) 
+        idl = self.kwargs.get('idl', None) 
         detalle = form.save(commit=False)
         #poner try
         try:
-            detalleVenta.lote = lote.objects.get(id=pk)
-            detalleVenta.save()
+            detalle.lote = lote.objects.get(pk=idl)
+            detalle.save()
             messages.success(self.request, 'Detalle de venta guardado con éxito')
         except Exception:
-            detalleVenta.delete()
+            detalle.delete()
             messages.error(self.request, 'Ocurrió un error al guardar el detalle de venta, el detalle de venta no es válido')
         return HttpResponseRedirect(self.get_url_redirect())
 
