@@ -101,7 +101,7 @@
                                 {% endif %}
                               {% endif %}
 
-                              <td><a class="btn btn-default btn-block"> Imprimir </a></td>
+                              <td><a class="btn btn-default btn-block" href="{% url 'recibo' idp=idp pk=pago.id  %}"> Imprimir </a></td>
                             </tr>
                                 {% endfor %}
                       </tbody>
