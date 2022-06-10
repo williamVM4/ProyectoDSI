@@ -23,8 +23,8 @@ class lote(models.Model):
     numeroLote = models.IntegerField()
     poligono = models.CharField(max_length=5)
     identificador = models.CharField(max_length=4, blank=True)
-    areaMCuadrado = models.DecimalField(max_digits=8, decimal_places=6)
-    areaVCuadrada = models.DecimalField(max_digits=8, decimal_places=6)
+    areaMCuadrado = models.DecimalField(max_digits=8, decimal_places=2)
+    areaVCuadrada = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
         return self.identificador
@@ -47,8 +47,8 @@ class propietario(models.Model):
 class detalleVenta(models.Model):
     lote = models.ForeignKey(lote, on_delete=models.CASCADE, blank=True)
     propietarios = models.ManyToManyField(propietario, through='asignacionLote')
-    precioVenta = models.DecimalField(default=0,max_digits=8, decimal_places=6)
-    descuento = models.DecimalField(default=0,max_digits=8, decimal_places=6)
+    precioVenta = models.DecimalField(default=0,max_digits=8, decimal_places=2)
+    descuento = models.DecimalField(default=0,max_digits=8, decimal_places=2)
     estado = models.BooleanField(default=True)
     
     def __str__(self):
