@@ -121,24 +121,27 @@
         let date = new Date();
         now = date.toISOString().split('T')[0];
         if($('#id_fechaPago').val() > now) {
-            alert('La fecha de pago no puede ser mayor a la actual');
+            Swal.fire({
+                icon: 'error',
+                text: 'La fecha de pago no puede ser mayor a la actual',
+              })
             return false;
         }
         if($('#id_tipoPago').val() == '2') {
             if($('#id_referencia').val() == '') {
-                alert('Debe ingresar la referencia');
-                return false;
-            }
-        }
-        if($('#id_tipoPago').val() == '2') {
-            if($('#id_referencia').val() == '') {
-                alert('Debe ingresar la referencia');
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Debe ingresar la referencia',
+                  })
                 return false;
             }
         }
         if($('#id_tipoPago').val() == '2') {
             if($('#id_cuentaBancaria').val() == '') {
-                alert('Debe ingresar la cuenta bancaria');
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Debe ingresar la cuenta bancaria',
+                  })
                 return false;
             }
         }

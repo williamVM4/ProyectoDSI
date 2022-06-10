@@ -61,13 +61,12 @@
                                             {% for asignacion in asignaciones %}
                                           {%if asignacion.detalleVenta.id == detalleVenta.id%}
                                           {{asignacion.propietario.nombrePropietario}} <br>
-                                          {%else%}
-                                          
                                           {%endif%}  
                                           {% endfor %}
+                                          No posee propietarios
                                         </td>
                                           <td></td>
-                                          <td></td>
+                                          <td>{{detalleVenta.precioVenta}} - {{detalleVenta.descuento}}</td>
                                           {%if detalleVenta.estado == True%}
                                           <td>Activo</td>
                                           {%else%}

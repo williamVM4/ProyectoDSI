@@ -30,7 +30,7 @@ class GroupRequiredMixin(View):
     group_required = None
     url_redirect = None 
 
-    def get_url_redirect(self):
+    def get_url_redirects(self):
         if self.url_redirect is None:
             return reverse_lazy('home')
         return self.url_redirect
@@ -41,7 +41,7 @@ class GroupRequiredMixin(View):
             user_groups.append(group)
         if len(set(user_groups).intersection(self.group_required)) <= 0:
             messages.error(self.request, 'Ocurrió un error, su usuario no tiene los permisos para ver esta página')
-            return HttpResponseRedirect(self.get_url_redirect())
+            return HttpResponseRedirect(self.get_url_redirects())
         return super().dispatch(request,*args,**kwargs)
 
 
