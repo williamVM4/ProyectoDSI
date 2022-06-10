@@ -11,6 +11,8 @@ django-widget-tweaks = "==1.4.12"
 django-crum = "==0.7.9"
 asgiref = "==3.5.2"
 sqlparse = "==0.4.2"
+et-xmlfile = "==1.1.0"
+openpyxl = "==3.0.10"
 
 [dev-packages]
 
