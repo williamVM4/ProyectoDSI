@@ -35,8 +35,10 @@ class detalleLote(GroupRequiredMixin,DetailView):
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        idp = self.kwargs.get('idp', None) 
-        context['idp'] = idp        
+        idp = self.kwargs.get('idp', None)
+        id = self.kwargs.get('pk', None) 
+        context['idp'] = idp   
+        context['id'] = id      
         return context
 
 class asignacionesLote(GroupRequiredMixin,ListView):

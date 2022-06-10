@@ -60,7 +60,7 @@
                                             <td>
                                             {% for asignacion in asignaciones %}
                                           {%if asignacion.detalleVenta.id == detalleVenta.id%}
-                                          {{asignacion.propietario.nombrePropietario}}
+                                          {{asignacion.propietario.nombrePropietario}} <br>
                                           {%else%}
                                           
                                           {%endif%}  

@@ -25,7 +25,7 @@
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">{{form.numeroReciboMantenimiento.label}} {{ form.numeroReciboMantenimiento.errors }}</p>
-                                        {{form.numeroReciboMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo del pago'}}
+                                        {{form.numeroReciboMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo del pago en formato 00000000'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboMantenimiento.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
@@ -35,7 +35,7 @@
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">{{form2.monto.label}}</p>
-                                        {{form2.monto|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto de la Prima'}}
+                                        {{form2.monto|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto del pago'|attr:'min:0'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.monto.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">{{form.montoOtros.label}}</p>
-                                        {{form.montoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por otros pagos'}}
+                                        {{form.montoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por otros pagos'|attr:'min:0'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.montoOtros.help_text}}</p></div>
                                     </div>
                                     
@@ -112,6 +112,37 @@
             $('#cuentaBancaria').addClass('oculto');
         }
     });
+
+    $('form').submit(function(event) { 
+        let date = new Date();
+        now = date.toISOString().split('T')[0];
+        if($('#id_fechaPago').val() > now) {
+            alert('La fecha de pago no puede ser mayor a la actual');
+            return false;
+        }
+        if($('#id_tipoPago').val() == '2') {
+            if($('#id_referencia').val() == '') {
+                alert('Debe ingresar la referencia');
+                return false;
+            }
+        }
+        if($('#id_tipoPago').val() == '2') {
+            if($('#id_referencia').val() == '') {
+                alert('Debe ingresar la referencia');
+                return false;
+            }
+        }
+        if($('#id_tipoPago').val() == '2') {
+            if($('#id_cuentaBancaria').val() == '') {
+                alert('Debe ingresar la cuenta bancaria');
+                return false;
+            }
+        }
+    });
+
+    
+    
+        
     //usuario = document.getElementById('id_numeroReciboMantenimiento');
     //usuario.classList.add('has-error');
   </script>

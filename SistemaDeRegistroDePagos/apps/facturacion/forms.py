@@ -23,6 +23,7 @@ class agregarPrimaForm(ModelForm):
 
 
 class pagoForm(ModelForm):
+
     class Meta:
         model = pago
         fields = {'monto','tipoPago','referencia','fechaPago','cuentaBancaria'}
