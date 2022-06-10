@@ -6,4 +6,5 @@ urlpatterns = [
     path('caja/<str:idp>/',caja.as_view(),name='caja'),
     path('agregarprima/<str:idp>/',agregarPrima.as_view(),name='agregarprima'),
     path('pagomantenimiento/<str:idp>/',agregarPagoMantenimiento.as_view(),name='agregarPagoMantenimiento'),
+    path('recibo/<str:idp>/<str:pk>/',Recibo.as_view(),name='recibo'),
 ]
