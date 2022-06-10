@@ -13,7 +13,7 @@
                     <h3 class="panel-title">Agregar pago por mantenimiento</h3>
                 </div>
                 <div class="panel-body">
-                    <form role="form" action="." method="POST">
+                    <form id = "formulario" role="form" action="." method="POST">
                         {% csrf_token %}
                         <fieldset>
                             <div class="row">
@@ -24,7 +24,7 @@
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form3.matricula.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">{{form.numeroReciboMantenimiento.label}}</p>
+                                        <p class="label-form">{{form.numeroReciboMantenimiento.label}} {{ form.numeroReciboMantenimiento.errors }}</p>
                                         {{form.numeroReciboMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo del pago'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboMantenimiento.help_text}}</p></div>
                                     </div>
@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">{{form2.cuentaBancaria.label}}</p>
-                                        {{form2.cuentaBancaria|add_class:'form-control'}}
+                                        {{form2.cuentaBancaria|add_class:' form-control'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.cuentaBancaria.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
@@ -96,7 +96,13 @@
         {% for error in form.non_field_errors %}
           errors += '{{ error }}\n';
         {% endfor %}
-          alert(errors)
+        Swal.fire({
+            icon: 'error',
+            text: errors,
+          })
     {% endif %}
+
+    //usuario = document.getElementById('id_numeroReciboMantenimiento');
+    //usuario.classList.add('has-error');
   </script>
 {% endblock %}
