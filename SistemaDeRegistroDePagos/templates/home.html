@@ -13,7 +13,7 @@
 <!-- Navigation -->
 <nav class="navbar navbar-inverse navbar-inverse" role="navigation">
     <div class="navbar-header">
-        <a class="navbar-brand" href="#">Startmin</a>
+        <a class="navbar-brand" href="#">DECATUR</a>
     </div>
 
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -35,10 +35,12 @@
                 <i class="fa fa-user fa-fw"></i> {{request.user.username}} <b class="caret"></b>
             </a>
             <ul class="dropdown-menu dropdown-user">
-                <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                <li><a href="#"><i class="fa fa-user fa-fw"></i> Usuario</a>
                 </li>
+                {% if request.user|has_group:"Configurador del sistema" %} 
                 <li><a href="{% url 'admin:index' %}"><i class="fa fa-gear fa-fw"></i>Configuración</a>
                 </li>
+                {% endif %}
                 <li class="divider"></li>
                 <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out fa-fw"></i>Cerrar Sesión</a>
                 </li>
@@ -62,7 +64,9 @@
                           <div class="col-md-10">
                           </div>
                           <div class="col-md-2">
+                            {% if request.user|has_group:"Configurador del sistema" or request.user|has_group:"Administrador del sistema" %} 
                             <a class="btn btn-default btn-block boton-agregar-proyecto" href="{% url 'agregarproyecto' %}"> Agregar </a>
+                            {% endif %}
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -103,26 +107,30 @@
 <script type= application/javascript>
     {%if messages%}
         var msg = '';
+        var msg1 = '';
         {%for message in messages%}
-          {% if message.tags %}
+        {% if 'error' in message.tags %}
             msg += '{{ message }}\n';
           {% endif %}
         {% endfor %}
-          alert(msg)
-    {% endif %}
-  </script>
-  <script type= application/javascript>
-    {%if form.errors%}
-        var errors = '';
-        {%for field in form%}
-          {% for error in field.errors %}
-            errors += '{{ error }}\n';
-          {% endfor %}
+        if(msg != ''){
+        Swal.fire({
+            icon: 'error',
+            text: msg,
+            //footer: '<a href="">Why do I have this issue?</a>'
+          })
+        }
+        {%for message in messages%}
+        {% if 'success' in message.tags %}
+            msg1 += '{{ message }}\n';
+          {% endif %}
         {% endfor %}
-        {% for error in form.non_field_errors %}
-          errors += '{{ error }}\n';
-        {% endfor %}
-          alert(errors)
-    {% endif %}
+        if(msg1 != ''){
+            Swal.fire({
+                icon: 'success',
+                text: msg1,
+              })
+        }
+    {% endif %} 
   </script>
 {% endblock %}

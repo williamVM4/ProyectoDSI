@@ -89,12 +89,30 @@
 <script type= application/javascript>
     {%if messages%}
         var msg = '';
+        var msg1 = '';
         {%for message in messages%}
-          {% if message.tags %}
+        {% if 'error' in message.tags %}
             msg += '{{ message }}\n';
           {% endif %}
         {% endfor %}
-          alert(msg)
-    {% endif %}
+        if(msg != ''){
+        Swal.fire({
+            icon: 'error',
+            text: msg,
+            //footer: '<a href="">Why do I have this issue?</a>'
+          })
+        }
+        {%for message in messages%}
+        {% if 'success' in message.tags %}
+            msg1 += '{{ message }}\n';
+          {% endif %}
+        {% endfor %}
+        if(msg1 != ''){
+            Swal.fire({
+                icon: 'success',
+                text: msg1,
+              })
+        }
+    {% endif %} 
   </script>
 {% endblock %}
