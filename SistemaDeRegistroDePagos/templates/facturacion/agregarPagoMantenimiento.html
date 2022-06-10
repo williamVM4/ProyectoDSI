@@ -43,12 +43,12 @@
                                         {{form2.tipoPago|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.tipoPago.help_text}}</p></div>
                                     </div>
-                                    <div class="form-group">
+                                    <div id="referencia" class="form-group oculto">
                                         <p class="label-form">{{form2.referencia.label}}</p>
                                         {{form2.referencia|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la referencia'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.referencia.help_text}}</p></div>
                                     </div>
-                                    <div class="form-group">
+                                    <div id="cuentaBancaria" class="form-group oculto">
                                         <p class="label-form">{{form2.cuentaBancaria.label}}</p>
                                         {{form2.cuentaBancaria|add_class:' form-control'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.cuentaBancaria.help_text}}</p></div>
@@ -102,6 +102,16 @@
           })
     {% endif %}
 
+    $('#id_tipoPago').on('change',function(){
+        var selectValor = $(this).val();
+        if (selectValor == '2') {
+            $('#referencia').removeClass('oculto');
+            $('#cuentaBancaria').removeClass('oculto');
+        }else {
+            $('#referencia').addClass('oculto');
+            $('#cuentaBancaria').addClass('oculto');
+        }
+    });
     //usuario = document.getElementById('id_numeroReciboMantenimiento');
     //usuario.classList.add('has-error');
   </script>
