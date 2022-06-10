@@ -8,5 +8,5 @@ urlpatterns = [
     path('pagomantenimiento/<str:idp>/',agregarPagoMantenimiento.as_view(),name='agregarPagoMantenimiento'),
     path('gestionarcuentas/<str:idp>/',gestionarCuentasBancarias.as_view(),name='cuentas'),
     path('agregarcuenta/<str:idp>/',agregarCuentaBancaria.as_view(),name='agregarCuentaB'),
-    
+    path('recibo/<str:idp>/<str:pk>/',Recibo.as_view(),name='recibo'),
 ]

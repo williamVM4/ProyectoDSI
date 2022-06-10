@@ -3,7 +3,11 @@ from django.forms import ModelForm
 from .models import *
 from apps.inventario.models import cuentaBancaria, lote
 from django import forms
-from django.core.exceptions import NON_FIELD_ERRORS
+
+class DateInput(forms.DateInput): 
+    input_type = 'date'
+
+
 class agregarPrimaForm(ModelForm):
     class Meta:
         model = prima
@@ -36,6 +40,9 @@ class pagoForm(ModelForm):
             'referencia':('Campo Obligatorio'),
             'fechaPago':('Campo Obligatorio'),
         }
+
+        widgets = { 'fechaPago': DateInput(), }
+        
     def __init__(self, *args, **kwargs):
         id = kwargs.pop('id', None)
         super(pagoForm, self).__init__(*args, **kwargs)
@@ -62,6 +69,8 @@ class agregarPagoMantenimientoForm(ModelForm):
             'montoOtros': ('Campo Opcional'),
         }
         #error_messages={'required':_("First name is required.")}
+        
+
     
 
 class lotePagoForm(forms.Form):
