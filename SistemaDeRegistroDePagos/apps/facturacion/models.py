@@ -20,6 +20,7 @@ class pago(models.Model):
     referencia = models.CharField(max_length=100, blank=True, default="")
     cuentaBancaria = models.ForeignKey('inventario.cuentaBancaria',blank=True, null = True, on_delete=models.CASCADE)
     fechaPago = models.DateField()
+    observaciones = models.TextField(max_length=200,default="")
     
 # Create your models here.
 class prima(models.Model):
@@ -31,12 +32,7 @@ class prima(models.Model):
     def __str__(self):
         return self.numeroReciboPrima
 
-    def save(self, force_insert=False, force_update=False,using=None, update_fields=None):
-        user = get_current_user()
-        if user is not None:
-            if not self.pk:
-                self.user_creation_prima = user
-        super(prima,self).save()
+
 
 class BasePagoModel(models.Model):
     conceptoOtros = models.CharField(max_length=100,blank=True, default="")

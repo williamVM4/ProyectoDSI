@@ -26,13 +26,14 @@ class pagoForm(ModelForm):
 
     class Meta:
         model = pago
-        fields = {'monto','tipoPago','referencia','fechaPago','cuentaBancaria'}
+        fields = {'monto','tipoPago','referencia','fechaPago','cuentaBancaria','observaciones'}
         label = {
             'cuentaBancaria':('Cuenta Bancaria'),
             'monto':('Monto de la prima'),
             'tipoPago':('Tipo de Pago'),
             'referencia':('Referencia'),
             'fechaPago':('Fecha de pago de prima'),
+            'observaciones':('Ingrese observaciones')
         }
         help_texts = {
             'cuentaBancaria':('Campo Obligatorio'),
@@ -40,6 +41,7 @@ class pagoForm(ModelForm):
             'tipoPago':('Campo Obligatorio'),
             'referencia':('Campo Obligatorio'),
             'fechaPago':('Campo Obligatorio'),
+            'observaciones':('Campo opcional')
         }
 
         widgets = { 'fechaPago': DateInput(), }
