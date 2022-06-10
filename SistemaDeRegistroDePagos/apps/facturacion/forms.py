@@ -23,6 +23,7 @@ class agregarPrimaForm(ModelForm):
 
 
 class pagoForm(ModelForm):
+
     class Meta:
         model = pago
         fields = {'monto','tipoPago','referencia','fechaPago','cuentaBancaria','observaciones'}
@@ -82,6 +83,23 @@ class lotePagoForm(forms.Form):
         super().__init__(*args, **kwargs)
         if id:        
             self.fields['matricula'].queryset = lote.objects.filter(proyectoTuristico__id=id)
+
+class agregarCuentaBancariaForm(ModelForm):
+    class Meta:
+        model = cuentaBancaria
+        fields = ('numeroCuentaBancaria','nombreCuentaBancaria','tipoCuenta','banco')
+        label= {
+            'numeroCuentaBancaria':('Número de cuenta: '),
+            'nombreCuentaBancaria': ('Nombre de cuenta: '),
+            'tipoCuenta':('Tipo de cuenta:  '),
+            'banco': ('Banco: '),
+        }
+        help_texts = {
+            'numeroCuentaBancaria':('Campo Obligatorio'),
+            'nombreCuentaBancaria': ('Campo Obligatorio'),
+            'tipoCuenta':('Campo Obligatorio'),
+            'banco': ('Campo Obligatorio'),
+        }
 
 
 
