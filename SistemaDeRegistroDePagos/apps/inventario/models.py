@@ -67,5 +67,3 @@ class asignacionLote(models.Model):
 
 
 
-
-

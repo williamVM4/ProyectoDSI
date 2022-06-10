@@ -93,6 +93,42 @@ class agregarLote(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error al guardar el lote, el lote no es válido')
         return HttpResponseRedirect(self.get_url_redirect())
 
+# Views de detalle de venta
+class agregarDetalleVenta(GroupRequiredMixin,CreateView):
+    group_required = [u'Configurador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'inventario/agregarDetalleVenta.html'
+    form_class = DetalleVentaForm
+    #success_url = reverse_lazy('asignacionLote')
+    def get_url_redirect(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None)
+        pk = self.kwargs.get('pk', None)  
+        return reverse_lazy('asignacionesLote', kwargs={'idp': idp,'pk': pk})
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None)
+        pk = self.kwargs.get('pk', None)
+        context['idp'] = idp
+        context['pk'] = pk           
+        return context
+    def form_valid(self, form, **kwargs):
+        context=super().get_context_data(**kwargs)
+         # recojo el parametro 
+        pk = self.kwargs.get('pk', None) 
+        detalle = form.save(commit=False)
+        #poner try
+        try:
+            detalleVenta.lote = lote.objects.get(id=pk)
+            detalleVenta.save()
+            messages.success(self.request, 'Detalle de venta guardado con éxito')
+        except Exception:
+            detalleVenta.delete()
+            messages.error(self.request, 'Ocurrió un error al guardar el detalle de venta, el detalle de venta no es válido')
+        return HttpResponseRedirect(self.get_url_redirect())
+
 # Views de propietario
 class agregarPropietario(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
