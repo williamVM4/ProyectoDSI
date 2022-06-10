@@ -53,27 +53,35 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h1 class="page-header">Proyectos Turisticos</h1>
+                    <h1 class="page-header">Proyectos Turísticos </h1>
                 </div>
             </div>
             <div class="row">
-              <div class="col-md-12">
-                  <div class="panel panel-default">
-                      <div class="panel-body">
-                        <div class="row centrar">
-                          <div class="col-md-10">
-                          </div>
-                          <div class="col-md-2">
-                            {% if request.user|has_group:"Configurador del sistema" or request.user|has_group:"Administrador del sistema" %} 
-                            <a class="btn btn-default btn-block boton-agregar-proyecto" href="{% url 'agregarproyecto' %}"> Agregar </a>
-                            {% endif %}
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                          <div class="row centrar">
+                            <div class="col-md-10">
+                                <h3></h3>
                             </div>
+                            <div class="col-md-2">
+                                <a class="btn btn-primary btn-block" href="{% url 'agregarproyecto' %}" > Agregar </a>
+                            </div>
+                          </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                     <tr>
-                                        <th>Nombre de Proyecto Turistico</th>
+                                        <th>Nombre de Proyecto Turístico </th>
                                         <th>Empresa</th>
                                         <th></th>
                                     </tr>
@@ -84,7 +92,7 @@
                                     <tr>
                                         <td>{{proyectoTuristico.nombreProyectoTuristico}}</td>
                                         <td>{{proyectoTuristico.empresa}}</td>
-                                        <td><a class="btn btn-default btn-block" href="{% url 'homeProyecto' idp=proyectoTuristico.id %}"> Ir </a></td>
+                                        <td><a class="btn btn-default btn-block" href="{% url 'homeProyecto' idp=proyectoTuristico.id %}"> Ver detalle </a></td>
                                     </tr>
                                     
                                     {%endfor%}
