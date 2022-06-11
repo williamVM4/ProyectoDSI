@@ -35,7 +35,8 @@
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">{{form2.monto.label}}</p>
-                                        {{form2.monto|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto de la Prima'}}
+                                        <div class="input-group"><span class="input-group-addon">$</span>
+                                        {{form2.monto|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto de la Prima'}}</div>
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.monto.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
@@ -59,7 +60,11 @@
                                         {{form.conceptoPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el concepto de la Prima'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.conceptoPrima.help_text}}</p></div>
                                     </div>
-                                    
+                                    <div class="form-group">
+                                        <p class="label-form">{{form2.observaciones.label}}</p>
+                                        {{form2.observaciones|add_class:'form-control'|attr:'rows:3' |attr:'colm:40'|attr:'autocomplete:off'|attr:'placeholder:'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.observaciones.help_text}}</p></div>
+                                    </div>
                                 </div>
                             </div>
                         </fieldset>
@@ -97,6 +102,22 @@
             text: errors,
           })
     {% endif %}
+    {%if messages%}
+        var msg = '';
+        var msg1 = '';
+        {%for message in messages%}
+        {% if 'error' in message.tags %}
+            msg += '{{ message }}\n';
+          {% endif %}
+        {% endfor %}
+        if(msg != ''){
+        Swal.fire({
+            icon: 'error',
+            text: msg,
+            //footer: '<a href="">Why do I have this issue?</a>'
+          })
+        }
+    {% endif %} 
 
     $('#id_tipoPago').on('change',function(){
         var selectValor = $(this).val();
