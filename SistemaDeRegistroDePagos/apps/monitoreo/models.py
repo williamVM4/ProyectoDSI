@@ -7,7 +7,7 @@ class condicionesPago(models.Model):
     montoFinanciamiento = models.DecimalField(max_digits=8, decimal_places=2)
     plazo = models.IntegerField()
     tasaInteres = models.DecimalField(max_digits=8, decimal_places=2)
-    cuotaKi = models.DecimalField(max_digits=8, decimal_places=2)
+    cuotaKi = models.DecimalField(max_digits=8, decimal_places=2, blank=True)
     comisionCuota = models.DecimalField(max_digits=8, decimal_places=2)
     mantenimientoCuota = models.DecimalField(max_digits=8, decimal_places=2)
     multaMantenimiento = models.DecimalField(max_digits=8, decimal_places=2)

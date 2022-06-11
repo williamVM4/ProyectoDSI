@@ -12,6 +12,7 @@ class PropietarioForm(ModelForm):
             super(PropietarioForm, self).__init__(*args, **kwargs)
             self.fields['dui'].widget.attrs['pattern'] = "[0-9]{8}[ -][0-9]{1}"
             self.fields['telefonoTrabajo'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
+            self.fields['nombrePropietario'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
             self.fields['telefonoCasa'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
             self.fields['telefonoCelular'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
             self.fields['correoElectronico'].widget.attrs['pattern'] = "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 4}$"
@@ -143,14 +144,14 @@ class condicionPagoForm(ModelForm):
         }
         help_texts = {
             'fechaEscrituracion': _('Campo Obligatorio'),
-            'montoFinanciamiento': _('Campo Obligatorio. Se muestra la sumatoria del monto de todas las primas'),
-            'plazo': _('Campo Obligatorio'),
-            'tasaInteres': _('Campo Obligatorio'),
-            'cuotaKi': _('Campo Obligatorio'),
-            'comisionCuota': _('Campo Obligatorio'),
-            'mantenimientoCuota': _('Campo Obligatorio'),
-            'multaMantenimiento': _('Campo Obligatorio'),
-            'multaFinanciamiento': _('multaFinanciamiento'),
+            'montoFinanciamiento': _('Campo Obligatorio. Solo números'),
+            'plazo': _('Campo Obligatorio. Solo números enteros'),
+            'tasaInteres': _('Campo Obligatorio. En porcentaje sin el simbolo %'),
+            'cuotaKi': _('Campo Obligatorio. Solo números'),
+            'comisionCuota': _('Campo Obligatorio. Solo números'),
+            'mantenimientoCuota': _('Campo Obligatorio. Solo números'),
+            'multaMantenimiento': _('Campo Obligatorio. Solo números'),
+            'multaFinanciamiento': _('multaFinanciamiento. Solo números'),
         }
 
         widgets = { 'fechaEscrituracion': DateInput(), }

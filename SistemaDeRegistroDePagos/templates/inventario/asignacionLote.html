@@ -48,8 +48,9 @@
                                   <thead>
                                       <tr>
                                           <th>Propietarios</th>
-                                          <th>Fecha</th>
-                                          <th>Monto</th>
+                                          <th>Fecha de escrituración</th>
+                                          <th>Precio de venta</th>
+                                          <th>Descuento</th>
                                           <th>Estado</th>
                                           <th>Detalle de la venta del lote</th>
                                       </tr>
@@ -62,20 +63,29 @@
                                                 {% for asignacion in asignaciones %}
                                                     {%if asignacion.detalleVenta.id == detalleVenta.id%}
                                                     {{asignacion.propietario.nombrePropietario}} <br>
-                                                {%endif%}  
+                                                    {%endif%}  
                                                 {% endfor %}
                                                 {% else %}
                                                     No posee propietarios
                                                 {% endif %}                                       
-                                        </td>
-                                          <td></td>
-                                          <td>{{detalleVenta.precioVenta}} - {{detalleVenta.descuento}}</td>
-                                          {%if detalleVenta.estado == True%}
-                                          <td>Activo</td>
-                                          {%else%}
-                                          <td>Inactivo</td>
-                                          {%endif%}
-                                          <td><a class="btn btn-default btn-block" href="{% url 'detalleLote' idp=idp pk=detalleVenta.id %}"> Ver detalle </a></td>
+                                            </td>
+                                            <td>
+                                            {% for condicion in condiciones%}
+                                                {% if condicion.detalleVenta == detalleVenta %}
+                                                    {{condicion.fechaEscrituracion}}
+                                                {% else%}
+                                                    No ha ingresado la fecha de escrituración
+                                                {% endif %}
+                                            {% endfor %}
+                                            </td>
+                                            <td>{{detalleVenta.precioVenta}}</td>
+                                            <td>{{detalleVenta.descuento}}</td>
+                                            {%if detalleVenta.estado == True%}
+                                            <td>Activo</td>
+                                            {%else%}
+                                            <td>Inactivo</td>
+                                            {%endif%}
+                                            <td><a class="btn btn-default btn-block" href="{% url 'detalleLote' idp=idp pk=detalleVenta.id %}"> Ver detalle </a></td>
                                       </tr>
                                       {%endfor%}
                                   </tbody>

@@ -24,37 +24,37 @@
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.montoFinanciamiento.label}}</p>
-                  {{form.montoFinanciamiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese monto de financiamiento'}}
+                  {{form.montoFinanciamiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese monto de financiamiento'|attr:'min:0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.montoFinanciamiento.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.plazo.label}}</p>
-                  {{form.plazo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el plazo de financiamiento'}}
+                  {{form.plazo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el plazo de financiamiento'|attr:'min:0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.plazo.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.tasaInteres.label}}</p>
-                  {{form.tasaInteres|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la tasa de interes en %'}}
+                  {{form.tasaInteres|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la tasa de interes en %'|attr:'min:0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.tasaInteres.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.cuotaKi.label}}</p>
-                  {{form.cuotaKi|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la cuotaKi'}}
+                  {{form.cuotaKi|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la cuotaKi'|attr:'min:0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.cuotaKi.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.comisionCuota.label}}</p>
-                  {{form.comisionCuota|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la cuota por administración y supervisión del proyecto'}}
+                  {{form.comisionCuota|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la cuota por administración y supervisión del proyecto'|attr:'min:0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.comisionCuota.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.mantenimientoCuota.label}}</p>
-                  {{form.mantenimientoCuota|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el valor de la cuota de mantenimiento'}}
+                  {{form.mantenimientoCuota|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el valor de la cuota de mantenimiento'|attr:'min:0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.mantenimientoCuota.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.multaMantenimiento.label}}</p>
-                  {{form.multaMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese multa por mantenimiento'}}
+                  {{form.multaMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese multa por mantenimiento'|attr:'min:0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.multaMantenimiento.help_text}}</p></div>
                 </div>
                 <div class="form-group">
@@ -104,9 +104,37 @@
     if($('#id_fechaEscrituracion').val() > now) {
         Swal.fire({
             icon: 'error',
-            text: 'La fecha de pago escrituración ser mayor a la actual',
+            text: 'La fecha de pago escrituración no puede ser mayor a la actual',
           })
         return false;
+    }
+  });
+
+  $('#id_plazo').keyup(function(event) {
+    if($('#id_tasaInteres').val() > 0) {
+    let monto = $('#id_montoFinanciamiento').val();
+    let plazo = $('#id_plazo').val();
+    let tasa = ($('#id_tasaInteres').val())/100;
+    let tasau = tasa/12;
+    //(J7)*((K9)*(POTENCIA((1+K9);J8)/(POTENCIA((1+K9);J8)-1)))
+    let cuotaKi = monto*((tasau *(Math.pow((1+tasau),plazo)))/(Math.pow((1+tasau),plazo)-1));
+    cuotaKi = cuotaKi.toFixed(2);
+    //cuota = (monto)*((tasa + Math.pow(1 + tasa, plazo))/(Math.pow(1 + tasa, plazo) - 1));
+    $('#id_cuotaKi').val(cuotaKi);
+    }
+  });
+
+  $('#id_tasaInteres').keyup(function(event) {
+    if($('#id_plazo').val() > 0) {
+    let monto = $('#id_montoFinanciamiento').val();
+    let plazo = $('#id_plazo').val();
+    let tasa = ($('#id_tasaInteres').val())/100;
+    let tasau = tasa/12;
+    //(J7)*((K9)*(POTENCIA((1+K9);J8)/(POTENCIA((1+K9);J8)-1)))
+    let cuotaKi = monto*((tasau *(Math.pow((1+tasau),plazo)))/(Math.pow((1+tasau),plazo)-1));
+    cuotaKi = cuotaKi.toFixed(2);
+    //cuota = (monto)*((tasa + Math.pow(1 + tasa, plazo))/(Math.pow(1 + tasa, plazo) - 1));
+    $('#id_cuotaKi').val(cuotaKi);
     }
   });
 
