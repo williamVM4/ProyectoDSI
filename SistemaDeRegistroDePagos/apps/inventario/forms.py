@@ -2,7 +2,10 @@ from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
 from .models import propietario, detalleVenta, lote, proyectoTuristico
 from apps.monitoreo.models import condicionesPago
-from django.contrib.admin.widgets import FilteredSelectMultiple
+from django import forms
+
+class DateInput(forms.DateInput): 
+    input_type = 'date'
 
 class PropietarioForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -136,7 +139,7 @@ class condicionPagoForm(ModelForm):
         }
         help_texts = {
             'fechaEscrituracion': _('Campo Obligatorio'),
-            'montoFinanciamiento': _('Campo Obligatorio'),
+            'montoFinanciamiento': _('Campo Obligatorio. Se muestra la sumatoria del monto de todas las primas'),
             'plazo': _('Campo Obligatorio'),
             'tasaInteres': _('Campo Obligatorio'),
             'cuotaKi': _('Campo Obligatorio'),
@@ -145,3 +148,5 @@ class condicionPagoForm(ModelForm):
             'multaMantenimiento': _('Campo Obligatorio'),
             'multaFinanciamiento': _('multaFinanciamiento'),
         }
+
+        widgets = { 'fechaEscrituracion': DateInput(), }
