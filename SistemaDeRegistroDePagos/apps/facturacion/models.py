@@ -20,7 +20,7 @@ class pago(models.Model):
     referencia = models.CharField(max_length=100, blank=True, default="")
     cuentaBancaria = models.ForeignKey('inventario.cuentaBancaria',blank=True, null = True, on_delete=models.CASCADE)
     fechaPago = models.DateField()
-    observaciones = models.TextField(max_length=200,default="")
+    observaciones = models.TextField(max_length=200,blank = True, default="")
     
 # Create your models here.
 class prima(models.Model):

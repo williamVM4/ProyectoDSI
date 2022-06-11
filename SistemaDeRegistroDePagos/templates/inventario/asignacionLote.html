@@ -58,12 +58,15 @@
                                       {% for detalleVenta in detalles %}
                                       <tr>
                                             <td>
-                                            {% for asignacion in asignaciones %}
-                                          {%if asignacion.detalleVenta.id == detalleVenta.id%}
-                                          {{asignacion.propietario.nombrePropietario}} <br>
-                                          {%endif%}  
-                                          {% endfor %}
-                                          No posee propietarios
+                                                {% if asignaciones%}
+                                                {% for asignacion in asignaciones %}
+                                                    {%if asignacion.detalleVenta.id == detalleVenta.id%}
+                                                    {{asignacion.propietario.nombrePropietario}} <br>
+                                                {%endif%}  
+                                                {% endfor %}
+                                                {% else %}
+                                                    No posee propietarios
+                                                {% endif %}                                       
                                         </td>
                                           <td></td>
                                           <td>{{detalleVenta.precioVenta}} - {{detalleVenta.descuento}}</td>

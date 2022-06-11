@@ -87,7 +87,17 @@ class agregarPrima(GroupRequiredMixin,CreateView):
         prima = form.save(commit=False)
         pago = self.second_form_class(self.request.POST).save(commit=False)
         try:
-            detalle = detalleVenta.objects.get(lote = lote.data['matricula'], estado = True)
+            lotef = self.third_form_class(self.request.POST).data['matricula']
+            detalle = detalleVenta.objects.get(id = lotef)
+            try:
+                asig = asignacionLote.objects.get(detalleVenta = detalle)
+                est = estadoCuenta.objects.get(detalleVenta = detalle)
+                if est:
+                    messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' tiene un estado de cuenta generado. Ya no puede agregar mas primas')
+                    return self.render_to_response(self.get_context_data(form=form))   
+            except Exception:
+                messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene propietarios')
+                return self.render_to_response(self.get_context_data(form=form))     
             pago.prima = prima
             prima.detalleVenta = detalle
             user = get_current_user()
@@ -135,9 +145,18 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
 
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
-        lotef = self.third_form_class(self.request.POST)
-        detalle = detalleVenta.objects.get(lote = lotef.data['matricula'], estado = True)
-        estaC = estadoCuenta.objects.get(detalleVenta = detalle)
+        lotef = self.third_form_class(self.request.POST).data['matricula']
+        detalle = detalleVenta.objects.get(id = lotef)
+        try:
+                asig = asignacionLote.objects.get(detalleVenta = detalle)
+                try:
+                    estaC = estadoCuenta.objects.get(detalleVenta = detalle)
+                except Exception:
+                    messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene un estado de cuenta generado. Genere un estado de cuenta para poder agregar un pago')
+                    return self.render_to_response(self.get_context_data(form=form))   
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene propietarios')
+            return self.render_to_response(self.get_context_data(form=form)) 
         pagoM = form.save(commit=False)
         pago = self.second_form_class(self.request.POST).save(commit=False)
         
@@ -271,6 +290,7 @@ class Recibo(TemplateView):
             ws['F8'] = 0
             ws['F9'] = 0
             ws.merge_cells('B2:F2')
+            ws.merge_cells('B15:F15')
             ws['F5'].number_format = '0.00'
             ws['F7'].number_format = '0.00'
             ws['F8'].number_format = '0.00'
@@ -295,6 +315,7 @@ class Recibo(TemplateView):
             ws['F11'] = "=SUM(F5:F10)"
             ws['B19'] = usuario.first_name
             ws['B1'] = '=F11'
+            ws['B15'] = pagoRecibo.fechaPago
             if pagoRecibo.tipoPago == 1:
                     ws['E18'] = "Pago realizado en efectivo"
             else:
@@ -360,6 +381,7 @@ class Recibo(TemplateView):
                 ws['H3'] = "Nº "+pagoMRecibo.numeroReciboMantenimiento
                 ws.merge_cells('B4:F4')
                 ws.merge_cells('B16:F16')
+                ws.merge_cells('B12:E12')
                 ws['F7'] = pagoRecibo.monto
                 ws['F13'] = '=SUM(F7:F12)'
                 ws['B3'] = '=F13'
@@ -368,13 +390,14 @@ class Recibo(TemplateView):
                 ws['E19'].font = Font(size=10)
                 ws['B16'] = pagoRecibo.fechaPago
                 ws['F12'] = pagoMRecibo.montoOtros
-                ws['G12'] = pagoMRecibo.conceptoOtros
+                ws['B12'] = "  "+pagoMRecibo.conceptoOtros
                 ws['B4'].alignment = Alignment(horizontal="center",vertical="center")
                 ws['B4'] = nombre.nombrePropietario
                 ws['D5'].alignment = Alignment(horizontal="center",vertical="center")
                 ws['E5'].alignment = Alignment(horizontal="center",vertical="center")
                 ws['D5'] = lotes.numeroLote
                 ws['E5'] = lotes.poligono
+
                 if pagoRecibo.tipoPago == 1:
                     ws['E18'] = "Pago realizado en efectivo"
                 else:
