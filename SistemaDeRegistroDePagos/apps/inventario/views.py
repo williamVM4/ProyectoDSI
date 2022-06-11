@@ -286,6 +286,11 @@ class proyectoTuristicoView(ListView):
     template_name = 'home.html'
     model = proyectoTuristico
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp
+        return context
 
 class agregarProyectoTuristico(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']

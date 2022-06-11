@@ -5,6 +5,18 @@
 .label-help-form{
     font-size: 11px;
 }
+#sub{
+    margin: 0;
+    font-weight: lighter;
+    color: rgb(119, 116, 116);
+}
+#pol{
+    margin: 0;
+    font-weight: bolder;
+    font-size: 80px;
+    font-display: block;
+}
+
 .multiple{
     height: 17em !important;
     margin-bottom: 3em;
