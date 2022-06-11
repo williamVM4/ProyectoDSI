@@ -4,6 +4,8 @@ from django.views.generic import TemplateView, CreateView, FormView, ListView, D
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from apps.facturacion.models import pago, prima
+from apps.monitoreo.models import estadoCuenta
 from apps.inventario.models import asignacionLote, detalleVenta, lote, proyectoTuristico
 from apps.autenticacion.mixins import *
 from django.contrib import messages
@@ -286,6 +288,11 @@ class proyectoTuristicoView(ListView):
     template_name = 'home.html'
     model = proyectoTuristico
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp
+        return context
 
 class agregarProyectoTuristico(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
@@ -309,3 +316,89 @@ class agregarProyectoTuristico(GroupRequiredMixin,CreateView):
         except Exception:
             messages.error(self.request, 'Ocurrió un error al guardar el proyecto')
         return HttpResponseRedirect(self.get_url_redirect())
+
+# Views de condicion de pago
+class agregarCondicionP(GroupRequiredMixin,CreateView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        try:
+            venta = detalleVenta.objects.get(pk=self.kwargs['idv'], estado = True)
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe y esté activo')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+        try:
+            asignacion = asignacionLote.objects.get(detalleVenta__id=self.kwargs['idv'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el lote no tiene propietarios asociados')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+        try:
+            condicon = condicionesPago.objects.get(detalleVenta__id=self.kwargs['idv'])
+            messages.error(self.request, 'Ocurrió un error, el lote ya tiene condiciones de pago registradas')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+        except Exception: 
+            try:
+                prim = prima.objects.get(detalleVenta__id=self.kwargs['idv'])
+            except Exception:
+                messages.error(self.request, 'Ocurrió un error, el lote debe tener registrada al menos una prima para poder registrar condiciones de pago')
+                return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))    
+        return super().dispatch(request, *args, **kwargs)
+    
+    model = condicionesPago
+    template_name = 'inventario/CondicionesDePago/agregarCondicionPago.html'
+    form_class = condicionPagoForm
+
+    #success_url = reverse_lazy('detalleLote')
+    def get_url_redirect(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        idv = self.kwargs.get('idv', None)         
+        return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': idv})
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idv = self.kwargs.get('idv', None)
+        idp = self.kwargs.get('idp', None) 
+        context['idp'] = idp  
+        context['idv'] = idv  
+        return context
+
+    def get_form(self, form_class = None, **kwargs):
+        form = super().get_form(form_class)
+         # recojo el parametro 
+        idv = self.kwargs.get('idv', None)
+        detalle = detalleVenta.objects.get(pk=idv)
+        pagosprimas = pago.objects.filter(prima__detalleVenta__id = idv)
+        for pag in pagosprimas:
+          suma =+ pag.monto
+        montof = detalle.precioVenta - suma - detalle.descuento
+        form.fields['montoFinanciamiento'].initial = montof
+        #form.fields['montoFinanciamiento'] = forms.DecimalField(max_digits=10, decimal_places=2, label='Monto de financiamiento', initial=50000, widget=forms.TextInput(attrs={'readonly':'readonly'}))
+        form.fields['montoFinanciamiento'].disabled = True # Desabilitamos el campo status
+        #form.fields['status'].choices = [('r', 'Reservado')] # Le damos solo una opcion al campo status
+        return form
+
+    def form_valid(self, form, **kwargs):
+        context=super().get_context_data(**kwargs)
+         # recojo el parametro 
+        idv = self.kwargs.get('idv', None) 
+        condicion = form.save(commit=False)  
+        #poner try
+        try:
+            detalle = detalleVenta.objects.get(pk = idv)
+            print(' = a')
+            condicion.detalleVenta = detalle
+            condicion.save()
+            estado = estadoCuenta(detalleVenta=detalle)
+            estado.save()
+            messages.success(self.request, 'Condicion de pago guardado con exito')
+        except Exception:
+            condicion.delete()
+            messages.error(self.request, 'Ocurrió un error al guardar la condición de pago, la condición de pago no es valida')
+        return HttpResponseRedirect(self.get_url_redirect())
+

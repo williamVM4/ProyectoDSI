@@ -10,7 +10,7 @@
     <div class="col-md-6 col-md-offset-3">
       <div class="form-panel panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Agregar Cuenta Bancaria</h3>
+          <h3 class="panel-title">Agregar Condición de Pago</h3>
         </div>
         <div class="panel-body">
           <form role="form" action="." method="post">
@@ -18,11 +18,50 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
-                  <p class="label-form">{{form.numeroCuentaBancaria.label}}</p>
-                  {{form.numeroCuentaBancaria|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroCuentaBancaria.help_text}}</p></div>
+                  <p class="label-form">{{form.fechaEscrituracion.label}}</p>
+                  {{form.fechaEscrituracion|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:dd/mm/yyyy'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.fechaEscrituracion.help_text}}</p></div>
                 </div>
-                
+                <div class="form-group">
+                  <p class="label-form">{{form.montoFinanciamiento.label}}</p>
+                  {{form.montoFinanciamiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese monto de financiamiento'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.montoFinanciamiento.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.plazo.label}}</p>
+                  {{form.plazo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el plazo de financiamiento'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.plazo.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.tasaInteres.label}}</p>
+                  {{form.tasaInteres|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la tasa de interes en %'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.tasaInteres.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.cuotaKi.label}}</p>
+                  {{form.cuotaKi|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la cuotaKi'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.cuotaKi.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.comisionCuota.label}}</p>
+                  {{form.comisionCuota|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la cuota por administración y supervisión del proyecto'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.comisionCuota.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.mantenimientoCuota.label}}</p>
+                  {{form.mantenimientoCuota|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el valor de la cuota de mantenimiento'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.mantenimientoCuota.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.multaMantenimiento.label}}</p>
+                  {{form.multaMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese multa por mantenimiento'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.multaMantenimiento.help_text}}</p></div>
+                </div>
+                <div class="form-group">
+                  <p class="label-form">{{form.multaFinanciamiento.label}}</p>
+                  {{form.multaFinanciamiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese multa por financiamiento'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.multaFinanciamiento.help_text}}</p></div>
+                </div>
               </div>
             </div>
             <div class="row">
@@ -31,7 +70,7 @@
                 <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
               </div>
               <div class="col-md-3">
-                <a class="btn btn-danger btn-block" href="{% url 'cuentas' idp=idp %}"> Cancelar </a>
+                <a class="btn btn-danger btn-block" href="{% url 'detalleLote' idp=idp pk=idv %}"> Cancelar </a>
               </div>
             </div>
           </form>
@@ -59,25 +98,17 @@
         text: errors,
       })
   {% endif %}
-</script>
-<script type= application/javascript>
-  Inputmask("9{8}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_matriculaLote');
-  Inputmask("9{3}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_numeroLote');
+  $('form').submit(function(event) { 
+    let date = new Date();
+    now = date.toISOString().split('T')[0];
+    if($('#id_fechaEscrituracion').val() > now) {
+        Swal.fire({
+            icon: 'error',
+            text: 'La fecha de pago escrituración ser mayor a la actual',
+          })
+        return false;
+    }
+  });
 
-  Inputmask("9{5}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_areaMCuadrado');
-
-  Inputmask("9{5}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_areaVCuadrada');
 </script>
   {% endblock %}

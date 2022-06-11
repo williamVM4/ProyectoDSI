@@ -35,7 +35,8 @@
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">{{form2.monto.label}}</p>
-                                        {{form2.monto|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto del pago'|attr:'min:0'}}
+                                        <div class="input-group"><span class="input-group-addon">$</span>
+                                        {{form2.monto|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto del pago'|attr:'min:0'}}</div>
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.monto.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
@@ -60,7 +61,8 @@
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">{{form.montoOtros.label}}</p>
-                                        {{form.montoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por otros pagos'|attr:'min:0'}}
+                                        <div class="input-group"><span class="input-group-addon">$</span>
+                                        {{form.montoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por otros pagos'|attr:'min:0'}}</div>
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.montoOtros.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
@@ -105,6 +107,22 @@
             text: errors,
           })
     {% endif %}
+    {%if messages%}
+        var msg = '';
+        var msg1 = '';
+        {%for message in messages%}
+        {% if 'error' in message.tags %}
+            msg += '{{ message }}\n';
+          {% endif %}
+        {% endfor %}
+        if(msg != ''){
+        Swal.fire({
+            icon: 'error',
+            text: msg,
+            //footer: '<a href="">Why do I have this issue?</a>'
+          })
+        }
+    {% endif %} 
 
     $('#id_tipoPago').on('change',function(){
         var selectValor = $(this).val();
@@ -147,10 +165,5 @@
         }
     });
 
-    
-    
-        
-    //usuario = document.getElementById('id_numeroReciboMantenimiento');
-    //usuario.classList.add('has-error');
   </script>
 {% endblock %}

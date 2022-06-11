@@ -8,18 +8,20 @@
 <div id="wrapper">
     {% include 'navbar.html' %}
     <!-- Page Content -->
+    {% if request.user|has_group:"Configurador del sistema" or request.user|has_group:"Administrador del sistema" or request.user|has_group:"Operador del sistema"%}
     <div id="page-wrapper">
         <div class="container-fluid">
-
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Page Title</h1>
+                    <h1 class="page-header">{{proyecto.nombreProyectoTuristico}}</h1>
+                    <h4 id="sub">{{proyecto.empresa}}</label>
                 </div>
             </div>
 
             <!-- ... Aqui poner su contenido... -->
         </div>
     </div>
+    {% endif %}
 </div>
 {% endblock content %}
 

@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
 from .models import *
-from apps.inventario.models import cuentaBancaria, lote
+from apps.inventario.models import cuentaBancaria, detalleVenta, lote
 from django import forms
 
 class DateInput(forms.DateInput): 
@@ -13,27 +13,32 @@ class agregarPrimaForm(ModelForm):
         model = prima
         fields = ('numeroReciboPrima','conceptoPrima',)
         label= {
-            'numeroReciboPrima':('Numero de Recibo de la Prima: '),
-            'conceptoPrima': ('Concepto Prima'),
+            'numeroReciboPrima':_('Numero de Recibo de la Prima: '),
+            'conceptoPrima': _('Concepto Prima'),
         }
         help_texts = {
-            'numeroReciboPrima':('Campo Obligatorio'),
-            'conceptoPrima': ('Campo Obligatorio'),
+            'numeroReciboPrima':_('Campo Obligatorio'),
+            'conceptoPrima': _('Campo Obligatorio'),
         }
 
 
 class pagoForm(ModelForm):
-
+    def __init__(self, *args, **kwargs):
+        id = kwargs.pop('id', None)
+        super(pagoForm, self).__init__(*args, **kwargs)
+        if id:  
+            self.fields['cuentaBancaria'].queryset = cuentaBancaria.objects.filter(proyectoTuristico__id=id)
+                
     class Meta:
         model = pago
         fields = {'monto','tipoPago','referencia','fechaPago','cuentaBancaria','observaciones'}
         label = {
-            'cuentaBancaria':('Cuenta Bancaria'),
-            'monto':('Monto de la prima'),
-            'tipoPago':('Tipo de Pago'),
-            'referencia':('Referencia'),
-            'fechaPago':('Fecha de pago de prima'),
-            'observaciones':('Ingrese observaciones')
+            'cuentaBancaria':_('Cuenta Bancaria'),
+            'monto':_('Monto de la prima'),
+            'tipoPago':_('Tipo de Pago'),
+            'referencia':_('Referencia'),
+            'fechaPago':_('Fecha de pago de prima'),
+            'observaciones':_('Ingrese observaciones')
         }
         help_texts = {
             'cuentaBancaria':('Campo Obligatorio'),
@@ -46,11 +51,6 @@ class pagoForm(ModelForm):
 
         widgets = { 'fechaPago': DateInput(), }
         
-    def __init__(self, *args, **kwargs):
-        id = kwargs.pop('id', None)
-        super(pagoForm, self).__init__(*args, **kwargs)
-        if id:  
-            self.fields['cuentaBancaria'].queryset = cuentaBancaria.objects.filter(proyectoTuristico__id=id)
         
 
 class agregarPagoMantenimientoForm(ModelForm):
@@ -62,14 +62,14 @@ class agregarPagoMantenimientoForm(ModelForm):
         model = pagoMantenimiento
         fields = {'numeroReciboMantenimiento','conceptoOtros','montoOtros'}
         label= {
-            'numeroReciboMantenimiento':('Numero de Recibo'),
-            'conceptoOtros': ('Concepto Otros'),
-            'montoOtros': ('Monto Otros'),
+            'numeroReciboMantenimiento': _('Numero de Recibo'),
+            'conceptoOtros': _('Concepto Otros'),
+            'montoOtros': _('Monto Otros'),
         }
         help_texts = {
-            'numeroReciboMantenimiento':('Campo Obligatorio'),
-            'conceptoOtros': ('Campo Opcional'),
-            'montoOtros': ('Campo Opcional'),
+            'numeroReciboMantenimiento': _('Campo Obligatorio'),
+            'conceptoOtros': _('Campo Opcional'),
+            'montoOtros': _('Campo Opcional'),
         }
         #error_messages={'required':_("First name is required.")}
         
@@ -77,12 +77,12 @@ class agregarPagoMantenimientoForm(ModelForm):
     
 
 class lotePagoForm(forms.Form):
-    matricula = forms.ModelChoiceField(queryset=lote.objects.all(),label='Matricula',help_text = 'Campo Obligatorio')
+    matricula = forms.ModelChoiceField(queryset=detalleVenta.objects.all(),label='Lote',help_text = 'Campo Obligatorio. Se muestran solo los lotes que tiene una venta activa')
     def __init__(self, *args, **kwargs):
         id = kwargs.pop('id', None)
         super().__init__(*args, **kwargs)
         if id:        
-            self.fields['matricula'].queryset = lote.objects.filter(proyectoTuristico__id=id)
+            self.fields['matricula'].queryset = detalleVenta.objects.filter(lote__proyectoTuristico__id=id, estado=True)
 
 class agregarCuentaBancariaForm(ModelForm):
     class Meta:

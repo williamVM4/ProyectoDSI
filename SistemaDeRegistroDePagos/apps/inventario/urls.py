@@ -1,6 +1,7 @@
 from django.urls import path
 from django.urls import re_path
 from apps.inventario.views import *
+from apps.monitoreo.views import *
 
 urlpatterns = [
     path('detallelote/<str:idp>/<str:pk>/',detalleLote.as_view(),name='detalleLote'),
@@ -12,4 +13,5 @@ urlpatterns = [
     path('',proyectoTuristicoView.as_view(),name='home'),
     path('agregarproyecto/',agregarProyectoTuristico.as_view(),name='agregarproyecto'),
     path('agregardetalleventa/<str:idp>/<str:idl>/',agregarDetalleVenta.as_view(),name='agregarDetalleVenta'),
+    path('agregarcondicionpago/<str:idp>/<str:idv>/',agregarCondicionP.as_view(),name='agregarCondicionP'),
 ]

@@ -1,7 +1,11 @@
 from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
 from .models import propietario, detalleVenta, lote, proyectoTuristico
-from django.contrib.admin.widgets import FilteredSelectMultiple
+from apps.monitoreo.models import condicionesPago
+from django import forms
+
+class DateInput(forms.DateInput): 
+    input_type = 'date'
 
 class PropietarioForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -116,3 +120,33 @@ class agregarProyectoForm(ModelForm):
                 'max_length': _("El dato ingresado es demasiado largo"),
             },
         }
+
+class condicionPagoForm(ModelForm):
+
+    class Meta:
+        model=condicionesPago
+        fields=('fechaEscrituracion','montoFinanciamiento','plazo','tasaInteres','cuotaKi','comisionCuota','mantenimientoCuota','multaMantenimiento','multaFinanciamiento')
+        labels = {
+            'fechaEscrituracion': _('Fecha de escrituración:'),
+            'montoFinanciamiento': _('Monto de financiamiento:'),
+            'plazo': _('Plazo:'),
+            'tasaInteres': _('Tasa de interés:'),
+            'cuotaKi': _('Cuota Ki.:'),
+            'comisionCuota': _('Comisión por administración y supervisión:'),
+            'mantenimientoCuota': _('Cuota de mantenimiento:'),
+            'multaMantenimiento': _('Multa por mantenimiento:'),
+            'multaFinanciamiento': _('Multa por financiamiento:'),
+        }
+        help_texts = {
+            'fechaEscrituracion': _('Campo Obligatorio'),
+            'montoFinanciamiento': _('Campo Obligatorio. Se muestra la sumatoria del monto de todas las primas'),
+            'plazo': _('Campo Obligatorio'),
+            'tasaInteres': _('Campo Obligatorio'),
+            'cuotaKi': _('Campo Obligatorio'),
+            'comisionCuota': _('Campo Obligatorio'),
+            'mantenimientoCuota': _('Campo Obligatorio'),
+            'multaMantenimiento': _('Campo Obligatorio'),
+            'multaFinanciamiento': _('multaFinanciamiento'),
+        }
+
+        widgets = { 'fechaEscrituracion': DateInput(), }
