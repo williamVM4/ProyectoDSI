@@ -6,10 +6,10 @@ from django.views.generic import TemplateView, CreateView, FormView, ListView, D
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from apps.facturacion.models import pago, prima
-from apps.monitoreo.models import estadoCuenta
-from apps.inventario.models import asignacionLote, detalleVenta, lote, proyectoTuristico
-from apps.autenticacion.mixins import *
+from SistemaDeRegistroDePagos.apps.facturacion.models import pago, prima
+from SistemaDeRegistroDePagos.apps.monitoreo.models import estadoCuenta
+from SistemaDeRegistroDePagos.apps.inventario.models import asignacionLote, detalleVenta, lote, proyectoTuristico
+from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
 

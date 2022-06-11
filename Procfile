@@ -1,1 +1,1 @@
-web: gunicorn SistemaDeRegistroPagos.wsgi
+web: gunicorn SistemaDeRegistroDePagos.config.wsgi

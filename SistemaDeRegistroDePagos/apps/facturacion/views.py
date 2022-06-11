@@ -9,12 +9,12 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView
-from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
-from apps.inventario.models import cuentaBancaria,proyectoTuristico
-from apps.autenticacion.mixins import *
+from SistemaDeRegistroDePagos.apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
+from SistemaDeRegistroDePagos.apps.inventario.models import cuentaBancaria,proyectoTuristico
+from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
 from .forms import *
 from .models import *
-from apps.inventario.models import *
+from SistemaDeRegistroDePagos.apps.inventario.models import *
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from crum import get_current_user
@@ -25,7 +25,7 @@ from django.contrib.auth.models import User
 
 
 
-from apps.inventario.models import detalleVenta
+from SistemaDeRegistroDePagos.apps.inventario.models import detalleVenta
 # Create your views here.
 
 class caja(GroupRequiredMixin,TemplateView):

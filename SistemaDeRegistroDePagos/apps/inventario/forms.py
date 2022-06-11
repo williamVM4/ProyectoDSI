@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
 from .models import propietario, detalleVenta, lote, proyectoTuristico
-from apps.monitoreo.models import condicionesPago
+from SistemaDeRegistroDePagos.apps.monitoreo.models import condicionesPago
 from django import forms
 
 class DateInput(forms.DateInput): 

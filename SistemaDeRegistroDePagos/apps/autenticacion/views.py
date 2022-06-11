@@ -5,7 +5,7 @@ from django.contrib.auth.views import LogoutView,LoginView
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from apps.autenticacion.mixins import *
+from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
 
 # Create your views here.
 

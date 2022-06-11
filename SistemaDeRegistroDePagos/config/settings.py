@@ -41,11 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     #apps
-    'apps.autenticacion',
-    'apps.home',
-    'apps.facturacion',
-    'apps.inventario',
-    'apps.monitoreo',
+    'SistemaDeRegistroDePagos.apps.autenticacion',
+    'SistemaDeRegistroDePagos.apps.home',
+    'SistemaDeRegistroDePagos.apps.facturacion',
+    'SistemaDeRegistroDePagos.apps.inventario',
+    'SistemaDeRegistroDePagos.apps.monitoreo',
 ]
 
 MIDDLEWARE = [
@@ -60,7 +60,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'SistemaDeRegistroDePagos.config.urls'
 
 TEMPLATES = [
     {
@@ -78,7 +78,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = 'SistemaDeRegistroDePagos.config.wsgi.application'
 
 
 # Database
