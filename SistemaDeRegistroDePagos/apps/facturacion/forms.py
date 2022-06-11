@@ -85,21 +85,25 @@ class lotePagoForm(forms.Form):
             self.fields['matricula'].queryset = detalleVenta.objects.filter(lote__proyectoTuristico__id=id, estado=True)
 
 class agregarCuentaBancariaForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(agregarCuentaBancariaForm, self).__init__(*args, **kwargs)
+            self.fields['numeroCuentaBancaria'].widget.attrs['pattern'] = "[0-9]{6,20}"
+            self.fields['nombreCuentaBancaria'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+[\s]*)+$"
+            self.fields['tipoCuenta'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
+            self.fields['banco'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
     class Meta:
         model = cuentaBancaria
         fields = ('numeroCuentaBancaria','nombreCuentaBancaria','tipoCuenta','banco')
         label= {
-            'numeroCuentaBancaria':('Número de cuenta: '),
-            'nombreCuentaBancaria': ('Nombre de cuenta: '),
-            'tipoCuenta':('Tipo de cuenta:  '),
-            'banco': ('Banco: '),
+            'numeroCuentaBancaria': _('Numero cuenta bancaria'),
+            'nombreCuentaBancaria': _('Nombre de cuenta'),
+            'tipoCuenta': _('Tipo de cuenta'),
+            'banco': _('Banco'),
         }
         help_texts = {
-            'numeroCuentaBancaria':('Campo Obligatorio'),
-            'nombreCuentaBancaria': ('Campo Obligatorio'),
-            'tipoCuenta':('Campo Obligatorio'),
-            'banco': ('Campo Obligatorio'),
+            'numeroCuentaBancaria': _('Campo Obligatorio'),
+            'nombreCuentaBancaria': _('Campo Obligatorio'),
+            'tipoCuenta': _('Campo Obligatorio'),
+            'banco': _('Campo Obligatorio'),
         }
-
-
 

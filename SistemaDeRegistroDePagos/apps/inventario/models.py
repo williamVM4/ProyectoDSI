@@ -8,7 +8,7 @@ class proyectoTuristico(models.Model):
         return self.nombreProyectoTuristico
 
 class cuentaBancaria(models.Model):
-    numeroCuentaBancaria = models.CharField(max_length=30, primary_key=True)
+    numeroCuentaBancaria = models.CharField(max_length=20, primary_key=True)
     proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE)
     nombreCuentaBancaria = models.CharField(max_length=50)
     tipoCuenta = models.CharField(max_length=30)

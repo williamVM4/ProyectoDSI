@@ -47,9 +47,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <div class="pull-right">
-                                <a type="button" class="btn btn-primary btn-block" href="">
-                                    Agregar
-                                </a>
+                                <a type="button" class="btn btn-primary btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=id %}">Agregar detalle de venta</a>
                             </div>
                             <h4> Detalle de Venta</h4>
                         </div>
@@ -166,8 +164,8 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <div class="pull-right">
-                                <a type="button" class="btn btn-primary btn-block" href="">
-                                    Agregar
+                                <a type="button" class="btn btn-primary btn-block" href="{% url 'agregarCondicionP' idp=idp idv=id%}">
+                                    Agregar condiciones de pago
                                 </a>
                             </div>
                             <h4> Condiciones de Pago</h4>

@@ -101,6 +101,10 @@ class LoteForm(ModelForm):
         }
 
 class agregarProyectoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(agregarProyectoForm, self).__init__(*args, **kwargs)
+            self.fields['nombreProyectoTuristico'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
+            self.fields['empresa'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
     class Meta:
         model= proyectoTuristico
         fields=('nombreProyectoTuristico','empresa')
