@@ -24,12 +24,12 @@
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form3.matricula.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">{{form.numeroReciboMantenimiento.label}} {{ form.numeroReciboMantenimiento.errors }}</p>
+                                        <p class="label-form">Numero de recibo de mantenimiento</p>
                                         {{form.numeroReciboMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo del pago en formato 00000000'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboMantenimiento.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">{{form2.fechaPago.label}}</p>
+                                        <p class="label-form">Fecha de pago</p>
                                         {{form2.fechaPago|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la fecha de pago'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.fechaPago.help_text}}</p></div>
                                     </div>
@@ -40,33 +40,33 @@
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.monto.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">{{form2.tipoPago.label}}</p>
+                                        <p class="label-form">Tipo de pago</p>
                                         {{form2.tipoPago|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.tipoPago.help_text}}</p></div>
                                     </div>
                                     <div id="referencia" class="form-group oculto">
-                                        <p class="label-form">{{form2.referencia.label}}</p>
+                                        <p class="label-form">referencia</p>
                                         {{form2.referencia|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la referencia'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.referencia.help_text}}</p></div>
                                     </div>
                                     <div id="cuentaBancaria" class="form-group oculto">
-                                        <p class="label-form">{{form2.cuentaBancaria.label}}</p>
+                                        <p class="label-form">Cuenta bancaria</p>
                                         {{form2.cuentaBancaria|add_class:' form-control'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.cuentaBancaria.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">{{form.conceptoOtros.label}}</p>
+                                        <p class="label-form">Concepto por otros</p>
                                         {{form.conceptoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el concepto por otros pagos'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.conceptoOtros.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">{{form.montoOtros.label}}</p>
+                                        <p class="label-form">Monto por otros</p>
                                         <div class="input-group"><span class="input-group-addon">$</span>
                                         {{form.montoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por otros pagos'|attr:'min:0'}}</div>
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.montoOtros.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">{{form2.observaciones.label}}</p>
+                                        <p class="label-form">Observaciones</p>
                                         {{form2.observaciones|add_class:'form-control'|attr:'rows:3' |attr:'colm:40'|attr:'autocomplete:off'|attr:'placeholder:'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.observaciones.help_text}}</p></div>
                                     </div>
