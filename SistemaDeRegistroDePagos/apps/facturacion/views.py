@@ -174,7 +174,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
             pagoM.usuarioCreacion = user
         pagoM.save()
         pago.pagoMantenimiento = pagoM
-        if pago.tipoPago is 1:
+        if pago.tipoPago == 1:
             pago.referencia = ''
             pago.cuentaBancaria = None
         pago.save()
