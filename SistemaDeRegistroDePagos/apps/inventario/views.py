@@ -1,3 +1,5 @@
+import decimal
+import math
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, FormView, ListView, DetailView
@@ -86,7 +88,8 @@ class asignacionesLote(GroupRequiredMixin,ListView):
         context['idp'] = idp
         context['id'] = id
         context['detalles'] = detalleVenta.objects.filter(lote__matriculaLote=id)
-        context['asignaciones'] = asignacionLote.objects.filter()   
+        context['asignaciones'] = asignacionLote.objects.filter()
+        context['condiciones'] = condicionesPago.objects.filter(detalleVenta__lote__matriculaLote = id)
         return context
 
 # Views de lote
@@ -380,7 +383,7 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
         for pag in pagosprimas:
           suma =+ pag.monto
         montof = detalle.precioVenta - suma - detalle.descuento
-        form.fields['montoFinanciamiento'].initial = 29102.30
+        form.fields['montoFinanciamiento'].initial = montof
         #form.fields['montoFinanciamiento'] = forms.DecimalField(max_digits=10, decimal_places=2, label='Monto de financiamiento', initial=50000, widget=forms.TextInput(attrs={'readonly':'readonly'}))
         form.fields['montoFinanciamiento'].disabled = True 
         form.fields['cuotaKi'].disabled = True 
@@ -394,6 +397,9 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
         condicion = form.save(commit=False)  
         #poner try
         try:
+            tasau = (condicion.tasaInteres / 100) /12
+            condicion.cuotaKi = condicion.montoFinanciamiento*((tasau *decimal.Decimal((math.pow((1+tasau),condicion.plazo))))/decimal.Decimal((math.pow((1+tasau),condicion.plazo))-1));
+            condicion.cuotaKi = round(condicion.cuotaKi, 2)
             detalle = detalleVenta.objects.get(pk = idv)
             print(' = a')
             condicion.detalleVenta = detalle
@@ -402,7 +408,10 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
             estado.save()
             messages.success(self.request, 'Condicion de pago guardado con exito')
         except Exception:
-            condicion.delete()
-            messages.error(self.request, 'Ocurrió un error al guardar la condición de pago, la condición de pago no es valida')
+            try:
+                condicion.delete()
+            except Exception:
+                pass
+        messages.error(self.request, 'Ocurrió un error al guardar la condición de pago, la condición de pago no es valida')
         return HttpResponseRedirect(self.get_url_redirect())
 
