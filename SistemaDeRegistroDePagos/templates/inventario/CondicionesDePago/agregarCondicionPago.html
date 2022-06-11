@@ -110,5 +110,18 @@
     }
   });
 
+  $('#id_plazo').change(function(event) {
+    if($('#id_tasaInteres').val() > 0) {
+    let monto = $('#id_montoFinanciamiento').val();
+    let plazo = $('#id_plazo').val();
+    let tasa = $('#id_tasaInteres').val();
+    let tasau = tasa/12;
+    //(J7)*((K9)*(POTENCIA((1+K9);J8)/(POTENCIA((1+K9);J8)-1)))
+    let cuotaKi = (monto*(Math.pow((1+tasau),plazo)))/(Math.pow((1+tasau),plazo)-1);
+    //cuota = (monto)*((tasa + Math.pow(1 + tasa, plazo))/(Math.pow(1 + tasa, plazo) - 1));
+    $('#id_cuotaKi').val(cuotaKi);
+    }
+  });
+
 </script>
   {% endblock %}

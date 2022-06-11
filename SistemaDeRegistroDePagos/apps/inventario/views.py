@@ -380,9 +380,10 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
         for pag in pagosprimas:
           suma =+ pag.monto
         montof = detalle.precioVenta - suma - detalle.descuento
-        form.fields['montoFinanciamiento'].initial = montof
+        form.fields['montoFinanciamiento'].initial = 29102.30
         #form.fields['montoFinanciamiento'] = forms.DecimalField(max_digits=10, decimal_places=2, label='Monto de financiamiento', initial=50000, widget=forms.TextInput(attrs={'readonly':'readonly'}))
-        form.fields['montoFinanciamiento'].disabled = True # Desabilitamos el campo status
+        form.fields['montoFinanciamiento'].disabled = True 
+        form.fields['cuotaKi'].disabled = True 
         #form.fields['status'].choices = [('r', 'Reservado')] # Le damos solo una opcion al campo status
         return form
 

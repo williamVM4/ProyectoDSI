@@ -144,14 +144,14 @@ class condicionPagoForm(ModelForm):
         }
         help_texts = {
             'fechaEscrituracion': _('Campo Obligatorio'),
-            'montoFinanciamiento': _('Campo Obligatorio. Se muestra la sumatoria del monto de todas las primas'),
-            'plazo': _('Campo Obligatorio'),
-            'tasaInteres': _('Campo Obligatorio'),
-            'cuotaKi': _('Campo Obligatorio'),
-            'comisionCuota': _('Campo Obligatorio'),
-            'mantenimientoCuota': _('Campo Obligatorio'),
-            'multaMantenimiento': _('Campo Obligatorio'),
-            'multaFinanciamiento': _('multaFinanciamiento'),
+            'montoFinanciamiento': _('Campo Obligatorio. Solo números'),
+            'plazo': _('Campo Obligatorio. Solo números enteros'),
+            'tasaInteres': _('Campo Obligatorio. En porcentaje sin el simbolo %'),
+            'cuotaKi': _('Campo Obligatorio. Solo números'),
+            'comisionCuota': _('Campo Obligatorio. Solo números'),
+            'mantenimientoCuota': _('Campo Obligatorio. Solo números'),
+            'multaMantenimiento': _('Campo Obligatorio. Solo números'),
+            'multaFinanciamiento': _('multaFinanciamiento. Solo números'),
         }
 
         widgets = { 'fechaEscrituracion': DateInput(), }
