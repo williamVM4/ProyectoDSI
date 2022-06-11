@@ -53,8 +53,8 @@ class PropietarioForm(ModelForm):
 class DetalleVentaForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(DetalleVentaForm, self).__init__(*args, **kwargs)
-            self.fields['precioVenta'].widget.attrs['pattern'] = "[0-9]{3}"
-            self.fields['descuento'].widget.attrs['pattern'] = "[0-9]{3}"
+            self.fields['precioVenta'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
+            self.fields['descuento'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
             self.fields['estado'].widget.attrs['pattern'] = "[A-Z]{5}"
     class Meta:
         model=detalleVenta
@@ -79,11 +79,11 @@ class detalleVentaPropietarioForm(ModelForm):
 class LoteForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(LoteForm, self).__init__(*args, **kwargs)
-            self.fields['matriculaLote'].widget.attrs['pattern'] = "[0-9]{8}"
-            self.fields['numeroLote'].widget.attrs['pattern'] = "[0-9]{3}"
-            self.fields['poligono'].widget.attrs['pattern'] = "[A-Z]{1}"
-            self.fields['areaMCuadrado'].widget.attrs['pattern'] = "[0-9]{5}"
-            self.fields['areaVCuadrada'].widget.attrs['pattern'] = "[0-9]{5}"
+            self.fields['matriculaLote'].widget.attrs['pattern'] = "^\d{8}"
+            self.fields['numeroLote'].widget.attrs['pattern'] = "^\d{1}(\d+)?"
+            self.fields['poligono'].widget.attrs['pattern'] = "^([A-Z]{1}[a-z]?)"
+            self.fields['areaMCuadrado'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
+            self.fields['areaVCuadrada'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
 
     class Meta:
         model=lote
@@ -104,6 +104,10 @@ class LoteForm(ModelForm):
         }
 
 class agregarProyectoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(agregarProyectoForm, self).__init__(*args, **kwargs)
+            self.fields['nombreProyectoTuristico'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
+            self.fields['empresa'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
     class Meta:
         model= proyectoTuristico
         fields=('nombreProyectoTuristico','empresa')
