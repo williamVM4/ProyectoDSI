@@ -70,9 +70,9 @@ class agregarPrima(GroupRequiredMixin,CreateView):
         context = super(agregarPrima, self).get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None)
         if 'form2' not in context:
-            context['form2'] = self.second_form_class(initial={'id':self.kwargs.get('id',None)})
+            context['form2'] = self.second_form_class(id = idp)
         if 'form3' not in context:
-            context['form3'] = self.third_form_class(initial={'id': self.kwargs.get('id', None)})
+            context['form3'] = self.third_form_class(id = idp)
         context['idp'] = idp
         return context
 
@@ -91,7 +91,7 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             lotef = self.third_form_class(self.request.POST).data['matricula']
             detalle = detalleVenta.objects.get(id = lotef)
             try:
-                asig = asignacionLote.objects.get(detalleVenta = detalle)
+                asig = asignacionLote.objects.filter(detalleVenta = detalle)
                 try:
                     est = estadoCuenta.objects.get(detalleVenta = detalle)
                     messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' tiene un estado de cuenta generado. Ya no puede agregar mas primas')
@@ -113,7 +113,10 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             pago.save()
             messages.success(self.request, 'La prima fue registrada con exito')
         except Exception:
-            prima.delete()
+            try:
+                prima.delete()
+            except Exception:
+                pass
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
         return HttpResponseRedirect(self.get_url_redirect())
 
@@ -154,7 +157,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
         lotef = self.third_form_class(self.request.POST).data['matricula']
         detalle = detalleVenta.objects.get(id = lotef)
         try:
-                asig = asignacionLote.objects.get(detalleVenta = detalle)
+                asig = asignacionLote.objects.filter(detalleVenta = detalle)
                 try:
                     estaC = estadoCuenta.objects.get(detalleVenta = detalle)
                 except Exception:

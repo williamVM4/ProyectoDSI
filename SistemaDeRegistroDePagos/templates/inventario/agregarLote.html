@@ -34,12 +34,12 @@
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.areaMCuadrado.label}}</p>
-                  {{form.areaMCuadrado|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'}}
+                  {{form.areaMCuadrado|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'|attr:'min:0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.areaMCuadrado.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.areaVCuadrada.label}}</p>
-                  {{form.areaVCuadrada|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'}}
+                  {{form.areaVCuadrada|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'|attr:'min:0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.areaVCuadrada.help_text}}</p></div>
                 </div>
               </div>
@@ -87,5 +87,13 @@
     placeholder: "",
     greedy: false
   }).mask('#id_numeroLote');
+
+  $('#id_areaMCuadrado').keyup(function(event) {
+    let metros = $('#id_areaMCuadrado').val();
+    let varas = metros * 1.431;
+    varas = varas.toFixed(2);
+
+    $('#id_areaVCuadrada').val(varas);
+  });
 </script>
   {% endblock %}

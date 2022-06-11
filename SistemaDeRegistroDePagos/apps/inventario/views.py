@@ -115,6 +115,10 @@ class agregarLote(GroupRequiredMixin,CreateView):
         idp = self.kwargs.get('idp', None)
         context['idp'] = idp         
         return context
+    def get_form(self, form_class = None, **kwargs):
+        form = super().get_form(form_class)
+        form.fields['areaVCuadrada'].disabled = True 
+        return form
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
          # recojo el parametro 
@@ -124,6 +128,7 @@ class agregarLote(GroupRequiredMixin,CreateView):
         try:
             lote.proyectoTuristico = proyectoTuristico.objects.get(id=idp)
             lote.identificador = str(lote.poligono) + str(lote.numeroLote)
+            lote.areaVCuadrada = lote.areaMCuadrado * decimal.Decimal(1.431)
             lote.save()
             messages.success(self.request, 'Lote guardado con éxito')
         except Exception:
@@ -170,11 +175,22 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
         detalle = form.save(commit=False)
         #poner try
         try:
+            if (detalle.precioVenta < detalle.descuento):
+                messages.error(self.request, 'El descuento no puede ser mayor al precio de venta')
+                return self.render_to_response(self.get_context_data(form=form))
+            otrosdeta = detalleVenta.objects.filter(lote__matriculaLote=idl)
+            for d in otrosdeta:
+                d.estado = False
+                d.save()
+            detalle.estado = True
             detalle.lote = lote.objects.get(pk=idl)
             detalle.save()
             messages.success(self.request, 'Detalle de venta guardado con éxito')
         except Exception:
-            detalle.delete()
+            try:
+                detalle.delete()
+            except Exception:
+                pass
             messages.error(self.request, 'Ocurrió un error al guardar el detalle de venta, el detalle de venta no es válido')
         return HttpResponseRedirect(self.get_url_redirect())
 
@@ -339,7 +355,7 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe y esté activo')
             return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
         try:
-            asignacion = asignacionLote.objects.get(detalleVenta__id=self.kwargs['idv'])
+            asignacion = asignacionLote.objects.filter(detalleVenta__id=self.kwargs['idv'])
         except Exception:
             messages.error(self.request, 'Ocurrió un error, el lote no tiene propietarios asociados')
             return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))

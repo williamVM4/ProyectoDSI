@@ -20,13 +20,13 @@
                 <div class="form-group">
                   <p class="label-form">{{form.precioVenta.label}}</p>
                   <div class="input-group"><span class="input-group-addon">$</span>
-                    {{form.precioVenta|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'}}</div>
+                    {{form.precioVenta|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'|attr:'min:0'}}</div>
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.precioVenta.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.descuento.label}}</p>
                   <div class="input-group"><span class="input-group-addon">$</span>
-                    {{form.descuento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'}}</div>
+                    {{form.descuento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'|attr:'min:0'}}</div>
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.descuento.help_text}}</p></div>
                 </div>
               </div>
@@ -47,7 +47,9 @@
   </div>
 </div>
 {% endblock content %}
+
 {% block scripts %}
+
 <script type= application/javascript>
   {%if form.errors%}
       var errors = '';
@@ -62,22 +64,23 @@
         alert(errors)
   {% endif %}
 
-$('form').submit(function(event) { 
-        if($('#id_precioVenta').pattern('^\d+(.{1}\d{2})?')){
-            Swal.fire({
-                icon: 'error',
-                text: 'La fecha de pago no puede ser mayor a la actual',
-              })
-            return false;
-        }
-    });
-    function validar() {
-        const input = document.getElementById('id_precioVenta');
-        const input2 = document.getElementById('id_descuento');
-        input.addEventListener('input', e => {
-            const value = parseDouble(e.currentTarget.value);
-            input2.setVaue(value*10);
-    });
-  }
+{%if messages%}
+var msg = '';
+var msg1 = '';
+{%for message in messages%}
+{% if 'error' in message.tags %}
+    msg += '{{ message }}\n';
+  {% endif %}
+{% endfor %}
+if(msg != ''){
+Swal.fire({
+    icon: 'error',
+    text: msg,
+    //footer: '<a href="">Why do I have this issue?</a>'
+  })
+}
+{% endif %} 
 </script>
+
 {% endblock %}
+
