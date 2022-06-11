@@ -170,12 +170,22 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="pull-right">
+                                <a type="button" class="btn btn-default" href="{% url 'estadoCuenta' idp=idp pk=object.id %}">
+                                    Ver
+                                </a>
+                            </div>
+                            <h4> Estado de cuenta</h4>
+                        </div>
+                        <div class="panel-body">
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="pull-right">
-                <a type="button" class="btn btn-default" href="{% url 'estadoCuenta' idp=idp pk=object.id %}">
-                    Completar
-                </a>
-            </div>
+            
         </div>
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
