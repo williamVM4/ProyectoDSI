@@ -25,7 +25,7 @@
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">Numero de recibo de mantenimiento</p>
-                                        {{form.numeroReciboMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo del pago en formato 00000000'}}
+                                        {{form.numeroReciboMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo del pago en formato 00000000'|attr:'min:0'|attr:'max:999999'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboMantenimiento.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
