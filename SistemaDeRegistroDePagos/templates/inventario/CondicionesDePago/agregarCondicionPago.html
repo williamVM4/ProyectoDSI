@@ -98,25 +98,17 @@
         text: errors,
       })
   {% endif %}
-</script>
-<script type= application/javascript>
-  Inputmask("9{8}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_matriculaLote');
-  Inputmask("9{3}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_numeroLote');
+  $('form').submit(function(event) { 
+    let date = new Date();
+    now = date.toISOString().split('T')[0];
+    if($('#id_fechaEscrituracion').val() > now) {
+        Swal.fire({
+            icon: 'error',
+            text: 'La fecha de pago escrituración ser mayor a la actual',
+          })
+        return false;
+    }
+  });
 
-  Inputmask("9{5}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_areaMCuadrado');
-
-  Inputmask("9{5}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_areaVCuadrada');
 </script>
   {% endblock %}
