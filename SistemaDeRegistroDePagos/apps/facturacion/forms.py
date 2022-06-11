@@ -9,17 +9,23 @@ class DateInput(forms.DateInput):
 
 
 class agregarPrimaForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(agregarPrimaForm, self).__init__(*args, **kwargs)
+            self.fields['numeroReciboPrima'].widget.attrs['pattern'] = "[0-9]{10}"
     class Meta:
         model = prima
         fields = ('numeroReciboPrima','conceptoPrima',)
         label= {
-            'numeroReciboPrima':_('Numero de Recibo de la Prima: '),
-            'conceptoPrima': _('Concepto Prima'),
+            'numeroReciboPrima':('Numero de Recibo de la Prima: '),
+            'conceptoPrima': ('Concepto Prima: '),
         }
         help_texts = {
-            'numeroReciboPrima':_('Campo Obligatorio'),
-            'conceptoPrima': _('Campo Obligatorio'),
+            'numeroReciboPrima':('Campo Obligatorio'),
+            'conceptoPrima': ('Campo Obligatorio'),
         }
+        def clean_numeroReciboPrima(self):
+            numeroReciboPrima = self.clean_numeroReciboPrima['numeroReciboPrima']
+
 
 
 class pagoForm(ModelForm):
@@ -33,12 +39,12 @@ class pagoForm(ModelForm):
         model = pago
         fields = {'monto','tipoPago','referencia','fechaPago','cuentaBancaria','observaciones'}
         label = {
-            'cuentaBancaria':_('Cuenta Bancaria'),
-            'monto':_('Monto de la prima'),
-            'tipoPago':_('Tipo de Pago'),
-            'referencia':_('Referencia'),
-            'fechaPago':_('Fecha de pago de prima'),
-            'observaciones':_('Ingrese observaciones')
+            'cuentaBancaria':('Cuenta Bancaria'),
+            'monto':('Monto de la prima'),
+            'tipoPago':('Tipo de Pago'),
+            'referencia':('Referencia'),
+            'fechaPago':('Fecha de pago de prima'),
+            'observaciones':('Ingrese observaciones')
         }
         help_texts = {
             'cuentaBancaria':('Campo Obligatorio'),
@@ -62,14 +68,14 @@ class agregarPagoMantenimientoForm(ModelForm):
         model = pagoMantenimiento
         fields = {'numeroReciboMantenimiento','conceptoOtros','montoOtros'}
         label= {
-            'numeroReciboMantenimiento': _('Numero de Recibo'),
-            'conceptoOtros': _('Concepto Otros'),
-            'montoOtros': _('Monto Otros'),
+            'numeroReciboMantenimiento': ('Numero de Recibo'),
+            'conceptoOtros': ('Concepto Otros'),
+            'montoOtros': ('Monto Otros'),
         }
         help_texts = {
-            'numeroReciboMantenimiento': _('Campo Obligatorio'),
-            'conceptoOtros': _('Campo Opcional'),
-            'montoOtros': _('Campo Opcional'),
+            'numeroReciboMantenimiento': ('Campo Obligatorio'),
+            'conceptoOtros': ('Campo Opcional'),
+            'montoOtros': ('Campo Opcional'),
         }
         #error_messages={'required':_("First name is required.")}
         

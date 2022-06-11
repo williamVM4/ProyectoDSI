@@ -126,10 +126,13 @@ class EstadoCuentaReporte(TemplateView):
             cuotaEstado = cuotaEstadoCuenta.objects.get(id = q.numeroCuotaEstadoCuenta_id)
             pagos = pago.objects.get(pagoMantenimiento_id = q.numeroReciboMantenimiento)
             ws.cell(row=cont,column=3).value 
-            ws.cell(row=cont,column=4).value = cuotaEstado.id
+            ws.cell(row=cont,column=4).value
             ws.cell(row=cont,column=5).value = pagos.fechaPago
             ws.cell(row=cont,column=6).value = q.numeroReciboMantenimiento
-            ws.cell(row=cont,column=7).value = pagos.referencia
+            if pagos.tipoPago == 2:
+                ws.cell(row=cont,column=7).value = pagos.referencia
+            else:
+                ws.cell(row=cont,column=7).value = "Pago en Efectivo"
             ws.cell(row=cont,column=8).value 
             ws.cell(row=cont,column=9).value 
             ws.cell(row=cont,column=10).value 
