@@ -61,4 +61,23 @@
       {% endfor %}
         alert(errors)
   {% endif %}
+
+$('form').submit(function(event) { 
+        if($('#id_precioVenta').pattern('^\d+(.{1}\d{2})?')){
+            Swal.fire({
+                icon: 'error',
+                text: 'La fecha de pago no puede ser mayor a la actual',
+              })
+            return false;
+        }
+    });
+    function validar() {
+        const input = document.getElementById('id_precioVenta');
+        const input2 = document.getElementById('id_descuento');
+        input.addEventListener('input', e => {
+            const value = parseDouble(e.currentTarget.value);
+            input2.setVaue(value*10);
+    });
+  }
+</script>
 {% endblock %}
