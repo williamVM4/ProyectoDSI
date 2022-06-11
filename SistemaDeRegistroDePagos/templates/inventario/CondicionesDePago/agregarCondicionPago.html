@@ -109,6 +109,11 @@
         return false;
     }
   });
-
+  $('#id_plazo').change(function(event) {
+    let plazo = $('#id_plazo').val();
+    let tasa = $('#id_tasaInteres').val();
+    cuota = plazo + tasa;
+    $('#id_cuotaKi').val(cuota);
+  }
 </script>
   {% endblock %}
