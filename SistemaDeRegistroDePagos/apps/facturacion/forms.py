@@ -11,7 +11,7 @@ class DateInput(forms.DateInput):
 class agregarPrimaForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(agregarPrimaForm, self).__init__(*args, **kwargs)
-            self.fields['numeroReciboPrima'].widget.attrs['pattern'] = "[0-9]{10}"
+            self.fields['numeroReciboPrima'] = forms.IntegerField()
     class Meta:
         model = prima
         fields = ('numeroReciboPrima','conceptoPrima',)
@@ -59,7 +59,7 @@ class pagoForm(ModelForm):
 class agregarPagoMantenimientoForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(agregarPagoMantenimientoForm, self).__init__(*args, **kwargs)
-            self.fields['numeroReciboMantenimiento'].widget.attrs['pattern'] = "[0-9]{10}"
+            self.fields['numeroReciboMantenimiento'] = forms.IntegerField()
 
     class Meta:
         model = pagoMantenimiento
