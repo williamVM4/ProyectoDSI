@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block head %} {% endblock %}
+
+{% block content %} 
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="form-panel panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Agregar Cuenta Bancaria</h3>
+        </div>
+        <div class="panel-body">
+          <form role="form" action="." method="post">
+            {% csrf_token %}  
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <p class="label-form">{{form.numeroCuentaBancaria.label}}</p>
+                  {{form.numeroCuentaBancaria|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000'}}
+                  <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroCuentaBancaria.help_text}}</p></div>
+                </div>
+                
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6"></div>
+              <div class="col-md-3">
+                <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+              </div>
+              <div class="col-md-3">
+                <a class="btn btn-danger btn-block" href="{% url 'cuentas' idp=idp %}"> Cancelar </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script type= application/javascript>
+  {%if form.errors%}
+      var errors = '';
+      {%for field in form%}
+        {% for error in field.errors %}
+          errors += '{{ error }}\n';
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        errors += '{{ error }}\n';
+      {% endfor %}
+      Swal.fire({
+        icon: 'error',
+        text: errors,
+      })
+  {% endif %}
+</script>
+<script type= application/javascript>
+  Inputmask("9{8}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_matriculaLote');
+  Inputmask("9{3}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_numeroLote');
+
+  Inputmask("9{5}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_areaMCuadrado');
+
+  Inputmask("9{5}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_areaVCuadrada');
+</script>
+  {% endblock %}
