@@ -52,7 +52,7 @@ class detalleVenta(models.Model):
     estado = models.BooleanField(default=True)
     
     def __str__(self):
-        return self.lote
+        return self.lote.identificador
 
 class asignacionLote(models.Model):
     propietario = models.ForeignKey(propietario, on_delete=models.CASCADE)
