@@ -170,6 +170,9 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
         detalle = form.save(commit=False)
         #poner try
         try:
+            if (detalle.precioVenta < detalle.descuento):
+                messages.error(self.request, 'El descuento no puede ser mayor al precio de venta')
+                return self.render_to_response(self.get_context_data(form=form))
             detalle.lote = lote.objects.get(pk=idl)
             detalle.save()
             messages.success(self.request, 'Detalle de venta guardado con éxito')
@@ -339,7 +342,7 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe y esté activo')
             return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
         try:
-            asignacion = asignacionLote.objects.get(detalleVenta__id=self.kwargs['idv'])
+            asignacion = asignacionLote.objects.filter(detalleVenta__id=self.kwargs['idv'])
         except Exception:
             messages.error(self.request, 'Ocurrió un error, el lote no tiene propietarios asociados')
             return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))

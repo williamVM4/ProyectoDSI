@@ -92,7 +92,7 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             lotef = self.third_form_class(self.request.POST).data['matricula']
             detalle = detalleVenta.objects.get(id = lotef)
             try:
-                asig = asignacionLote.objects.get(detalleVenta = detalle)
+                asig = asignacionLote.objects.filter(detalleVenta = detalle)
                 try:
                     est = estadoCuenta.objects.get(detalleVenta = detalle)
                     messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' tiene un estado de cuenta generado. Ya no puede agregar mas primas')
@@ -155,7 +155,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
         lotef = self.third_form_class(self.request.POST).data['matricula']
         detalle = detalleVenta.objects.get(id = lotef)
         try:
-                asig = asignacionLote.objects.get(detalleVenta = detalle)
+                asig = asignacionLote.objects.filter(detalleVenta = detalle)
                 try:
                     estaC = estadoCuenta.objects.get(detalleVenta = detalle)
                 except Exception:
