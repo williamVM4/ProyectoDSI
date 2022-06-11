@@ -24,22 +24,22 @@
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.numeroLote.label}}</p>
-                  {{form.numeroLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el número de lote'}}
+                  {{form.numeroLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroLote.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.poligono.label}}</p>
-                  {{form.poligono|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el polígono'}}
+                  {{form.poligono|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Pa=Polígono(P)Porcion(a)'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.poligono.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.areaMCuadrado.label}}</p>
-                  {{form.areaMCuadrado|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el área en metros cuadrados'}}
+                  {{form.areaMCuadrado|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.areaMCuadrado.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.areaVCuadrada.label}}</p>
-                  {{form.areaVCuadrada|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el área en varas cuadradas'}}
+                  {{form.areaVCuadrada|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.areaVCuadrada.help_text}}</p></div>
                 </div>
               </div>
@@ -60,7 +60,6 @@
   </div>
 </div>
 {% endblock content %}
-
 {% block scripts %}
 <script type= application/javascript>
   {%if form.errors%}
@@ -74,9 +73,9 @@
         errors += '{{ error }}\n';
       {% endfor %}
       Swal.fire({
-        icon: 'error',
-        text: errors,
-      })
+          icon: 'error',
+          text: errors,
+        })
   {% endif %}
 </script>
 <script type= application/javascript>
@@ -84,19 +83,9 @@
     placeholder: "",
     greedy: false
   }).mask('#id_matriculaLote');
-  Inputmask("9{3}", {
+  Inputmask("9{10}", {
     placeholder: "",
     greedy: false
   }).mask('#id_numeroLote');
-
-  Inputmask("9{5}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_areaMCuadrado');
-
-  Inputmask("9{5}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_areaVCuadrada');
 </script>
   {% endblock %}
