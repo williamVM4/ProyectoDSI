@@ -23,9 +23,6 @@ class agregarPrimaForm(ModelForm):
             'numeroReciboPrima':('Campo Obligatorio'),
             'conceptoPrima': ('Campo Obligatorio'),
         }
-        def clean_numeroReciboPrima(self):
-            numeroReciboPrima = self.clean_numeroReciboPrima['numeroReciboPrima']
-
 
 
 class pagoForm(ModelForm):
@@ -62,7 +59,7 @@ class pagoForm(ModelForm):
 class agregarPagoMantenimientoForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(agregarPagoMantenimientoForm, self).__init__(*args, **kwargs)
-            #self.fields['numeroReciboMantenimiento'].widget.error_messages = {'required': 'aaa'}
+            self.fields['numeroReciboMantenimiento'].widget.attrs['pattern'] = "[0-9]{10}"
 
     class Meta:
         model = pagoMantenimiento
