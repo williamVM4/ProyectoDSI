@@ -21,10 +21,10 @@ class lote(models.Model):
     matriculaLote = models.CharField(max_length=50, primary_key=True)
     proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE,blank=True)
     numeroLote = models.IntegerField()
-    poligono = models.CharField(max_length=5)
-    identificador = models.CharField(max_length=4, blank=True)
-    areaMCuadrado = models.DecimalField(max_digits=8, decimal_places=2)
-    areaVCuadrada = models.DecimalField(max_digits=8, decimal_places=2)
+    poligono = models.CharField(max_length=2)
+    identificador = models.CharField(max_length=5, blank=True)
+    areaMCuadrado = models.DecimalField(max_digits=6, decimal_places=2)
+    areaVCuadrada = models.DecimalField(max_digits=6, decimal_places=2)
 
     def __str__(self):
         return self.identificador
