@@ -271,6 +271,7 @@ class Recibo(TemplateView):
             ws['F8'] = 0
             ws['F9'] = 0
             ws.merge_cells('B2:F2')
+            ws.merge_cells('B15:F15')
             ws['F5'].number_format = '0.00'
             ws['F7'].number_format = '0.00'
             ws['F8'].number_format = '0.00'
@@ -295,6 +296,7 @@ class Recibo(TemplateView):
             ws['F11'] = "=SUM(F5:F10)"
             ws['B19'] = usuario.first_name
             ws['B1'] = '=F11'
+            ws['B15'] = pagoRecibo.fechaPago
             if pagoRecibo.tipoPago == 1:
                     ws['E18'] = "Pago realizado en efectivo"
             else:
@@ -360,6 +362,7 @@ class Recibo(TemplateView):
                 ws['H3'] = "Nº "+pagoMRecibo.numeroReciboMantenimiento
                 ws.merge_cells('B4:F4')
                 ws.merge_cells('B16:F16')
+                ws.merge_cells('B12:E12')
                 ws['F7'] = pagoRecibo.monto
                 ws['F13'] = '=SUM(F7:F12)'
                 ws['B3'] = '=F13'
@@ -368,13 +371,14 @@ class Recibo(TemplateView):
                 ws['E19'].font = Font(size=10)
                 ws['B16'] = pagoRecibo.fechaPago
                 ws['F12'] = pagoMRecibo.montoOtros
-                ws['G12'] = pagoMRecibo.conceptoOtros
+                ws['B12'] = "  "+pagoMRecibo.conceptoOtros
                 ws['B4'].alignment = Alignment(horizontal="center",vertical="center")
                 ws['B4'] = nombre.nombrePropietario
                 ws['D5'].alignment = Alignment(horizontal="center",vertical="center")
                 ws['E5'].alignment = Alignment(horizontal="center",vertical="center")
                 ws['D5'] = lotes.numeroLote
                 ws['E5'] = lotes.poligono
+
                 if pagoRecibo.tipoPago == 1:
                     ws['E18'] = "Pago realizado en efectivo"
                 else:
