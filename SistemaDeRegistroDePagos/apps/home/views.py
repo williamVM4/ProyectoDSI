@@ -26,5 +26,7 @@ class homeProyecto(GroupRequiredMixin,TemplateView):
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('idp', None) 
-        context['idp'] = id         
+        proyect = proyectoTuristico.objects.get(pk=id)
+        context['idp'] = id
+        context['proyecto'] = proyect         
         return context

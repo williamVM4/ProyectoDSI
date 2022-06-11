@@ -2,7 +2,10 @@ from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
 from .models import propietario, detalleVenta, lote, proyectoTuristico
 from apps.monitoreo.models import condicionesPago
-from django.contrib.admin.widgets import FilteredSelectMultiple
+from django import forms
+
+class DateInput(forms.DateInput): 
+    input_type = 'date'
 
 class PropietarioForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -50,8 +53,8 @@ class PropietarioForm(ModelForm):
 class DetalleVentaForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(DetalleVentaForm, self).__init__(*args, **kwargs)
-            self.fields['precioVenta'].widget.attrs['pattern'] = "[0-9]{3}"
-            self.fields['descuento'].widget.attrs['pattern'] = "[0-9]{3}"
+            self.fields['precioVenta'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
+            self.fields['descuento'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
             self.fields['estado'].widget.attrs['pattern'] = "[A-Z]{5}"
     class Meta:
         model=detalleVenta
@@ -76,11 +79,11 @@ class detalleVentaPropietarioForm(ModelForm):
 class LoteForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(LoteForm, self).__init__(*args, **kwargs)
-            self.fields['matriculaLote'].widget.attrs['pattern'] = "[0-9]{8}"
-            self.fields['numeroLote'].widget.attrs['pattern'] = "[0-9]{3}"
-            self.fields['poligono'].widget.attrs['pattern'] = "[A-Z]{1}"
-            self.fields['areaMCuadrado'].widget.attrs['pattern'] = "[0-9]{5}"
-            self.fields['areaVCuadrada'].widget.attrs['pattern'] = "[0-9]{5}"
+            self.fields['matriculaLote'].widget.attrs['pattern'] = "^\d{8}"
+            self.fields['numeroLote'].widget.attrs['pattern'] = "^\d{3}"
+            self.fields['poligono'].widget.attrs['pattern'] = "^([A-Z]{1}[a-z]?)"
+            self.fields['areaMCuadrado'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
+            self.fields['areaVCuadrada'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
 
     class Meta:
         model=lote
@@ -140,7 +143,7 @@ class condicionPagoForm(ModelForm):
         }
         help_texts = {
             'fechaEscrituracion': _('Campo Obligatorio'),
-            'montoFinanciamiento': _('Campo Obligatorio'),
+            'montoFinanciamiento': _('Campo Obligatorio. Se muestra la sumatoria del monto de todas las primas'),
             'plazo': _('Campo Obligatorio'),
             'tasaInteres': _('Campo Obligatorio'),
             'cuotaKi': _('Campo Obligatorio'),
@@ -149,3 +152,5 @@ class condicionPagoForm(ModelForm):
             'multaMantenimiento': _('Campo Obligatorio'),
             'multaFinanciamiento': _('multaFinanciamiento'),
         }
+
+        widgets = { 'fechaEscrituracion': DateInput(), }

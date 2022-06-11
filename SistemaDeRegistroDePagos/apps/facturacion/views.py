@@ -91,10 +91,12 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             detalle = detalleVenta.objects.get(id = lotef)
             try:
                 asig = asignacionLote.objects.get(detalleVenta = detalle)
-                est = estadoCuenta.objects.get(detalleVenta = detalle)
-                if est:
+                try:
+                    est = estadoCuenta.objects.get(detalleVenta = detalle)
                     messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' tiene un estado de cuenta generado. Ya no puede agregar mas primas')
-                    return self.render_to_response(self.get_context_data(form=form))   
+                    return self.render_to_response(self.get_context_data(form=form))  
+                except Exception:
+                    pass
             except Exception:
                 messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene propietarios')
                 return self.render_to_response(self.get_context_data(form=form))     

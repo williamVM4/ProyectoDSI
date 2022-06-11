@@ -164,7 +164,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <div class="pull-right">
-                                <a type="button" class="btn btn-primary btn-block" href="{% url 'agregarCondicionP' idp=idp idv=id%}">
+                                <a type="button" class="btn btn-primary btn-block" href="{% url 'agregarCondicionP' idp=idp idv=object.id %}">
                                     Agregar condiciones de pago
                                 </a>
                             </div>
@@ -176,7 +176,7 @@
                 </div>
             </div>
             <div class="pull-right">
-                <a type="button" class="btn btn-default" href="">
+                <a type="button" class="btn btn-default" href="{% url 'estadoCuenta' idp=idp pk=object.id %}">
                     Completar
                 </a>
             </div>
