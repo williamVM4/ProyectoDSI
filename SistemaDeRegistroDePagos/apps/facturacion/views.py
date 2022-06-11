@@ -320,13 +320,10 @@ class Recibo(TemplateView):
             ws['B19'] = usuario.first_name
             ws['B1'] = '=F11'
             fecha = pagoRecibo.fechaPago
-            date.today()
-            datetime.date()
-            datetime.datetime.now()
-            year = date.today()
+            
             
 
-            ws['B15'] = year.year
+            ws['B15'] = fecha
             
             if pagoRecibo.tipoPago == 1:
                     ws['E18'] = "Pago realizado en efectivo"
