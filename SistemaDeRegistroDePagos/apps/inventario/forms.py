@@ -80,7 +80,7 @@ class LoteForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(LoteForm, self).__init__(*args, **kwargs)
             self.fields['matriculaLote'].widget.attrs['pattern'] = "^\d{8}"
-            self.fields['numeroLote'].widget.attrs['pattern'] = "^\d{3}"
+            self.fields['numeroLote'].widget.attrs['pattern'] = "^\d{1}(\d+)?"
             self.fields['poligono'].widget.attrs['pattern'] = "^([A-Z]{1}[a-z]?)"
             self.fields['areaMCuadrado'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
             self.fields['areaVCuadrada'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
