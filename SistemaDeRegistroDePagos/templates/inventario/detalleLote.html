@@ -19,14 +19,19 @@
             <!-- Contenido aqui -->
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Detalle de lote</h1>
+                    <h1 class="page-header">Especificaciones del lote</h1>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-md-4">
-                            <h1 id="pol">{{object.lote.numeroLote}}{{object.lote.poligono}}</h1>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <p class="page-header" id="pol">{{object.lote.numeroLote}}</p>
+                                    <p id="lote">{{object.lote.poligono}}</h4>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-8">
                             <div class="panel panel-default">
