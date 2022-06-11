@@ -54,8 +54,6 @@ class PropietarioForm(ModelForm):
 class DetalleVentaForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(DetalleVentaForm, self).__init__(*args, **kwargs)
-            self.fields['precioVenta'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
-            self.fields['descuento'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
             self.fields['estado'].widget.attrs['pattern'] = "[A-Z]{5}"
     class Meta:
         model=detalleVenta
@@ -97,9 +95,9 @@ class LoteForm(ModelForm):
             'areaVCuadrada': _('Área en varas cuadradas:'),
         }
         help_texts = {
-            'matriculaLote': _('Campo Obligatorio'),
-            'numeroLote': _('Campo Obligatorio'),
-            'poligono': _('Campo Obligatorio'),
+            'matriculaLote': _('Campo Obligatorio. Solo se permiten números, minimo 8 carácteres numericos'),
+            'numeroLote': _('Campo Obligatorio. Solo se permiten números, minimo 3 carácteres numericos'),
+            'poligono': _('Campo Obligatorio. Pa=Polígono(P)Porcion(a)'),
             'areaMCuadrado': _('Campo Obligatorio'),
             'areaVCuadrada': _('Campo Obligatorio'),
         }

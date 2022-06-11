@@ -104,9 +104,9 @@ class agregarCuentaBancariaForm(ModelForm):
             'banco': _('Banco'),
         }
         help_texts = {
-            'numeroCuentaBancaria': _('Campo Obligatorio'),
-            'nombreCuentaBancaria': _('Campo Obligatorio'),
-            'tipoCuenta': _('Campo Obligatorio'),
-            'banco': _('Campo Obligatorio'),
+            'numeroCuentaBancaria': _('Campo Obligatorio. Solo se permiten numeros'),
+            'nombreCuentaBancaria': _('Campo Obligatorio. El nombre de la cuenta debe iniciar con mayuscula, no debe contener numeros'),
+            'tipoCuenta': _('Campo Obligatorio. El nombre del tipo de cuenta debe iniciar con mayuscula, no debe contener numeros'),
+            'banco': _('Campo Obligatorio. El nombre del banco debe iniciar con mayuscula, no debe contener numeros'),
         }
 
