@@ -20,11 +20,11 @@ class cuentaBancaria(models.Model):
 class lote(models.Model):
     matriculaLote = models.CharField(max_length=50, primary_key=True)
     proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE,blank=True)
-    numeroLote = models.IntegerField()
-    poligono = models.CharField(max_length=5)
-    identificador = models.CharField(max_length=4, blank=True)
-    areaMCuadrado = models.DecimalField(max_digits=8, decimal_places=2)
-    areaVCuadrada = models.DecimalField(max_digits=8, decimal_places=2)
+    numeroLote = models.CharField(max_length=3)
+    poligono = models.CharField(max_length=2)
+    identificador = models.CharField(max_length=5,blank=True)
+    areaMCuadrado = models.CharField(max_length=9)
+    areaVCuadrada = models.CharField(max_length=9)
 
     def __str__(self):
         return self.identificador
@@ -47,8 +47,8 @@ class propietario(models.Model):
 class detalleVenta(models.Model):
     lote = models.ForeignKey(lote, on_delete=models.CASCADE, blank=True)
     propietarios = models.ManyToManyField(propietario, through='asignacionLote')
-    precioVenta = models.DecimalField(default=0,max_digits=8, decimal_places=2)
-    descuento = models.DecimalField(default=0,max_digits=8, decimal_places=2)
+    precioVenta = models.CharField(default=0.00,max_length=9)
+    descuento = models.CharField(default=0.00,max_length=9)
     estado = models.BooleanField(default=True)
     
     def __str__(self):
