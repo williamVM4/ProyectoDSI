@@ -22,8 +22,7 @@ from django.http.response import HttpResponse
 from openpyxl import Workbook
 from openpyxl.styles import *
 from django.contrib.auth.models import User
-from datetime import date
-from datetime import datetime
+
 
 
 from apps.inventario.models import detalleVenta
@@ -319,12 +318,15 @@ class Recibo(TemplateView):
             ws['F11'] = "=SUM(F5:F10)"
             ws['B19'] = usuario.first_name
             ws['B1'] = '=F11'
-            fecha = pagoRecibo.fechaPago
+            fecha = str(pagoRecibo.fechaPago).split(sep='-')
+            f = reversed(fecha)
             
-            
-
-            ws['B15'] = fecha
-            
+            for x in f:
+                if ws.cell(row=15,column=2).value is None:
+                    ws.cell(row=15,column=2).value = x 
+                else:
+                    ws.cell(row=15,column=2).value = str(ws.cell(row=15,column=2).value) +"                    "+x  
+            ws['B15'].alignment = Alignment(horizontal="right",vertical="center")
             if pagoRecibo.tipoPago == 1:
                     ws['E18'] = "Pago realizado en efectivo"
             else:
@@ -397,7 +399,18 @@ class Recibo(TemplateView):
                 ws['B20'] = usuario.first_name
                 ws['E18'].font = Font(size=10)
                 ws['E19'].font = Font(size=10)
-                ws['B16'] = pagoRecibo.fechaPago
+                fecha = str(pagoRecibo.fechaPago).split(sep='-')
+                f = reversed(fecha)
+                
+                for x in f:
+                    if ws.cell(row=16,column=2).value is None:
+                        ws.cell(row=16,column=2).value = x 
+                    else:
+                        ws.cell(row=16,column=2).value = str(ws.cell(row=16,column=2).value) +"                    "+x  
+                ws['B16'].alignment = Alignment(horizontal="right",vertical="center")
+
+
+                
                 ws['F12'] = pagoMRecibo.montoOtros
                 ws['B12'] = "  "+pagoMRecibo.conceptoOtros
                 ws['B4'].alignment = Alignment(horizontal="center",vertical="center")
