@@ -82,3 +82,7 @@ input[type=number] { -moz-appearance:textfield; }
 	width: 250px;
 	margin-top: 4.75em !important;
 }
+
+.pol1{
+    justify-content: left !important;
+}

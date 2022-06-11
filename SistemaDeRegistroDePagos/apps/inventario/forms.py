@@ -115,8 +115,8 @@ class agregarProyectoForm(ModelForm):
             'empresa': _('Empresa:'),
         }
         help_texts = {
-            'nombreProyectoTuristico': _('Campo Obligatorio'),
-            'empresa': _('Campo Obligatorio'),
+            'nombreProyectoTuristico': _('Campo Obligatorio. No se permiten números, ni otros caracteres especiales'),
+            'empresa': _('Campo Obligatorio. No se permiten números, ni otros caracteres especiales'),
         }
         error_messages = {
             'nombreProyectoTuristico': {
