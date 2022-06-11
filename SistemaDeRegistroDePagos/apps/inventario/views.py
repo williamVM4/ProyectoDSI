@@ -57,8 +57,11 @@ class detalleLote(GroupRequiredMixin,DetailView):
         idp = self.kwargs.get('idp', None)
         id = self.kwargs.get('pk', None) 
         context['idp'] = idp   
-        context['id'] = id      
-        return context
+        context['id'] = id
+        det = detalleVenta.objects.get(pk=id)
+        context['asignaciones'] = asignacionLote.objects.filter()  
+        context['detalleV'] = det     
+        return context 
 
 class asignacionesLote(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']

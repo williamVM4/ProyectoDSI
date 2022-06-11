@@ -46,31 +46,27 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <div class="pull-right">
-                                <a type="button" class="btn btn-primary btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=id %}">Agregar detalle de venta</a>
-                            </div>
                             <h4> Detalle de Venta</h4>
                         </div>
                         <div class="panel-body">
-                        <!--div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover" id="dataTables-example">
-                            <thead>
-                                    <tr>
-                                        <th>Precio de Venta</th>
-                                        <th>Descuento</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for detalle in object_list %}
-                                    <tr>
-                                        <td>{{detalleVenta.precioVenta}}</td>
-                                        <td>{{detalleVenta.descuento}}</td>
-                                    </tr>
-                                    {%endfor%}
-                                </tbody>
-                            </table>
-                        </div-->
-                       <ul></ul> 
+                            <div class="panel-body">
+                                <p><label class="label-form">Propietarios:&nbsp;</label></br>{% if asignaciones%}
+                                                                                            {% for asignacion in asignaciones %}
+                                                                                                {%if asignacion.detalleVenta.id == detalleV.id%}
+                                                                                                    {{asignacion.propietario.nombrePropietario}}</br>
+                                                                                                {%endif%}  
+                                                                                            {% endfor %}
+                                                                                        {% else %}
+                                                                                            No posee propietarios asignados
+                                                                                        {% endif %} 
+                                </p>
+                                <p><label class="label-form">Precio de venta:&nbsp;</label>{{detalleV.precioVenta}}
+                                </p>
+                                <p><label class="label-form">Descuento:&nbsp;</label>{{detalleV.descuento}}
+                                </p>
+                                <p><label class="label-form">Estado:&nbsp;</label>{%if detalleV.estado == True%}Activo{%else%}Inactivo{%endif%}
+                                </p>        
+                            </div>
                     </div>
                     </div>
                 </div>
