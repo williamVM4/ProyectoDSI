@@ -54,3 +54,16 @@ input[type=number] { -moz-appearance:textfield; }
     padding-top: 4em;
     padding-bottom: 4em;
 }
+
+.nav > li > a{
+    padding: 20px 15px !important;
+    color: black;
+    font-size: medium;
+}
+
+.sidebar {
+	z-index: 1;
+	position: absolute;
+	width: 250px;
+	margin-top: 4.75em !important;
+}
