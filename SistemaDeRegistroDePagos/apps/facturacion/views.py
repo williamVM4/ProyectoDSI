@@ -104,6 +104,9 @@ class agregarPrima(GroupRequiredMixin,CreateView):
                 return self.render_to_response(self.get_context_data(form=form))     
             pago.prima = prima
             prima.detalleVenta = detalle
+            if pago.monto > (detalle.precioVenta - detalle.descuento):
+                messages.error(self.request, 'Ocurrió un error, el monto debe ser menor al precio de venta')
+                return self.render_to_response(self.get_context_data(form=form))
             user = get_current_user()
             if user is not None:
                 prima.usuarioCreacion = user
