@@ -1,0 +1,88 @@
+.label-form{
+    margin: 0;
+    font-weight: 600;
+}
+.label-help-form{
+    font-size: 11px;
+}
+#sub{
+    margin: 0;
+    font-weight: lighter;
+    color: rgb(119, 116, 116);
+}
+#pol{
+    margin: 0;
+    font-weight: bolder;
+    font-size: 80px;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.multiple{
+    height: 17em !important;
+    margin-bottom: 3em;
+}
+
+#myInput {
+    width: 100%;
+    font-size: 14px; 
+    padding: 0.8em 0.5em 0.5em 1em; 
+    border: 1px solid #ddd; 
+    margin-bottom: 1em; 
+  }
+
+.centrar{
+    align-self: center;
+}
+  
+.boton-registrar-caja{
+    max-width: 90%;
+}
+
+.pt-3{
+    padding-top: 3em;
+}
+
+.customClass .confirmButton{
+    background-color: #00a65a;
+    color: white;
+  }
+
+.oculto{
+	display: none;
+}
+.mostrar{
+    display: block !important;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+input[type=number] { -moz-appearance:textfield; }
+
+.espacio{
+    padding-top: 4em;
+    padding-bottom: 4em;
+}
+
+.nav > li > a{
+    padding: 20px 15px !important;
+    color: black;
+    font-size: medium;
+}
+
+.sidebar {
+	z-index: 1;
+	position: absolute;
+	width: 250px;
+	margin-top: 4.75em !important;
+}
+
+.pol1{
+    justify-content: left !important;
+}
