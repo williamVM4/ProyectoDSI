@@ -22,6 +22,8 @@ from django.http.response import HttpResponse
 from openpyxl import Workbook
 from openpyxl.styles import *
 from django.contrib.auth.models import User
+from datetime import date
+from datetime import datetime
 
 
 from apps.inventario.models import detalleVenta
@@ -296,7 +298,15 @@ class Recibo(TemplateView):
             ws['F11'] = "=SUM(F5:F10)"
             ws['B19'] = usuario.first_name
             ws['B1'] = '=F11'
-            ws['B15'] = pagoRecibo.fechaPago
+            fecha = pagoRecibo.fechaPago
+            date.today()
+            datetime.date()
+            datetime.datetime.now()
+            year = date.today()
+            
+
+            ws['B15'] = year.year
+            
             if pagoRecibo.tipoPago == 1:
                     ws['E18'] = "Pago realizado en efectivo"
             else:
