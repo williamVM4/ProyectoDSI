@@ -139,7 +139,7 @@ class condicionPagoForm(ModelForm):
         }
         help_texts = {
             'fechaEscrituracion': _('Campo Obligatorio'),
-            'montoFinanciamiento': _('Campo Obligatorio'),
+            'montoFinanciamiento': _('Campo Obligatorio. Se muestra la sumatoria del monto de todas las primas'),
             'plazo': _('Campo Obligatorio'),
             'tasaInteres': _('Campo Obligatorio'),
             'cuotaKi': _('Campo Obligatorio'),

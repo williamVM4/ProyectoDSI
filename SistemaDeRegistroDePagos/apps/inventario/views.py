@@ -4,6 +4,7 @@ from django.views.generic import TemplateView, CreateView, FormView, ListView, D
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from apps.facturacion.models import pago, prima
 from apps.monitoreo.models import estadoCuenta
 from apps.inventario.models import asignacionLote, detalleVenta, lote, proyectoTuristico
 from apps.autenticacion.mixins import *
@@ -327,10 +328,25 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         try:
-            venta = detalleVenta.objects.get(pk=self.kwargs['idv'])
+            venta = detalleVenta.objects.get(pk=self.kwargs['idv'], estado = True)
         except Exception:
-            messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
-            return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe y esté activo')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+        try:
+            asignacion = asignacionLote.objects.get(detalleVenta__id=self.kwargs['idv'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el lote no tiene propietarios asociados')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+        try:
+            condicon = condicionesPago.objects.get(detalleVenta__id=self.kwargs['idv'])
+            messages.error(self.request, 'Ocurrió un error, el lote ya tiene condiciones de pago registradas')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+        except Exception: 
+            try:
+                prim = prima.objects.get(detalleVenta__id=self.kwargs['idv'])
+            except Exception:
+                messages.error(self.request, 'Ocurrió un error, el lote debe tener registrada al menos una prima para poder registrar condiciones de pago')
+                return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))    
         return super().dispatch(request, *args, **kwargs)
     
     model = condicionesPago
@@ -352,21 +368,34 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
         context['idv'] = idv  
         return context
 
+    def get_form(self, form_class = None, **kwargs):
+        form = super().get_form(form_class)
+         # recojo el parametro 
+        idv = self.kwargs.get('idv', None)
+        detalle = detalleVenta.objects.get(pk=idv)
+        pagosprimas = pago.objects.filter(prima__detalleVenta__id = idv)
+        for pag in pagosprimas:
+          suma =+ pag.monto
+        montof = detalle.precioVenta - suma - detalle.descuento
+        form.fields['montoFinanciamiento'].initial = montof
+        #form.fields['montoFinanciamiento'] = forms.DecimalField(max_digits=10, decimal_places=2, label='Monto de financiamiento', initial=50000, widget=forms.TextInput(attrs={'readonly':'readonly'}))
+        form.fields['montoFinanciamiento'].disabled = True # Desabilitamos el campo status
+        #form.fields['status'].choices = [('r', 'Reservado')] # Le damos solo una opcion al campo status
+        return form
+
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
          # recojo el parametro 
         idv = self.kwargs.get('idv', None) 
-        condicion = form.save(commit=False)
-        
+        condicion = form.save(commit=False)  
         #poner try
         try:
             detalle = detalleVenta.objects.get(pk = idv)
+            print(' = a')
             condicion.detalleVenta = detalle
             condicion.save()
-
-            #estado = estadoCuenta(detalleVenta=detalle)
-            #estado.save()
-
+            estado = estadoCuenta(detalleVenta=detalle)
+            estado.save()
             messages.success(self.request, 'Condicion de pago guardado con exito')
         except Exception:
             condicion.delete()
