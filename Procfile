@@ -1,1 +1,1 @@
-web: gunicorn --pythonpath SistemaDeRegistroDePagos config.wsgi
+web: gunicorn config.wsgi
