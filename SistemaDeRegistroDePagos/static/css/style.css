@@ -37,8 +37,13 @@
     font-weight: bolder;
     font-size: 50px;
     display: flex;
-    justify-content: center;
+    justify-content: center;}
+#sub{
+    margin: 0;
+    font-weight: lighter;
+    color: rgb(119, 116, 116);
 }
+
 
 .multiple{
     height: 17em !important;
