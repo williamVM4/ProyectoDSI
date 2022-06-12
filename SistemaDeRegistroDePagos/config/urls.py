@@ -15,12 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('apps.home.urls')),
-    path('', include('apps.autenticacion.urls')),
-    path('', include('apps.inventario.urls')),
-    path('', include('apps.facturacion.urls')),
-    path('', include('apps.monitoreo.urls'))
-]
+    path('', include('SistemaDeRegistroDePagos.apps.home.urls')),
+    path('', include('SistemaDeRegistroDePagos.apps.autenticacion.urls')),
+    path('', include('SistemaDeRegistroDePagos.apps.inventario.urls')),
+    path('', include('SistemaDeRegistroDePagos.apps.facturacion.urls')),
+    path('', include('SistemaDeRegistroDePagos.apps.monitoreo.urls'))
+]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

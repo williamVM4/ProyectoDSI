@@ -1,7 +1,7 @@
 from django.urls import path
 from django.urls import re_path
-from apps.inventario.views import *
-from apps.monitoreo.views import *
+from SistemaDeRegistroDePagos.apps.inventario.views import *
+from SistemaDeRegistroDePagos.apps.monitoreo.views import *
 
 urlpatterns = [
     path('detallelote/<str:idp>/<str:pk>/',detalleLote.as_view(),name='detalleLote'),

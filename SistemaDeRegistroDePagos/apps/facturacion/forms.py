@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
 from .models import *
-from apps.inventario.models import cuentaBancaria, detalleVenta, lote
+from SistemaDeRegistroDePagos.apps.inventario.models import cuentaBancaria, detalleVenta, lote
 from django import forms
 
 class DateInput(forms.DateInput): 
@@ -9,16 +9,19 @@ class DateInput(forms.DateInput):
 
 
 class agregarPrimaForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(agregarPrimaForm, self).__init__(*args, **kwargs)
+            self.fields['numeroReciboPrima'] = forms.IntegerField()
     class Meta:
         model = prima
         fields = ('numeroReciboPrima','conceptoPrima',)
         label= {
-            'numeroReciboPrima':_('Numero de Recibo de la Prima: '),
-            'conceptoPrima': _('Concepto Prima'),
+            'numeroReciboPrima':('Numero de Recibo de la Prima: '),
+            'conceptoPrima': ('Concepto Prima: '),
         }
         help_texts = {
-            'numeroReciboPrima':_('Campo Obligatorio'),
-            'conceptoPrima': _('Campo Obligatorio'),
+            'numeroReciboPrima':('Campo Obligatorio'),
+            'conceptoPrima': ('Campo Obligatorio'),
         }
 
 
@@ -33,12 +36,12 @@ class pagoForm(ModelForm):
         model = pago
         fields = {'monto','tipoPago','referencia','fechaPago','cuentaBancaria','observaciones'}
         label = {
-            'cuentaBancaria':_('Cuenta Bancaria'),
-            'monto':_('Monto de la prima'),
-            'tipoPago':_('Tipo de Pago'),
-            'referencia':_('Referencia'),
-            'fechaPago':_('Fecha de pago de prima'),
-            'observaciones':_('Ingrese observaciones')
+            'cuentaBancaria':('Cuenta Bancaria'),
+            'monto':('Monto de la prima'),
+            'tipoPago':('Tipo de Pago'),
+            'referencia':('Referencia'),
+            'fechaPago':('Fecha de pago de prima'),
+            'observaciones':('Ingrese observaciones')
         }
         help_texts = {
             'cuentaBancaria':('Campo Obligatorio'),
@@ -56,20 +59,20 @@ class pagoForm(ModelForm):
 class agregarPagoMantenimientoForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(agregarPagoMantenimientoForm, self).__init__(*args, **kwargs)
-            #self.fields['numeroReciboMantenimiento'].widget.error_messages = {'required': 'aaa'}
+            self.fields['numeroReciboMantenimiento'] = forms.IntegerField()
 
     class Meta:
         model = pagoMantenimiento
         fields = {'numeroReciboMantenimiento','conceptoOtros','montoOtros'}
         label= {
-            'numeroReciboMantenimiento': _('Numero de Recibo'),
-            'conceptoOtros': _('Concepto Otros'),
-            'montoOtros': _('Monto Otros'),
+            'numeroReciboMantenimiento': ('Numero de Recibo'),
+            'conceptoOtros': ('Concepto Otros'),
+            'montoOtros': ('Monto Otros'),
         }
         help_texts = {
-            'numeroReciboMantenimiento': _('Campo Obligatorio'),
-            'conceptoOtros': _('Campo Opcional'),
-            'montoOtros': _('Campo Opcional'),
+            'numeroReciboMantenimiento': ('Campo Obligatorio'),
+            'conceptoOtros': ('Campo Opcional'),
+            'montoOtros': ('Campo Opcional'),
         }
         #error_messages={'required':_("First name is required.")}
         
@@ -85,21 +88,25 @@ class lotePagoForm(forms.Form):
             self.fields['matricula'].queryset = detalleVenta.objects.filter(lote__proyectoTuristico__id=id, estado=True)
 
 class agregarCuentaBancariaForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(agregarCuentaBancariaForm, self).__init__(*args, **kwargs)
+            self.fields['numeroCuentaBancaria'].widget.attrs['pattern'] = "[0-9]{6,20}"
+            self.fields['nombreCuentaBancaria'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+[\s]*)+$"
+            self.fields['tipoCuenta'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
+            self.fields['banco'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
     class Meta:
         model = cuentaBancaria
         fields = ('numeroCuentaBancaria','nombreCuentaBancaria','tipoCuenta','banco')
         label= {
-            'numeroCuentaBancaria':('Número de cuenta: '),
-            'nombreCuentaBancaria': ('Nombre de cuenta: '),
-            'tipoCuenta':('Tipo de cuenta:  '),
-            'banco': ('Banco: '),
+            'numeroCuentaBancaria': _('Numero cuenta bancaria'),
+            'nombreCuentaBancaria': _('Nombre de cuenta'),
+            'tipoCuenta': _('Tipo de cuenta'),
+            'banco': _('Banco'),
         }
         help_texts = {
-            'numeroCuentaBancaria':('Campo Obligatorio'),
-            'nombreCuentaBancaria': ('Campo Obligatorio'),
-            'tipoCuenta':('Campo Obligatorio'),
-            'banco': ('Campo Obligatorio'),
+            'numeroCuentaBancaria': _('Campo Obligatorio. Solo se permiten numeros'),
+            'nombreCuentaBancaria': _('Campo Obligatorio. El nombre de la cuenta debe iniciar con mayuscula, no debe contener numeros'),
+            'tipoCuenta': _('Campo Obligatorio. El nombre del tipo de cuenta debe iniciar con mayuscula, no debe contener numeros'),
+            'banco': _('Campo Obligatorio. El nombre del banco debe iniciar con mayuscula, no debe contener numeros'),
         }
-
-
 

@@ -1,14 +1,18 @@
 from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm
 from .models import propietario, detalleVenta, lote, proyectoTuristico
-from apps.monitoreo.models import condicionesPago
-from django.contrib.admin.widgets import FilteredSelectMultiple
+from SistemaDeRegistroDePagos.apps.monitoreo.models import condicionesPago
+from django import forms
+
+class DateInput(forms.DateInput): 
+    input_type = 'date'
 
 class PropietarioForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(PropietarioForm, self).__init__(*args, **kwargs)
             self.fields['dui'].widget.attrs['pattern'] = "[0-9]{8}[ -][0-9]{1}"
             self.fields['telefonoTrabajo'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
+            self.fields['nombrePropietario'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
             self.fields['telefonoCasa'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
             self.fields['telefonoCelular'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
             self.fields['correoElectronico'].widget.attrs['pattern'] = "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 4}$"
@@ -50,8 +54,6 @@ class PropietarioForm(ModelForm):
 class DetalleVentaForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(DetalleVentaForm, self).__init__(*args, **kwargs)
-            self.fields['precioVenta'].widget.attrs['pattern'] = "[0-9]{3}"
-            self.fields['descuento'].widget.attrs['pattern'] = "[0-9]{3}"
             self.fields['estado'].widget.attrs['pattern'] = "[A-Z]{5}"
     class Meta:
         model=detalleVenta
@@ -76,11 +78,11 @@ class detalleVentaPropietarioForm(ModelForm):
 class LoteForm(ModelForm):
     def __init__(self, *args, **kwargs):
             super(LoteForm, self).__init__(*args, **kwargs)
-            self.fields['matriculaLote'].widget.attrs['pattern'] = "[0-9]{8}"
-            self.fields['numeroLote'].widget.attrs['pattern'] = "[0-9]{3}"
-            self.fields['poligono'].widget.attrs['pattern'] = "[A-Z]{1}"
-            self.fields['areaMCuadrado'].widget.attrs['pattern'] = "[0-9]{5}"
-            self.fields['areaVCuadrada'].widget.attrs['pattern'] = "[0-9]{5}"
+            self.fields['matriculaLote'].widget.attrs['pattern'] = "^\d{8}"
+            self.fields['numeroLote'].widget.attrs['pattern'] = "^\d{1}(\d+)?"
+            self.fields['poligono'].widget.attrs['pattern'] = "^([A-Z]{1}[a-z]?)"
+            self.fields['areaMCuadrado'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
+            self.fields['areaVCuadrada'].widget.attrs['pattern'] = "^\d+(.{1}\d{2})?"
 
     class Meta:
         model=lote
@@ -93,14 +95,18 @@ class LoteForm(ModelForm):
             'areaVCuadrada': _('Área en varas cuadradas:'),
         }
         help_texts = {
-            'matriculaLote': _('Campo Obligatorio'),
-            'numeroLote': _('Campo Obligatorio'),
-            'poligono': _('Campo Obligatorio'),
+            'matriculaLote': _('Campo Obligatorio. Solo se permiten números, minimo 8 carácteres numericos'),
+            'numeroLote': _('Campo Obligatorio. Solo se permiten números, minimo 3 carácteres numericos'),
+            'poligono': _('Campo Obligatorio. Pa=Polígono(P)Porcion(a)'),
             'areaMCuadrado': _('Campo Obligatorio'),
             'areaVCuadrada': _('Campo Obligatorio'),
         }
 
 class agregarProyectoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(agregarProyectoForm, self).__init__(*args, **kwargs)
+            self.fields['nombreProyectoTuristico'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
+            self.fields['empresa'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
     class Meta:
         model= proyectoTuristico
         fields=('nombreProyectoTuristico','empresa')
@@ -109,8 +115,8 @@ class agregarProyectoForm(ModelForm):
             'empresa': _('Empresa:'),
         }
         help_texts = {
-            'nombreProyectoTuristico': _('Campo Obligatorio'),
-            'empresa': _('Campo Obligatorio'),
+            'nombreProyectoTuristico': _('Campo Obligatorio. No se permiten números, ni otros caracteres especiales'),
+            'empresa': _('Campo Obligatorio. No se permiten números, ni otros caracteres especiales'),
         }
         error_messages = {
             'nombreProyectoTuristico': {
@@ -136,12 +142,14 @@ class condicionPagoForm(ModelForm):
         }
         help_texts = {
             'fechaEscrituracion': _('Campo Obligatorio'),
-            'montoFinanciamiento': _('Campo Obligatorio'),
-            'plazo': _('Campo Obligatorio'),
-            'tasaInteres': _('Campo Obligatorio'),
-            'cuotaKi': _('Campo Obligatorio'),
-            'comisionCuota': _('Campo Obligatorio'),
-            'mantenimientoCuota': _('Campo Obligatorio'),
-            'multaMantenimiento': _('Campo Obligatorio'),
-            'multaFinanciamiento': _('multaFinanciamiento'),
+            'montoFinanciamiento': _('Campo Obligatorio. Solo números'),
+            'plazo': _('Campo Obligatorio. Solo números enteros'),
+            'tasaInteres': _('Campo Obligatorio. En porcentaje sin el simbolo %'),
+            'cuotaKi': _('Campo Obligatorio. Solo números'),
+            'comisionCuota': _('Campo Obligatorio. Solo números'),
+            'mantenimientoCuota': _('Campo Obligatorio. Solo números'),
+            'multaMantenimiento': _('Campo Obligatorio. Solo números'),
+            'multaFinanciamiento': _('multaFinanciamiento. Solo números'),
         }
+
+        widgets = { 'fechaEscrituracion': DateInput(), }

@@ -1,12 +1,15 @@
+import decimal
+import math
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, FormView, ListView, DetailView
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from apps.monitoreo.models import estadoCuenta
-from apps.inventario.models import asignacionLote, detalleVenta, lote, proyectoTuristico
-from apps.autenticacion.mixins import *
+from SistemaDeRegistroDePagos.apps.facturacion.models import pago, prima
+from SistemaDeRegistroDePagos.apps.monitoreo.models import estadoCuenta
+from SistemaDeRegistroDePagos.apps.inventario.models import asignacionLote, detalleVenta, lote, proyectoTuristico
+from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
 
@@ -54,8 +57,11 @@ class detalleLote(GroupRequiredMixin,DetailView):
         idp = self.kwargs.get('idp', None)
         id = self.kwargs.get('pk', None) 
         context['idp'] = idp   
-        context['id'] = id      
-        return context
+        context['id'] = id
+        det = detalleVenta.objects.get(pk=id)
+        context['asignaciones'] = asignacionLote.objects.filter()  
+        context['detalleV'] = det     
+        return context 
 
 class asignacionesLote(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
@@ -82,7 +88,8 @@ class asignacionesLote(GroupRequiredMixin,ListView):
         context['idp'] = idp
         context['id'] = id
         context['detalles'] = detalleVenta.objects.filter(lote__matriculaLote=id)
-        context['asignaciones'] = asignacionLote.objects.filter()   
+        context['asignaciones'] = asignacionLote.objects.filter()
+        context['condiciones'] = condicionesPago.objects.filter(detalleVenta__lote__matriculaLote = id)
         return context
 
 # Views de lote
@@ -108,6 +115,10 @@ class agregarLote(GroupRequiredMixin,CreateView):
         idp = self.kwargs.get('idp', None)
         context['idp'] = idp         
         return context
+    def get_form(self, form_class = None, **kwargs):
+        form = super().get_form(form_class)
+        form.fields['areaVCuadrada'].disabled = True 
+        return form
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
          # recojo el parametro 
@@ -117,6 +128,7 @@ class agregarLote(GroupRequiredMixin,CreateView):
         try:
             lote.proyectoTuristico = proyectoTuristico.objects.get(id=idp)
             lote.identificador = str(lote.poligono) + str(lote.numeroLote)
+            lote.areaVCuadrada = lote.areaMCuadrado * decimal.Decimal(1.431)
             lote.save()
             messages.success(self.request, 'Lote guardado con éxito')
         except Exception:
@@ -163,11 +175,22 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
         detalle = form.save(commit=False)
         #poner try
         try:
+            if (detalle.precioVenta < detalle.descuento):
+                messages.error(self.request, 'El descuento no puede ser mayor al precio de venta')
+                return self.render_to_response(self.get_context_data(form=form))
+            otrosdeta = detalleVenta.objects.filter(lote__matriculaLote=idl)
+            for d in otrosdeta:
+                d.estado = False
+                d.save()
+            detalle.estado = True
             detalle.lote = lote.objects.get(pk=idl)
             detalle.save()
             messages.success(self.request, 'Detalle de venta guardado con éxito')
         except Exception:
-            detalle.delete()
+            try:
+                detalle.delete()
+            except Exception:
+                pass
             messages.error(self.request, 'Ocurrió un error al guardar el detalle de venta, el detalle de venta no es válido')
         return HttpResponseRedirect(self.get_url_redirect())
 
@@ -327,10 +350,25 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         try:
-            venta = detalleVenta.objects.get(pk=self.kwargs['idv'])
+            venta = detalleVenta.objects.get(pk=self.kwargs['idv'], estado = True)
         except Exception:
-            messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
-            return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe y esté activo')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+        try:
+            asignacion = asignacionLote.objects.filter(detalleVenta__id=self.kwargs['idv'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el lote no tiene propietarios asociados')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+        try:
+            condicon = condicionesPago.objects.get(detalleVenta__id=self.kwargs['idv'])
+            messages.error(self.request, 'Ocurrió un error, el lote ya tiene condiciones de pago registradas')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+        except Exception: 
+            try:
+                prim = prima.objects.get(detalleVenta__id=self.kwargs['idv'])
+            except Exception:
+                messages.error(self.request, 'Ocurrió un error, el lote debe tener registrada al menos una prima para poder registrar condiciones de pago')
+                return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))    
         return super().dispatch(request, *args, **kwargs)
     
     model = condicionesPago
@@ -352,24 +390,44 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
         context['idv'] = idv  
         return context
 
+    def get_form(self, form_class = None, **kwargs):
+        form = super().get_form(form_class)
+         # recojo el parametro 
+        idv = self.kwargs.get('idv', None)
+        detalle = detalleVenta.objects.get(pk=idv)
+        pagosprimas = pago.objects.filter(prima__detalleVenta__id = idv)
+        for pag in pagosprimas:
+          suma =+ pag.monto
+        montof = detalle.precioVenta - suma - detalle.descuento
+        form.fields['montoFinanciamiento'].initial = montof
+        #form.fields['montoFinanciamiento'] = forms.DecimalField(max_digits=10, decimal_places=2, label='Monto de financiamiento', initial=50000, widget=forms.TextInput(attrs={'readonly':'readonly'}))
+        form.fields['montoFinanciamiento'].disabled = True 
+        form.fields['cuotaKi'].disabled = True 
+        #form.fields['status'].choices = [('r', 'Reservado')] # Le damos solo una opcion al campo status
+        return form
+
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
          # recojo el parametro 
         idv = self.kwargs.get('idv', None) 
-        condicion = form.save(commit=False)
-        
+        condicion = form.save(commit=False)  
         #poner try
         try:
+            tasau = (condicion.tasaInteres / 100) /12
+            condicion.cuotaKi = condicion.montoFinanciamiento*((tasau *decimal.Decimal((math.pow((1+tasau),condicion.plazo))))/decimal.Decimal((math.pow((1+tasau),condicion.plazo))-1));
+            condicion.cuotaKi = round(condicion.cuotaKi, 2)
             detalle = detalleVenta.objects.get(pk = idv)
+            print(' = a')
             condicion.detalleVenta = detalle
             condicion.save()
-
-            #estado = estadoCuenta(detalleVenta=detalle)
-            #estado.save()
-
+            estado = estadoCuenta(detalleVenta=detalle)
+            estado.save()
             messages.success(self.request, 'Condicion de pago guardado con exito')
         except Exception:
-            condicion.delete()
-            messages.error(self.request, 'Ocurrió un error al guardar la condición de pago, la condición de pago no es valida')
+            try:
+                condicion.delete()
+            except Exception:
+                pass
+        messages.error(self.request, 'Ocurrió un error al guardar la condición de pago, la condición de pago no es valida')
         return HttpResponseRedirect(self.get_url_redirect())
 

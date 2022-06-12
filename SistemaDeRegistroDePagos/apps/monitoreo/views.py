@@ -4,10 +4,10 @@ from django.views.generic import ListView
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from apps.inventario.models import asignacionLote, detalleVenta, proyectoTuristico
-from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
-from apps.facturacion.models import pago, pagoMantenimiento
-from apps.autenticacion.mixins import *
+from SistemaDeRegistroDePagos.apps.inventario.models import asignacionLote, detalleVenta, proyectoTuristico
+from SistemaDeRegistroDePagos.apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
+from SistemaDeRegistroDePagos.apps.facturacion.models import pago, pagoMantenimiento
+from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
 from django.views.generic import TemplateView
@@ -126,10 +126,13 @@ class EstadoCuentaReporte(TemplateView):
             cuotaEstado = cuotaEstadoCuenta.objects.get(id = q.numeroCuotaEstadoCuenta_id)
             pagos = pago.objects.get(pagoMantenimiento_id = q.numeroReciboMantenimiento)
             ws.cell(row=cont,column=3).value 
-            ws.cell(row=cont,column=4).value = cuotaEstado.id
+            ws.cell(row=cont,column=4).value
             ws.cell(row=cont,column=5).value = pagos.fechaPago
             ws.cell(row=cont,column=6).value = q.numeroReciboMantenimiento
-            ws.cell(row=cont,column=7).value = pagos.referencia
+            if pagos.tipoPago == 2:
+                ws.cell(row=cont,column=7).value = pagos.referencia
+            else:
+                ws.cell(row=cont,column=7).value = "Pago en Efectivo"
             ws.cell(row=cont,column=8).value 
             ws.cell(row=cont,column=9).value 
             ws.cell(row=cont,column=10).value 

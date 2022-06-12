@@ -9,12 +9,12 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView
-from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
-from apps.inventario.models import cuentaBancaria,proyectoTuristico
-from apps.autenticacion.mixins import *
+from SistemaDeRegistroDePagos.apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
+from SistemaDeRegistroDePagos.apps.inventario.models import cuentaBancaria,proyectoTuristico
+from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
 from .forms import *
 from .models import *
-from apps.inventario.models import *
+from SistemaDeRegistroDePagos.apps.inventario.models import *
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from crum import get_current_user
@@ -24,7 +24,8 @@ from openpyxl.styles import *
 from django.contrib.auth.models import User
 
 
-from apps.inventario.models import detalleVenta
+
+from SistemaDeRegistroDePagos.apps.inventario.models import detalleVenta
 # Create your views here.
 
 class caja(GroupRequiredMixin,TemplateView):
@@ -69,9 +70,9 @@ class agregarPrima(GroupRequiredMixin,CreateView):
         context = super(agregarPrima, self).get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None)
         if 'form2' not in context:
-            context['form2'] = self.second_form_class(initial={'id':self.kwargs.get('id',None)})
+            context['form2'] = self.second_form_class(id = idp)
         if 'form3' not in context:
-            context['form3'] = self.third_form_class(initial={'id': self.kwargs.get('id', None)})
+            context['form3'] = self.third_form_class(id = idp)
         context['idp'] = idp
         return context
 
@@ -90,16 +91,21 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             lotef = self.third_form_class(self.request.POST).data['matricula']
             detalle = detalleVenta.objects.get(id = lotef)
             try:
-                asig = asignacionLote.objects.get(detalleVenta = detalle)
-                est = estadoCuenta.objects.get(detalleVenta = detalle)
-                if est:
+                asig = asignacionLote.objects.filter(detalleVenta = detalle)
+                try:
+                    est = estadoCuenta.objects.get(detalleVenta = detalle)
                     messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' tiene un estado de cuenta generado. Ya no puede agregar mas primas')
-                    return self.render_to_response(self.get_context_data(form=form))   
+                    return self.render_to_response(self.get_context_data(form=form))  
+                except Exception:
+                    pass
             except Exception:
                 messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene propietarios')
                 return self.render_to_response(self.get_context_data(form=form))     
             pago.prima = prima
             prima.detalleVenta = detalle
+            if pago.monto > (detalle.precioVenta - detalle.descuento):
+                messages.error(self.request, 'Ocurrió un error, el monto de la prima debe ser menor al precio de venta')
+                return self.render_to_response(self.get_context_data(form=form))
             user = get_current_user()
             if user is not None:
                 prima.usuarioCreacion = user
@@ -107,7 +113,10 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             pago.save()
             messages.success(self.request, 'La prima fue registrada con exito')
         except Exception:
-            prima.delete()
+            try:
+                prima.delete()
+            except Exception:
+                pass
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
         return HttpResponseRedirect(self.get_url_redirect())
 
@@ -148,7 +157,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
         lotef = self.third_form_class(self.request.POST).data['matricula']
         detalle = detalleVenta.objects.get(id = lotef)
         try:
-                asig = asignacionLote.objects.get(detalleVenta = detalle)
+                asig = asignacionLote.objects.filter(detalleVenta = detalle)
                 try:
                     estaC = estadoCuenta.objects.get(detalleVenta = detalle)
                 except Exception:
@@ -170,6 +179,9 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
             pagoM.usuarioCreacion = user
         pagoM.save()
         pago.pagoMantenimiento = pagoM
+        if pago.tipoPago == 1:
+            pago.referencia = ''
+            pago.cuentaBancaria = None
         pago.save()
         return HttpResponseRedirect(self.get_url_redirect())
         
@@ -315,7 +327,15 @@ class Recibo(TemplateView):
             ws['F11'] = "=SUM(F5:F10)"
             ws['B19'] = usuario.first_name
             ws['B1'] = '=F11'
-            ws['B15'] = pagoRecibo.fechaPago
+            fecha = str(pagoRecibo.fechaPago).split(sep='-')
+            f = reversed(fecha)
+            
+            for x in f:
+                if ws.cell(row=15,column=2).value is None:
+                    ws.cell(row=15,column=2).value = x 
+                else:
+                    ws.cell(row=15,column=2).value = str(ws.cell(row=15,column=2).value) +"                    "+x  
+            ws['B15'].alignment = Alignment(horizontal="right",vertical="center")
             if pagoRecibo.tipoPago == 1:
                     ws['E18'] = "Pago realizado en efectivo"
             else:
@@ -388,7 +408,18 @@ class Recibo(TemplateView):
                 ws['B20'] = usuario.first_name
                 ws['E18'].font = Font(size=10)
                 ws['E19'].font = Font(size=10)
-                ws['B16'] = pagoRecibo.fechaPago
+                fecha = str(pagoRecibo.fechaPago).split(sep='-')
+                f = reversed(fecha)
+                
+                for x in f:
+                    if ws.cell(row=16,column=2).value is None:
+                        ws.cell(row=16,column=2).value = x 
+                    else:
+                        ws.cell(row=16,column=2).value = str(ws.cell(row=16,column=2).value) +"                    "+x  
+                ws['B16'].alignment = Alignment(horizontal="right",vertical="center")
+
+
+                
                 ws['F12'] = pagoMRecibo.montoOtros
                 ws['B12'] = "  "+pagoMRecibo.conceptoOtros
                 ws['B4'].alignment = Alignment(horizontal="center",vertical="center")

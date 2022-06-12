@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,11 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     #apps
-    'apps.autenticacion',
-    'apps.home',
-    'apps.facturacion',
-    'apps.inventario',
-    'apps.monitoreo',
+    'SistemaDeRegistroDePagos.apps.autenticacion',
+    'SistemaDeRegistroDePagos.apps.home',
+    'SistemaDeRegistroDePagos.apps.facturacion',
+    'SistemaDeRegistroDePagos.apps.inventario',
+    'SistemaDeRegistroDePagos.apps.monitoreo',
 ]
 
 MIDDLEWARE = [
@@ -57,9 +57,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'crum.CurrentRequestUserMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'SistemaDeRegistroDePagos.config.urls'
 
 TEMPLATES = [
     {
@@ -77,13 +78,13 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = 'SistemaDeRegistroDePagos.config.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config("NAME"),
@@ -92,8 +93,15 @@ DATABASES = {
         'HOST': config("HOST"),
         'PORT': config("PORT"),
     }
-}
+}"""
 
+import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -137,6 +145,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Default primary key field type

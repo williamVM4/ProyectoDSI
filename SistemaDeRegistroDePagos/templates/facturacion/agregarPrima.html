@@ -25,7 +25,7 @@
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">{{form.numeroReciboPrima.label}}</p>
-                                        {{form.numeroReciboPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo de la Prima'}}
+                                        {{form.numeroReciboPrima|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo de la Prima'|attr:'min:0'|attr:'max:999999'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboPrima.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
@@ -36,7 +36,7 @@
                                     <div class="form-group">
                                         <p class="label-form">{{form2.monto.label}}</p>
                                         <div class="input-group"><span class="input-group-addon">$</span>
-                                        {{form2.monto|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto de la Prima'}}</div>
+                                        {{form2.monto|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto de la Prima'|attr:'min:0'}}</div>
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.monto.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
@@ -74,7 +74,7 @@
                                 <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
                             </div>
                             <div class="col-md-2">
-                                <a class="btn btn-danger btn-block" href="{% url 'caja' idp=idp %}"> Cancelar </a>
+                                <a class="btn btn-danger btn-block" href="javascript:history.back()"> Cancelar </a>
                             </div>
                         </div>
                     </form>
@@ -127,6 +127,36 @@
         }else {
             $('#referencia').addClass('oculto');
             $('#cuentaBancaria').addClass('oculto');
+        }
+    });
+
+    $('form').submit(function(event) { 
+        let date = new Date();
+        now = date.toISOString().split('T')[0];
+        if($('#id_fechaPago').val() > now) {
+            Swal.fire({
+                icon: 'error',
+                text: 'La fecha de pago no puede ser mayor a la actual',
+              })
+            return false;
+        }
+        if($('#id_tipoPago').val() == '2') {
+            if($('#id_referencia').val() == '') {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Debe ingresar la referencia',
+                  })
+                return false;
+            }
+        }
+        if($('#id_tipoPago').val() == '2') {
+            if($('#id_cuentaBancaria').val() == '') {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Debe ingresar la cuenta bancaria',
+                  })
+                return false;
+            }
         }
     });
   </script>

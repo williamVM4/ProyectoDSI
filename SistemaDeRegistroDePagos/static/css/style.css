@@ -5,17 +5,45 @@
 .label-help-form{
     font-size: 11px;
 }
+#proyecto{
+    padding-top: 3%;
+    margin: 0;
+    font-weight: bolder;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+}
+#empresa{
+    padding-top: 0.5%;
+    margin: 0;
+    font-weight: bolder;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    color: rgb(119, 116, 116);
+}
+#pol{
+    padding: 0;
+    margin: 0;
+    font-weight: bolder;
+    font-size: 60px;
+    display: flex;
+    justify-content: center;
+}
+
+#lote{
+    padding: 0;
+    margin: 0;
+    font-weight: bolder;
+    font-size: 50px;
+    display: flex;
+    justify-content: center;}
 #sub{
     margin: 0;
     font-weight: lighter;
     color: rgb(119, 116, 116);
 }
-#pol{
-    margin: 0;
-    font-weight: bolder;
-    font-size: 80px;
-    font-display: block;
-}
+
 
 .multiple{
     height: 17em !important;
@@ -78,4 +106,8 @@ input[type=number] { -moz-appearance:textfield; }
 	position: absolute;
 	width: 250px;
 	margin-top: 4.75em !important;
+}
+
+.pol1{
+    justify-content: left !important;
 }

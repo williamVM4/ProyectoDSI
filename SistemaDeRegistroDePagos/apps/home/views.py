@@ -6,8 +6,8 @@ from django.contrib.auth.views import LogoutView
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from apps.inventario.models import proyectoTuristico
-from apps.autenticacion.mixins import *
+from SistemaDeRegistroDePagos.apps.inventario.models import proyectoTuristico
+from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
 
 # Create your views here.
 class homeProyecto(GroupRequiredMixin,TemplateView):
@@ -26,5 +26,7 @@ class homeProyecto(GroupRequiredMixin,TemplateView):
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('idp', None) 
-        context['idp'] = id         
+        proyect = proyectoTuristico.objects.get(pk=id)
+        context['idp'] = id
+        context['proyecto'] = proyect         
         return context
