@@ -66,4 +66,30 @@
           })
     {% endif %}
   </script>
+  <script type= application/javascript>
+    $('#id_nombreProyectoTuristico').bind('keypress', function(event) {
+  var regex = new RegExp("^[a-zA-Z ]+$");
+  var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+  if (!regex.test(key)) {
+    event.preventDefault();
+    return false;
+  }
+});
+$('#id_empresa').bind('keypress', function(event) {
+  var regex = new RegExp("^[a-zA-Z ]+$");
+  var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+  if (!regex.test(key)) {
+    event.preventDefault();
+    return false;
+  }
+});
+    Inputmask("{50}", {
+      placeholder: "",
+      greedy: false
+    }).mask('#id_nombreProyectoTuristico');
+    Inputmask("{30}", {
+      placeholder: "",
+      greedy: false
+    }).mask('#id_empresa');
+  </script>
 {% endblock %}

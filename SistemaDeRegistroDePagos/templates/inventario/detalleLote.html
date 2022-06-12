@@ -19,19 +19,27 @@
             <!-- Contenido aqui -->
             <div class="row">
                 <div class="col-lg-12">
+<<<<<<< HEAD
                     <h1 class="page-header">Especificaciones del lote</h1>
+=======
+                    <h1 class="page-header">Detalle de lote</h1>
+>>>>>>> Gabriela
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-md-4">
+<<<<<<< HEAD
                             <div class="panel panel-default">
                                 <div class="panel-body">
                                     <p class="page-header" id="pol">{{object.lote.numeroLote}}</p>
                                     <p id="lote">{{object.lote.poligono}}</h4>
                                 </div>
                             </div>
+=======
+                            <h1 id="pol">{{object.lote.numeroLote}}{{object.lote.poligono}}</h1>
+>>>>>>> Gabriela
                         </div>
                         <div class="col-md-8">
                             <div class="panel panel-default">
@@ -51,6 +59,7 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
+<<<<<<< HEAD
                             <h4> Detalle de Venta</h4>
                         </div>
                         <div class="panel-body">
@@ -72,6 +81,35 @@
                                 <p><label class="label-form">Estado:&nbsp;</label>{%if detalleV.estado == True%}Activo{%else%}Inactivo{%endif%}
                                 </p>        
                             </div>
+=======
+                            <div class="pull-right">
+                                <a type="button" class="btn btn-primary btn-block" href="">
+                                    Agregar
+                                </a>
+                            </div>
+                            <h4> Detalle de Venta</h4>
+                        </div>
+                        <div class="panel-body">
+                        <!--div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                            <thead>
+                                    <tr>
+                                        <th>Precio de Venta</th>
+                                        <th>Descuento</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for detalle in object_list %}
+                                    <tr>
+                                        <td>{{detalleVenta.precioVenta}}</td>
+                                        <td>{{detalleVenta.descuento}}</td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div-->
+                       <ul></ul> 
+>>>>>>> Gabriela
                     </div>
                     </div>
                 </div>
@@ -165,8 +203,13 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <div class="pull-right">
+<<<<<<< HEAD
                                 <a type="button" class="btn btn-primary btn-block" href="{% url 'agregarCondicionP' idp=idp idv=object.id %}">
                                     Agregar condiciones de pago
+=======
+                                <a type="button" class="btn btn-primary btn-block" href="">
+                                    Agregar
+>>>>>>> Gabriela
                                 </a>
                             </div>
                             <h4> Condiciones de Pago</h4>
@@ -175,6 +218,7 @@
                         </div>
                     </div>
                 </div>
+<<<<<<< HEAD
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -191,6 +235,14 @@
                 </div>
             </div>
             
+=======
+            </div>
+            <div class="pull-right">
+                <a type="button" class="btn btn-default" href="">
+                    Completar
+                </a>
+            </div>
+>>>>>>> Gabriela
         </div>
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
