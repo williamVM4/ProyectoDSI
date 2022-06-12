@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView
 from SistemaDeRegistroDePagos.apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
-from SistemaDeRegistroDePagos.apps.inventario.models import cuentaBancaria,proyectoTuristico
+from SistemaDeRegistroDePagos.apps.inventario.models import cuentaBancaria,proyectoTuristico, asignacionLote
 from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
 from .forms import *
 from .models import *
@@ -90,17 +90,18 @@ class agregarPrima(GroupRequiredMixin,CreateView):
         try:
             lotef = self.third_form_class(self.request.POST).data['matricula']
             detalle = detalleVenta.objects.get(id = lotef)
-            try:
-                asig = asignacionLote.objects.filter(detalleVenta = detalle)
-                try:
-                    est = estadoCuenta.objects.get(detalleVenta = detalle)
-                    messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' tiene un estado de cuenta generado. Ya no puede agregar mas primas')
-                    return self.render_to_response(self.get_context_data(form=form))  
-                except Exception:
-                    pass
-            except Exception:
+            asig = asignacionLote.objects.filter(detalleVenta = detalle)
+            if asig:
+                pass
+            else:
                 messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene propietarios')
-                return self.render_to_response(self.get_context_data(form=form))     
+                return self.render_to_response(self.get_context_data(form=form)) 
+            try:
+                est = estadoCuenta.objects.get(detalleVenta = detalle)
+                messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' tiene un estado de cuenta generado. Ya no puede agregar mas primas')
+                return self.render_to_response(self.get_context_data(form=form))  
+            except Exception:
+                pass  
             pago.prima = prima
             prima.detalleVenta = detalle
             if pago.monto > (detalle.precioVenta - detalle.descuento):
@@ -156,16 +157,17 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
         context=super().get_context_data(**kwargs)
         lotef = self.third_form_class(self.request.POST).data['matricula']
         detalle = detalleVenta.objects.get(id = lotef)
-        try:
-                asig = asignacionLote.objects.filter(detalleVenta = detalle)
-                try:
-                    estaC = estadoCuenta.objects.get(detalleVenta = detalle)
-                except Exception:
-                    messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene un estado de cuenta generado. Genere un estado de cuenta para poder agregar un pago')
-                    return self.render_to_response(self.get_context_data(form=form))   
-        except Exception:
+        asig = asignacionLote.objects.filter(detalleVenta = detalle)
+        if asig:
+            pass
+        else:
             messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene propietarios')
             return self.render_to_response(self.get_context_data(form=form)) 
+        try:
+            estaC = estadoCuenta.objects.get(detalleVenta = detalle)
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene un estado de cuenta generado. Genere un estado de cuenta para poder agregar un pago')
+            return self.render_to_response(self.get_context_data(form=form))   
         pagoM = form.save(commit=False)
         pago = self.second_form_class(self.request.POST).save(commit=False)
         
