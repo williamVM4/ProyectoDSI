@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'SistemaDeRegistroDePagos.config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config("NAME"),
@@ -93,8 +93,15 @@ DATABASES = {
         'HOST': config("HOST"),
         'PORT': config("PORT"),
     }
-}
+}"""
 
+import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
