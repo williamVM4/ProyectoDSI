@@ -9,12 +9,12 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView
-from SistemaDeRegistroDePagos.apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
-from SistemaDeRegistroDePagos.apps.inventario.models import cuentaBancaria,proyectoTuristico, asignacionLote
-from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
+from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
+from apps.inventario.models import cuentaBancaria,proyectoTuristico, asignacionLote
+from apps.autenticacion.mixins import *
 from .forms import *
 from .models import *
-from SistemaDeRegistroDePagos.apps.inventario.models import *
+from apps.inventario.models import *
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from crum import get_current_user
@@ -25,7 +25,7 @@ from django.contrib.auth.models import User
 
 
 
-from SistemaDeRegistroDePagos.apps.inventario.models import detalleVenta
+from apps.inventario.models import detalleVenta
 # Create your views here.
 
 class caja(GroupRequiredMixin,TemplateView):
@@ -62,7 +62,7 @@ class agregarPrima(GroupRequiredMixin,CreateView):
         return super().dispatch(request, *args, **kwargs)
     
     model = prima
-    template_name = 'facturacion/agregarPrima.html'
+    template_name = 'facturacion/Prima/agregarPrima.html'
     form_class = agregarPrimaForm
     second_form_class = pagoForm
     third_form_class = lotePagoForm
@@ -136,7 +136,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     form_class = agregarPagoMantenimientoForm
     second_form_class = pagoForm
     third_form_class = lotePagoForm
-    template_name = 'facturacion/agregarPagoMantenimiento.html'
+    template_name = 'facturacion/PagoMantenimiento/agregarPagoMantenimiento.html'
 
     def get_context_data(self, **kwargs):
         context = super(agregarPagoMantenimiento, self).get_context_data(**kwargs)

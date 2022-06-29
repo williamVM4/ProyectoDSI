@@ -6,8 +6,8 @@ from django.contrib.auth.views import LogoutView
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from SistemaDeRegistroDePagos.apps.inventario.models import proyectoTuristico
-from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
+from apps.inventario.models import proyectoTuristico
+from apps.autenticacion.mixins import *
 
 # Create your views here.
 class homeProyecto(GroupRequiredMixin,TemplateView):

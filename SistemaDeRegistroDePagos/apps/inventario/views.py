@@ -6,10 +6,10 @@ from django.views.generic import TemplateView, CreateView, FormView, ListView, D
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from SistemaDeRegistroDePagos.apps.facturacion.models import pago, prima
-from SistemaDeRegistroDePagos.apps.monitoreo.models import estadoCuenta
-from SistemaDeRegistroDePagos.apps.inventario.models import asignacionLote, detalleVenta, lote, proyectoTuristico
-from SistemaDeRegistroDePagos.apps.autenticacion.mixins import *
+from apps.facturacion.models import pago, prima
+from apps.monitoreo.models import estadoCuenta
+from apps.inventario.models import asignacionLote, detalleVenta, lote, proyectoTuristico
+from apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
 
@@ -24,7 +24,7 @@ class gestionarLotes(GroupRequiredMixin,ListView):
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
-    template_name = 'inventario/gestionarLotes.html'
+    template_name = 'inventario/Lote/gestionarLotes.html'
     model = lote
 
     def get_context_data(self, **kwargs):
@@ -49,7 +49,7 @@ class detalleLote(GroupRequiredMixin,DetailView):
             messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
             return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
-    template_name = 'inventario/detalleLote.html'
+    template_name = 'inventario/Lote/detalleLote.html'
     model = detalleVenta
 
     def get_context_data(self, **kwargs):
@@ -103,7 +103,7 @@ class agregarLote(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
-    template_name = 'inventario/agregarLote.html'
+    template_name = 'inventario/Lote/agregarLote.html'
     form_class = LoteForm
     #success_url = reverse_lazy('asignacionLote')
     def get_url_redirect(self, **kwargs):
@@ -152,7 +152,7 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error, asegurese de que el lote existe')
             return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
-    template_name = 'inventario/agregarDetalleVenta.html'
+    template_name = 'inventario/DetalleVenta/agregarDetalleVenta.html'
     form_class = DetalleVentaForm
     #success_url = reverse_lazy('asignacionLote')
     def get_url_redirect(self, **kwargs):
@@ -211,7 +211,7 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
             return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
     
-    template_name = 'inventario/agregarPropietario.html'
+    template_name = 'inventario/Propietario/agregarPropietario.html'
     form_class = PropietarioForm
     #success_url = reverse_lazy('detalleLote')
     def get_url_redirect(self, **kwargs):
@@ -264,7 +264,7 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
             return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
 
-    template_name = 'inventario/seleccionarPropietario.html'
+    template_name = 'inventario/Propietario/seleccionarPropietario.html'
     form_class = detalleVentaPropietarioForm
     #success_url = reverse_lazy('detalleLote')
     model = detalleVenta
