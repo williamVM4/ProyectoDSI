@@ -141,13 +141,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for prima in object_list %}
+                                    {% for pago in pagos %}
                                     <tr>
-                                        <td>{{ prima.matricula}}</td>
-                                        <td>{{ prima.numeroReciboPrima}}</td>
-                                        <td>{{ prima.fechaPago}}</td>
-                                        <td>{{ prima.monto}}</td>
-                                        <td>{{ prima.conceptoPrima}}</td>
+                                        {% if pago.prima.detalleVenta_id == detalleV.id %}
+                                            <td>{{ pago.prima.detalleVenta.lote.identificador }}</td>
+                                            <td>{{ pago.prima_id}}</td>
+                                            <td>{{ pago.fechaPago}}</td>
+                                            <td>{{ pago.monto}}</td>
+                                            <td>{{ pago.prima.conceptoPrima}}</td>
+                                        {% endif %}
                                         <!--td><a class="btn btn-default btn-block" href="#"> Editar </a></td>
                                         <td><a class="btn btn-default btn-block" href="#"> Eliminar </a></td-->
                                     </tr>
@@ -171,7 +173,38 @@
                             </div>
                             <h4> Condiciones de Pago</h4>
                         </div>
+                        
                         <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha de Escrituraciòn</th>
+                                            <th>Monto Financiamiento</th>
+                                            <th>Plazo</th>
+                                            <th>Interes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for c in condiciones %}
+                                        <tr>
+                                            {% if c.detalleVenta_id == detalleV.id %}
+                                                <td>{{ c.fechaEscrituracion }}</td>
+                                                <td>{{ c.montoFinanciamiento }}</td>
+                                                <td>{{ c.plazo }} meses</td>
+                                                <td>{{ c.tasaInteres }}%</td>
+                                                
+                                            {% endif %}
+                                            <!--td><a class="btn btn-default btn-block" href="#"> Editar </a></td>
+                                            <td><a class="btn btn-default btn-block" href="#"> Eliminar </a></td-->
+                                        </tr>
+                                        {%endfor%}
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <br>
+                            </div>
                         </div>
                     </div>
                 </div>

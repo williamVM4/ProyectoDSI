@@ -60,7 +60,11 @@ class detalleLote(GroupRequiredMixin,DetailView):
         context['id'] = id
         det = detalleVenta.objects.get(pk=id)
         context['asignaciones'] = asignacionLote.objects.filter()  
-        context['detalleV'] = det     
+        context['primas'] = prima.objects.filter(detalleVenta_id = det.id)
+        context['condiciones'] = condicionesPago.objects.filter(detalleVenta_id = det.id)
+        context['pagos'] = pago.objects.filter() 
+        context['detalleV'] = det    
+        
         return context 
 
 class asignacionesLote(GroupRequiredMixin,ListView):
