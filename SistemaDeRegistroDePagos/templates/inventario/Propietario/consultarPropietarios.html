@@ -18,12 +18,11 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Historico de ventas por lote</h1>
+                    <h1 class="page-header">Listado de propietarios</h1>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-1"></div>
-                <div class="col-lg-10">
+                <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             Lotes
@@ -34,19 +33,26 @@
                                 <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                     <thead>
                                         <tr>
-                                            <th>Lote</th>
-                                            <th>Matricula</th>
-                                            <th>Historico de ventas</th>
+                                            <th>DUI</th>
+                                            <th>Nombre</th>
+                                            <th>Direccion</th>
+                                            <th>Profesion</th>
+                                            <th>Telefono</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for lote in lotes %}
+                                        {% for propietario in propietarios %}
+                                        {% ifchanged propietario.propietario.dui %} 
                                         <tr>
-                                            <a>
-                                            <td>{{ lote.identificador}}</td>
-                                            <td>{{ lote.matriculaLote}}</td>
-                                            <td><a class="btn btn-default btn-block" href="{% url 'asignacionesLote' idp=idp pk=lote.matriculaLote %}"> Ver detalle </a></td>
+                                            <td>{{ propietario.propietario.dui}}</td>
+                                            <td>{{ propietario.propietario.nombrePropietario}}</td>
+                                            <td>{{ propietario.propietario.direccion}}</td>
+                                            <td>{{ propietario.propietario.profesion}}</td>
+                                            <td>{{ propietario.propietario.telefonoCelular}}</td>
+                                            <td></td>
                                         </tr>
+                                        {% endifchanged %}
                                         {%endfor%}
                                     </tbody>
                                 </table>

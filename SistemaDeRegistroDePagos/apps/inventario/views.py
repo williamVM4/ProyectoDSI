@@ -17,6 +17,8 @@ from .forms import *
 # Views de lote
 class gestionarLotes(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    template_name = 'inventario/Lote/gestionarLotes.html'
+    model = lote
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         """Validacion de que exista proyecto"""
@@ -26,16 +28,14 @@ class gestionarLotes(GroupRequiredMixin,ListView):
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
-    template_name = 'inventario/Lote/gestionarLotes.html'
-    model = lote
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
+        """Se recuperan los parametros necesarios pasados por url"""
         id = self.kwargs.get('idp', None) 
         context['idp'] = id
         context['lotes'] = lote.objects.filter(proyectoTuristico__id=id)
         context['detalles'] = detalleVenta.objects.filter(lote__proyectoTuristico__id=id, estado=True)
-        context['contador'] = 0
         return context
     
 class detalleLote(GroupRequiredMixin,DetailView):
@@ -68,7 +68,6 @@ class detalleLote(GroupRequiredMixin,DetailView):
         context['condiciones'] = condicionesPago.objects.filter(detalleVenta_id = det.id)
         context['pagos'] = pago.objects.filter() 
         context['detalleV'] = det    
-        
         return context 
 
 class asignacionesLote(GroupRequiredMixin,ListView):
@@ -221,6 +220,28 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
             return HttpResponseRedirect(reverse_lazy('gestionarlotes', kwargs={'idp': idp}))
 
 # Views de propietario
+class consultarPropietarios(GroupRequiredMixin,ListView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    template_name = 'inventario/Propietario/consultarPropietarios.html'
+    model = propietario
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        """Validacion de que exista proyecto"""
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        """Se recuperan los parametros necesarios pasados por url"""
+        id = self.kwargs.get('idp', None) 
+        context['idp'] = id
+        context['propietarios'] = asignacionLote.objects.filter(detalleVenta__lote__proyectoTuristico__id=id).order_by('-propietario__dui')
+        return context
+
 class agregarPropietario(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
