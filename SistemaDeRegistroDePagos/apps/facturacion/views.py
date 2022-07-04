@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView
-from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
+from apps.monitoreo.models import condicionesPago, estadoCuenta, cuotaEstadoCuenta
 from apps.inventario.models import cuentaBancaria,proyectoTuristico, asignacionLote
 from apps.autenticacion.mixins import *
 from .forms import *
@@ -247,6 +247,34 @@ class agregarCuentaBancaria(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error al guardar la cuenta bancaria, la cuenta bancaria no es válido')
         return HttpResponseRedirect(self.get_url_redirect())
     
+#Eliminar prima 
+class EliminarPrima(TemplateView):
+
+    def get_url_redirect(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) 
+        id = self.kwargs.get('idv', None) 
+        try:
+            detalleVenta.objects.get(pk = id)
+            return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})
+        except Exception:
+            return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
+
+    def get(self,request,*args,**kwargs):
+        context=super().get_context_data(**kwargs) 
+        id = self.kwargs.get('id', None)
+        try:
+            primas = prima.objects.get(numeroReciboPrima = id)
+            try:
+                condiciones = condicionesPago.objects.get(detalleVenta_id = primas.detalleVenta_id)
+                messages.error(self.request, 'Error al eliminar la cuotra de prima, este lote ya cuenta con condiciones de pago establecidas.')
+            except Exception:
+                primas.delete() 
+                messages.success(self.request, 'La prima fue eliminada con exito.')      
+        except Exception: 
+            messages.error(self.request, 'Ocurrió un error al eliminar la prima, la prima no existe.')
+        return HttpResponseRedirect(self.get_url_redirect())
+        
     
 class Recibo(TemplateView):
 
