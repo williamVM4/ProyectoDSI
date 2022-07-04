@@ -13,11 +13,13 @@ from apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
 
+
 # Views de lote
 class gestionarLotes(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        """Validacion de que exista proyecto"""
         try:
             proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
         except Exception:
@@ -32,6 +34,8 @@ class gestionarLotes(GroupRequiredMixin,ListView):
         id = self.kwargs.get('idp', None) 
         context['idp'] = id
         context['lotes'] = lote.objects.filter(proyectoTuristico__id=id)
+        context['detalles'] = detalleVenta.objects.filter(lote__proyectoTuristico__id=id, estado=True)
+        context['contador'] = 0
         return context
     
 class detalleLote(GroupRequiredMixin,DetailView):
@@ -87,8 +91,8 @@ class asignacionesLote(GroupRequiredMixin,ListView):
         id = self.kwargs.get('pk', None)
         context['idp'] = idp
         context['id'] = id
-        context['detalles'] = detalleVenta.objects.filter(lote__matriculaLote=id)
-        context['asignaciones'] = asignacionLote.objects.filter()
+        context['detalles'] = detalleVenta.objects.filter(lote__matriculaLote=id).order_by('-estado')
+        context['asignaciones'] = asignacionLote.objects.filter(detalleVenta__lote__matriculaLote = id)
         context['condiciones'] = condicionesPago.objects.filter(detalleVenta__lote__matriculaLote = id)
         return context
 
@@ -136,6 +140,28 @@ class agregarLote(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error al guardar el lote, el lote no es válido')
         return HttpResponseRedirect(self.get_url_redirect())
 
+class historicoVentas(GroupRequiredMixin,ListView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        """Validacion de que exista proyecto"""
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'inventario/DetalleVenta/historicoVentas.html'
+    model = lote
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        id = self.kwargs.get('idp', None) 
+        context['idp'] = id
+        context['lotes'] = lote.objects.filter(proyectoTuristico__id=id)
+        return context
+
+
 # Views de detalle de venta
 class agregarDetalleVenta(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
@@ -154,12 +180,6 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
         return super().dispatch(request, *args, **kwargs)
     template_name = 'inventario/DetalleVenta/agregarDetalleVenta.html'
     form_class = DetalleVentaForm
-    #success_url = reverse_lazy('asignacionLote')
-    def get_url_redirect(self, **kwargs):
-        context=super().get_context_data(**kwargs)
-        idp = self.kwargs.get('idp', None)
-        idl = self.kwargs.get('idl', None)  
-        return reverse_lazy('asignacionesLote', kwargs={'idp': idp,'pk': idl})
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
@@ -171,7 +191,8 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
          # recojo el parametro 
-        idl = self.kwargs.get('idl', None) 
+        idl = self.kwargs.get('idl', None)
+        idp = self.kwargs.get('idp', None)
         detalle = form.save(commit=False)
         #poner try
         try:
@@ -186,13 +207,14 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
             detalle.lote = lote.objects.get(pk=idl)
             detalle.save()
             messages.success(self.request, 'Detalle de venta guardado con éxito')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': idp,'pk': detalle.id}))
         except Exception:
             try:
                 detalle.delete()
             except Exception:
                 pass
             messages.error(self.request, 'Ocurrió un error al guardar el detalle de venta, el detalle de venta no es válido')
-        return HttpResponseRedirect(self.get_url_redirect())
+            return HttpResponseRedirect(reverse_lazy('gestionarlotes', kwargs={'idp': idp}))
 
 # Views de propietario
 class agregarPropietario(GroupRequiredMixin,CreateView):

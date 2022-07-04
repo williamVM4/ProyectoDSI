@@ -18,23 +18,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Catálogo de lotes</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                          <div class="row centrar">
-                            <div class="col-md-10">
-                            <h3></h3>
-                            </div>
-                            <div class="col-md-2">
-                                <a class="btn btn-primary btn-block" href="{% url 'agregarLote' idp=idp %}"> Agregar </a>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
+                    <h1 class="page-header">Historico de ventas por lote</h1>
                 </div>
             </div>
             <div class="row">
@@ -51,10 +35,7 @@
                                         <tr>
                                             <th>Lote</th>
                                             <th>Matricula</th>
-                                            <th>Area en metros cuadrados</th>
-                                            <th>Area en varas cuadrados</th>
-                                            <th>Venta activa</th>
-                                            <th>Agregar Venta</th>
+                                            <th>Historico de ventas</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -63,19 +44,7 @@
                                             <a>
                                             <td>{{ lote.identificador}}</td>
                                             <td>{{ lote.matriculaLote}}</td>
-                                            <td>{{ lote.areaMCuadrado}}</td>
-                                            <td>{{ lote.areaVCuadrada}}</td>
-                                            <td>
-                                            {% for detalle in detalles %}
-                                            {% if detalle.lote == lote %}
-                                            <a class="btn btn-default btn-block" href="{% url 'detalleLote' idp=idp pk=detalle.id %}"> Ver detalle </a>
-                                            {%endif%}
-                                            {% empty %}
-                                            <li>No hay detalles de venta</li>
-                                            {%endfor%}
-                                            </td>
-                                            <td><a class="btn btn-default btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"> Agregar venta</a></td>
-                                            {% comment %} <td><a class="btn btn-default btn-block" href="{% url 'asignacionesLote' idp=idp pk=lote.matriculaLote %}"> Ver detalle </a></td> {% endcomment %}
+                                            <td><a class="btn btn-default btn-block" href="{% url 'asignacionesLote' idp=idp pk=lote.matriculaLote %}"> Ver detalle </a></td>
                                         </tr>
                                         {%endfor%}
                                     </tbody>
