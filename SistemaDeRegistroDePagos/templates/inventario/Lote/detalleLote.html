@@ -136,8 +136,7 @@
                                         <th>Fecha de Pago</th>
                                         <th>Monto</th>
                                         <th>Concepto</th>
-                                        <!--th></th>
-                                        <th></th-->
+                                        <th>Opciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -149,6 +148,11 @@
                                             <td>{{ pago.fechaPago}}</td>
                                             <td>{{ pago.monto}}</td>
                                             <td>{{ pago.prima.conceptoPrima}}</td>
+                                            <td>
+                                                <a class="btn btn-warning" href="#"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                                <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
+                                                <a class="btn btn-danger" onclick="eliminarPrima({{idp}},{{object.id}},{{pago.prima_id}})"><b><i class="fa-solid fa-trash-can"></i></b></a>
+                                            </td>
                                         {% endif %}
                                         <!--td><a class="btn btn-default btn-block" href="#"> Editar </a></td>
                                         <td><a class="btn btn-default btn-block" href="#"> Eliminar </a></td-->
@@ -183,6 +187,7 @@
                                             <th>Monto Financiamiento</th>
                                             <th>Plazo</th>
                                             <th>Interes</th>
+                                            <th>Opciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -193,6 +198,9 @@
                                                 <td>{{ c.montoFinanciamiento }}</td>
                                                 <td>{{ c.plazo }} meses</td>
                                                 <td>{{ c.tasaInteres }}%</td>
+                                                <td>
+                                                    <a class="btn btn-warning" href="#"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                                </td>
                                                 
                                             {% endif %}
                                             <!--td><a class="btn btn-default btn-block" href="#"> Editar </a></td>
@@ -283,5 +291,26 @@
               })
         }
     {% endif %} 
+  </script>
+
+  <script>
+      function eliminarPrima(proyecto, detalleVenta, id){
+          Swal.fire({
+            "title":"¿Esta seguro de eliminar la prima?",
+            "text":"Se eliminara de manera permanente",
+            "icon":"question",
+            "showCancelButton":true,
+            "cancelButtonText":"Cancelar",
+            "confirmButtonText":"Eliminar",
+            "confirmButtonColor":"Red",
+
+          })
+          .then(function(result){
+              if(result.isConfirmed)[
+                  window.location.href = "/eliminarPrima/"+proyecto+"/"+detalleVenta+"/"+id+"/"
+              ]
+          })
+      }
+
   </script>
 {% endblock %}
