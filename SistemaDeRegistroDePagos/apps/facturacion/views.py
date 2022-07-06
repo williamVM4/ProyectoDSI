@@ -8,7 +8,7 @@ from django.forms import NullBooleanField
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView
+from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView, UpdateView
 from apps.monitoreo.models import condicionesPago, estadoCuenta, cuotaEstadoCuenta
 from apps.inventario.models import cuentaBancaria,proyectoTuristico, asignacionLote
 from apps.autenticacion.mixins import *
@@ -248,8 +248,17 @@ class agregarCuentaBancaria(GroupRequiredMixin,CreateView):
         return HttpResponseRedirect(self.get_url_redirect())
     
 #Eliminar prima 
-class EliminarPrima(TemplateView):
-
+class EliminarPrima(GroupRequiredMixin,TemplateView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        return super().dispatch(request, *args, **kwargs)
+    
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None) 
@@ -265,16 +274,89 @@ class EliminarPrima(TemplateView):
         id = self.kwargs.get('id', None)
         try:
             primas = prima.objects.get(numeroReciboPrima = id)
+            pagos = pago.objects.get(prima_id = id)
             try:
                 condiciones = condicionesPago.objects.get(detalleVenta_id = primas.detalleVenta_id)
                 messages.error(self.request, 'Error al eliminar la cuotra de prima, este lote ya cuenta con condiciones de pago establecidas.')
             except Exception:
                 primas.delete() 
+                pagos.delete()
                 messages.success(self.request, 'La prima fue eliminada con exito.')      
         except Exception: 
             messages.error(self.request, 'Ocurrió un error al eliminar la prima, la prima no existe.')
         return HttpResponseRedirect(self.get_url_redirect())
         
+#Modificar Prima 
+class ModificarPrima(GroupRequiredMixin, UpdateView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])  
+            try:
+                primas = prima.objects.get(numeroReciboPrima=self.kwargs['pk'])
+                try:
+                    detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
+                except Exception:
+                    messages.error(self.request, 'Ocurrió un error, el detalle de venta no existe')
+                    return HttpResponseRedirect(reverse_lazy('home'))
+            except Exception:
+                messages.error(self.request, 'Ocurrió un error, el recibo de prima no existe')
+                return HttpResponseRedirect(reverse_lazy('home'))
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        return super().dispatch(request, *args, **kwargs)
+
+    model = prima
+    second_model = pago
+    third_model = lote
+    template_name = 'facturacion/Prima/agregarPrima.html'
+    form_class = agregarPrimaForm
+    second_form_class = pagoForm
+    third_form_class = lotePagoForm
+    
+    def get_context_data(self, **kwargs):
+        context = super(ModificarPrima, self).get_context_data(**kwargs)
+        pk = self.kwargs.get('pk', None)
+        primas = self.model.objects.get(numeroReciboPrima = pk)
+        pagos = self.second_model.objects.get(prima_id = primas.numeroReciboPrima)        
+        if 'form' not in context:
+            context['form'] = self.form_class()
+        if 'form2' not in context:
+            context['form2'] = self.second_form_class(instance = pagos)
+        context['pk'] = pk   
+        return context
+
+    def get_form(self, form_class = None, **kwargs):
+        form = super().get_form(form_class)
+        form.fields['numeroReciboPrima'].disabled = True 
+        return form
+ 
+    def post(self, request, form_class = None, *args, **kwargs):
+        self.object = self.get_object
+        id_prima = kwargs['pk']
+        primas = self.model.objects.get(numeroReciboPrima = id_prima)
+        pagos = self.second_model.objects.get(prima_id = primas.numeroReciboPrima)
+        form = self.form_class(request.POST, instance = primas)
+        form.fields['numeroReciboPrima'].disabled = True 
+        form2 = self.second_form_class(request.POST, instance = pagos)
+        idp = self.kwargs.get('idp', None) 
+        id = self.kwargs.get('idv', None) 
+        if form.is_valid() and form2.is_valid():
+            primasF = form.save(commit = False)
+            pagosF = form2.save(commit = False)
+            if pagosF.tipoPago == 1:
+                pagosF.referencia = ''
+                pagosF.cuentaBancaria = None
+
+            primasF.save()
+            pagosF.save()
+            messages.success(self.request, 'Prima actualizada exitosamente')
+        else: 
+            messages.error(self.request, 'Ocurrió un error, el recibo de prima no se actualizo')
+        return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id}))  
+       
     
 class Recibo(TemplateView):
 

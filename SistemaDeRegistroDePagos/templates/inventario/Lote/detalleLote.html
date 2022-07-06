@@ -149,7 +149,7 @@
                                             <td>{{ pago.monto}}</td>
                                             <td>{{ pago.prima.conceptoPrima}}</td>
                                             <td>
-                                                <a class="btn btn-warning" href="#"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                                <a class="btn btn-warning" href="{% url 'modificarPrima' idp=idp idv=object.id pk=pago.prima_id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
                                                 <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                 <a class="btn btn-danger" onclick="eliminarPrima({{idp}},{{object.id}},{{pago.prima_id}})"><b><i class="fa-solid fa-trash-can"></i></b></a>
                                             </td>
