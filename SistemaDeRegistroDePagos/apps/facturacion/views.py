@@ -22,16 +22,15 @@ from django.http.response import HttpResponse
 from openpyxl import Workbook
 from openpyxl.styles import *
 from django.contrib.auth.models import User
-
-
-
 from apps.inventario.models import detalleVenta
-# Create your views here.
 
+"Vista donde se listaran todos los pagos que se vayan registrando"
 class caja(GroupRequiredMixin,TemplateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
+    template_name = 'facturacion/caja.html'
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        "Se valida que exista el proyecto turistico"
         try:
             proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
         except Exception:
@@ -39,35 +38,36 @@ class caja(GroupRequiredMixin,TemplateView):
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
 
-    template_name = 'facturacion/caja.html'
-
     def get_context_data(self, *args, **kwargs):
         context=super().get_context_data(**kwargs)
+        "Se envian los parametros por contexto y los objetos de tipo pago"
         id = self.kwargs.get('idp', None) 
         context['idp'] = id
         context['pagos'] = pago.objects.all().order_by('-fechaPago')
         return context
 
-        
-
+"Vista de formulario para agregar prima"
 class agregarPrima(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
+    model = prima
+    template_name = 'facturacion/Prima/agregarPrima.html'
+    form_class = agregarPrimaForm #formulario con datos del modelo prima
+    second_form_class = pagoForm #formulario con datos del modelo pago
+    third_form_class = lotePagoForm #formulario con el detalle de venta
+
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        "Se valida si el proyecto turistico existe"
         try:
             proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
         except Exception:
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
-    
-    model = prima
-    template_name = 'facturacion/Prima/agregarPrima.html'
-    form_class = agregarPrimaForm
-    second_form_class = pagoForm
-    third_form_class = lotePagoForm
+
     def get_context_data(self, **kwargs): 
         context = super(agregarPrima, self).get_context_data(**kwargs)
+        "Se envia el id del proyecto y los formularios auxiliares por contexto"
         idp = self.kwargs.get('idp', None)
         if 'form2' not in context:
             context['form2'] = self.second_form_class(id = idp)
@@ -76,37 +76,35 @@ class agregarPrima(GroupRequiredMixin,CreateView):
         context['idp'] = idp
         return context
 
+    "url de exito del formulario"
     def get_url_redirect(self, **kwargs):
-        context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None)
         return reverse_lazy('caja', kwargs={'idp': idp})
 
-
     def form_valid(self, form, **kwargs):
-        context=super().get_context_data(**kwargs)
-        lote = self.third_form_class(self.request.POST)
+        "Se obtienen los datos de los formularios"
         prima = form.save(commit=False)
         pago = self.second_form_class(self.request.POST).save(commit=False)
+        lotef = self.third_form_class(self.request.POST).data['matricula']
         try:
-            lotef = self.third_form_class(self.request.POST).data['matricula']
             detalle = detalleVenta.objects.get(id = lotef)
-            asig = asignacionLote.objects.filter(detalleVenta = detalle)
-            if asig:
-                pass
-            else:
-                messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene propietarios')
-                return self.render_to_response(self.get_context_data(form=form)) 
-            try:
-                est = estadoCuenta.objects.get(detalleVenta = detalle)
-                messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' tiene un estado de cuenta generado. Ya no puede agregar mas primas')
-                return self.render_to_response(self.get_context_data(form=form))  
-            except Exception:
-                pass  
+            "validacion de que tenga propietarios"
+            asig = asignacionLote.objects.filter(detalleVenta = detalle).exists()
+            if asig is False:
+                messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene propietarios registrados')
+                return self.render_to_response(self.get_context_data(form=form, form2=self.second_form_class(self.request.POST), form3 = self.third_form_class(self.request.POST)))
+            "validacion de que no tenga estado de cuenta"
+            est = estadoCuenta.objects.filter(detalleVenta = detalle).exists()
+            if est is True:
+                messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' tiene un estado de cuenta generado. Ya no puede registrar más primas')
+                return self.render_to_response(self.get_context_data(form=form, form2=self.second_form_class(self.request.POST), form3 = self.third_form_class(self.request.POST)))  
             pago.prima = prima
             prima.detalleVenta = detalle
+            "validacion de que el monto de prima no sea menor al precio de venta - descuento"
             if pago.monto > (detalle.precioVenta - detalle.descuento):
                 messages.error(self.request, 'Ocurrió un error, el monto de la prima debe ser menor al precio de venta')
-                return self.render_to_response(self.get_context_data(form=form))
+                return self.render_to_response(self.get_context_data(form=form, form2=self.second_form_class(self.request.POST), form3 = self.third_form_class(self.request.POST)))
+            "guarda el usuario"
             user = get_current_user()
             if user is not None:
                 prima.usuarioCreacion = user
@@ -114,13 +112,10 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             pago.save()
             messages.success(self.request, 'La prima fue registrada con exito')
         except Exception:
-            try:
-                prima.delete()
-            except Exception:
-                pass
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
         return HttpResponseRedirect(self.get_url_redirect())
 
+"Vista de formulario para agregar pago por mantenimiento"
 class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     @method_decorator(login_required)
@@ -187,21 +182,23 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
         pago.save()
         return HttpResponseRedirect(self.get_url_redirect())
         
-# Views de cuentas Bancarias
+#--------------------Views de cuentas Bancarias----------------------------
+"Vista de la lista de cuentas bancarias"
 class gestionarCuentasBancarias(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    template_name = 'facturacion/CuentasBancarias/gestionarCuentasBancarias.html'
+    model = cuentaBancaria
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        "Validacion de que exista el proyecto"
         try:
             proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
         except Exception:
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
-    template_name = 'facturacion/CuentasBancarias/gestionarCuentasBancarias.html'
-    model = cuentaBancaria
-
-
+    
+    "Se envia el parametro del id del proyecto por url y la lista de cuentas bancarias"
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('idp', None) 
@@ -209,21 +206,23 @@ class gestionarCuentasBancarias(GroupRequiredMixin,ListView):
         context['cuentaBancaria'] = cuentaBancaria.objects.filter(proyectoTuristico__id=id)
         return context
 
+"Vista del formulario para agregar cuentas bancarias"
 class agregarCuentaBancaria(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    template_name = 'facturacion/CuentasBancarias/agregarCuentaBancaria.html'
+    form_class = agregarCuentaBancariaForm
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        "Validacion de que exista el proyecto turistico"
         try:
             proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
         except Exception:
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
-    template_name = 'facturacion/CuentasBancarias/agregarCuentaBancaria.html'
-    form_class = agregarCuentaBancariaForm
     
+    "Metodo para obtener la url de exito"
     def get_url_redirect(self, **kwargs):
-        context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None) 
         return reverse_lazy('cuentas', kwargs={'idp': idp})
 
@@ -234,7 +233,6 @@ class agregarCuentaBancaria(GroupRequiredMixin,CreateView):
         return context
 
     def form_valid(self, form, **kwargs):
-        context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None) 
         cuentaBancaria = form.save(commit=False)
         try:
@@ -243,7 +241,6 @@ class agregarCuentaBancaria(GroupRequiredMixin,CreateView):
             cuentaBancaria.save()
             messages.success(self.request, 'La cuenta bancaria se ha guardado con éxito')
         except Exception:
-            cuentaBancaria.delete()
             messages.error(self.request, 'Ocurrió un error al guardar la cuenta bancaria, la cuenta bancaria no es válido')
         return HttpResponseRedirect(self.get_url_redirect())
     
@@ -275,7 +272,7 @@ class EliminarPrima(TemplateView):
             messages.error(self.request, 'Ocurrió un error al eliminar la prima, la prima no existe.')
         return HttpResponseRedirect(self.get_url_redirect())
         
-    
+#--------------------Recibo pago mantenimiento--------------------------------------------
 class Recibo(TemplateView):
 
     def get_context_data(self, **kwargs):
@@ -466,8 +463,6 @@ class Recibo(TemplateView):
                     ws['E18'] = "Pago realizado en "+banco.banco+" Cta. No. "+banco.numeroCuentaBancaria
                     ws['E19'] = "a/n de Decatur, S.A. Ref. " + pagoRecibo.referencia
                 
-                                
-       
 
         nombre_archivo = "Recibo.xlsx"
         response = HttpResponse()

@@ -30,7 +30,7 @@ class lote(models.Model):
         return self.identificador
 
 class propietario(models.Model):
-    dui = models.CharField(max_length=10, primary_key=True)
+    dui = models.CharField(max_length=10)
     nombrePropietario = models.CharField(max_length=60)
     direccion = models.CharField(max_length=50)
     profesion = models.CharField(max_length=50)
@@ -64,6 +64,17 @@ class asignacionLote(models.Model):
 
     def __str__(self):
         return '%s %s' % (self.propietario, self.detalleVenta)
+
+class asignacionProyecto(models.Model):
+    propietario = models.ForeignKey(propietario, on_delete=models.CASCADE)
+    dui = models.CharField(max_length=10)
+    proyectoTuristico = models.ForeignKey(proyectoTuristico, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('dui', 'proyectoTuristico')
+
+    def __str__(self):
+        return '%s' % (self.propietario)
 
 
 
