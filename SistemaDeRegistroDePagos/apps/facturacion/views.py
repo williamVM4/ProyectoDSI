@@ -23,6 +23,7 @@ from openpyxl import Workbook
 from openpyxl.styles import *
 from django.contrib.auth.models import User
 from apps.inventario.models import detalleVenta
+from datetime import datetime
 
 "Vista donde se listaran todos los pagos que se vayan registrando"
 class caja(GroupRequiredMixin,TemplateView):
@@ -291,14 +292,22 @@ class ModificarPrima(GroupRequiredMixin, UpdateView):
         try:
             proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])  
             try:
-                primas = prima.objects.get(numeroReciboPrima=self.kwargs['pk'])
+                detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
                 try:
-                    detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
+                    condicion = condicionesPago.objects.get(detalleVenta_id = detallev.id)
+                    messages.error(self.request, 'Ocurrió un error. Ya existe condiciones de pago, no es posible modificar la cuota de prima')
+                    return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
                 except Exception:
-                    messages.error(self.request, 'Ocurrió un error, el detalle de venta no existe')
-                    return HttpResponseRedirect(reverse_lazy('home'))
+                    try:
+                        primas = prima.objects.get(numeroReciboPrima=self.kwargs['pk'])
+                        if primas.detalleVenta != detallev:
+                            messages.error(self.request, 'Ocurrió un error, la cuota de prima no pertenece a el detalle de venta')
+                            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+                    except Exception:
+                        messages.error(self.request, 'Ocurrió un error, el recibo de prima no existe')
+                        return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
             except Exception:
-                messages.error(self.request, 'Ocurrió un error, el recibo de prima no existe')
+                messages.error(self.request, 'Ocurrió un error, el detalle de venta no existe')
                 return HttpResponseRedirect(reverse_lazy('home'))
         except Exception:
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
@@ -327,22 +336,23 @@ class ModificarPrima(GroupRequiredMixin, UpdateView):
 
     def get_form(self, form_class = None, **kwargs):
         form = super().get_form(form_class)
-        form.fields['numeroReciboPrima'].disabled = True 
+        form.fields['numeroReciboPrima'].disabled = True        
         return form
- 
+
     def post(self, request, form_class = None, *args, **kwargs):
         self.object = self.get_object
-        id_prima = kwargs['pk']
+        id_prima = kwargs['pk']       
         primas = self.model.objects.get(numeroReciboPrima = id_prima)
         pagos = self.second_model.objects.get(prima_id = primas.numeroReciboPrima)
         form = self.form_class(request.POST, instance = primas)
         form.fields['numeroReciboPrima'].disabled = True 
+        
         form2 = self.second_form_class(request.POST, instance = pagos)
         idp = self.kwargs.get('idp', None) 
         id = self.kwargs.get('idv', None) 
         if form.is_valid() and form2.is_valid():
             primasF = form.save(commit = False)
-            pagosF = form2.save(commit = False)
+            pagosF = form2.save(commit = False)          
             if pagosF.tipoPago == 1:
                 pagosF.referencia = ''
                 pagosF.cuentaBancaria = None

@@ -1,8 +1,9 @@
 import decimal
 import math
+from operator import truediv
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, FormView, ListView, DetailView
+from django.views.generic import TemplateView, CreateView, FormView, ListView, DetailView, UpdateView
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -531,3 +532,66 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error al guardar la condición de pago, la condición de pago no es valida')
         return HttpResponseRedirect(self.get_url_redirect())
 
+#modificar condiciones de pago
+class modificarCondicionesP(GroupRequiredMixin, UpdateView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])  
+            try:
+                detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
+                try:
+                    condicion = condicionesPago.objects.get(id=self.kwargs['pk'])
+                    if condicion.detalleVenta != detallev:
+                            messages.error(self.request, 'Ocurrió un error, la condiciòn de pago no pertenece a el detalle de venta')
+                            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+                except Exception:
+                    messages.error(self.request, 'Ocurrió un error, la condicion de pago no existe')
+                    return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+            except Exception:
+                messages.error(self.request, 'Ocurrió un error, el detalle de venta no existe')
+                return HttpResponseRedirect(reverse_lazy('home'))
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        return super().dispatch(request, *args, **kwargs)
+
+    model = condicionesPago
+    template_name = 'inventario/CondicionesDePago/agregarCondicionPago.html'
+    form_class = condicionPagoForm
+
+    def get_context_data(self, **kwargs):
+        context = super(modificarCondicionesP, self).get_context_data(**kwargs)
+        pk = self.kwargs.get('pk', None)
+        condiciones = self.model.objects.get(id = pk)      
+        if 'form' not in context:
+            context['form'] = self.form_class()
+        context['pk'] = pk   
+        return context
+
+    def get_form(self, form_class = None, **kwargs):
+        form = super().get_form(form_class)
+        form.fields['montoFinanciamiento'].disabled = True 
+        form.fields['cuotaKi'].disabled = True
+        
+        return form
+
+    def post(self, request, form_class = None, *args, **kwargs):
+        self.object = self.get_object
+        id_condicion = kwargs['pk']
+        condicion = self.model.objects.get(id = id_condicion)
+        form = self.form_class(request.POST, instance = condicion)
+        form.fields['montoFinanciamiento'].disabled = True 
+        form.fields['cuotaKi'].disabled = True
+        idp = self.kwargs.get('idp', None) 
+        id = self.kwargs.get('idv', None) 
+        if form.is_valid():
+            form.save()
+            messages.success(self.request, 'Las condiciones de pago fueron actualizada exitosamente')
+        else: 
+            messages.error(self.request, 'Ocurrió un error, no se actualizo las condiciones de pago')
+        return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id}))  
+    
+
+    

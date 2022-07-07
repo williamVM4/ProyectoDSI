@@ -52,7 +52,8 @@ class pagoForm(ModelForm):
             'observaciones':('Campo opcional')
         }
 
-        widgets = { 'fechaPago': DateInput(), }
+        widgets = { 'fechaPago': DateInput(format=('%Y-%m-%d')), }
+      
         
         
 

@@ -175,4 +175,4 @@ class condicionPagoForm(ModelForm):
             'multaFinanciamiento': _('multaFinanciamiento. Solo números'),
         }
 
-        widgets = { 'fechaEscrituracion': DateInput(), }
+        widgets = { 'fechaEscrituracion': DateInput(format=('%Y-%m-%d')), }
