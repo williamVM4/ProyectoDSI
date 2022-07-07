@@ -199,7 +199,8 @@
                                                 <td>{{ c.plazo }} meses</td>
                                                 <td>{{ c.tasaInteres }}%</td>
                                                 <td>
-                                                    <a class="btn btn-warning" href="#"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                                    <a class="btn btn-warning" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                                    <a class="btn btn-danger" href="#"><b><i class="fa-solid fa-trash-can"></i></b></a>
                                                 </td>
                                                 
                                             {% endif %}
