@@ -61,7 +61,10 @@
       {% for error in form.non_field_errors %}
         errors += '{{ error }}\n';
       {% endfor %}
-        alert(errors)
+      Swal.fire({
+        icon: 'error',
+        text: errors,
+      })
   {% endif %}
 
 {%if messages%}
@@ -76,7 +79,6 @@ if(msg != ''){
 Swal.fire({
     icon: 'error',
     text: msg,
-    //footer: '<a href="">Why do I have this issue?</a>'
   })
 }
 {% endif %} 

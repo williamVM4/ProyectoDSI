@@ -70,7 +70,7 @@
                                             <a class="btn btn-default btn-block" href="{% url 'detalleLote' idp=idp pk=detalle.id %}"> Ver detalle </a>
                                             {%endif%}
                                             {% empty %}
-                                            <li>No hay detalles de venta</li>
+                                            No hay detalles de venta
                                             {%endfor%}
                                             </td>
                                             <td><a class="btn btn-default btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"> Agregar venta</a></td>

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_templatetag %}
+
+{% block head %}
+ <!-- DataTables CSS -->
+ <link rel="stylesheet" href="{% static 'css/dataTables/dataTables.bootstrap.css'%}" type="text/css">
+ <!-- DataTables Responsive CSS -->
+ <link rel="stylesheet" href="{% static 'css/dataTables/dataTables.responsive.css'%}" type="text/css">
+{% endblock %}
+
+{% block content %}
+
+<div id="wrapper">
+    {% include 'navbar.html' %}
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3>{{propietario.nombrePropietario}}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <div class="encabezado-propietario"><h4>Información</h4></div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <p><b>DUI:</b> {{propietario.dui}}</p>
+                                                    <p><b>Dirección:</b> {{propietario.direccion}}</p>
+                                                    <p><b>Profesión:</b> {{propietario.profesion}}</p>
+                                                    <p><b>Trabajo:</b>{% if propietario.trabajo == ""%} N/A{% endif%} {{propietario.trabajo}}</p>
+                                                    <p><b>Direccion del trabajo:</b>{% if propietario.direccionTrabajo == ""%} N/A{% endif%}{{propietario.direccionTrabajo}}</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p><b>Telefono del trabajo:</b>{% if propietario.telefonoTrabajo == ""%} N/A{% endif%} {{propietario.telefonoTrabajo}}</p>
+                                                    <p><b>Telefono de casa:</b>{% if propietario.telefonoCasa == ""%} N/A{% endif%} {{propietario.telefonoCasa}}</p>
+                                                    <p><b>Telefono celular:</b> {{propietario.telefonoCelular}}</p>
+                                                    <p><b>Correo electronico:</b>{% if propietario.correoElectronico == ""%} N/A{% endif%} {{propietario.correoElectronico}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.col-->
+                                <div class="col-md-12">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <div class="encabezado-propietario"><h4>Lotes</h4></div>
+                                            {% for lote in lotes%}
+                                            <p><b>Lote: </b> {{lote.detalleVenta.lote.identificador}}<b> Estado:</b> {{lote.detalleVenta.estado}}</p>
+                                            {%endfor%}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.col-->
+                            </div>
+                        </div>
+                        {% comment %} <div class="panel-footer">
+                            Panel Footer
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+                <!-- /.col-->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<!-- DataTables JavaScript -->
+<script src="{% static 'js/dataTables/jquery.dataTables.min.js'%}"></script>
+<script src="{% static 'js/dataTables/dataTables.bootstrap.min.js'%}"></script>
+{% endblock %}

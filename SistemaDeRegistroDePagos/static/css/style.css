@@ -111,3 +111,19 @@ input[type=number] { -moz-appearance:textfield; }
 .pol1{
     justify-content: left !important;
 }
+
+.form-control.is-invalid, .was-validated .form-control:invalid {
+    border-color: #dc3545;
+}
+
+.linkDetalle { cursor: pointer; }
+
+.mt-5{
+    margin-top: 5em;
+}
+
+.encabezado-propietario{
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
