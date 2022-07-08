@@ -146,7 +146,7 @@
                                             <td>{{ pago.prima.detalleVenta.lote.identificador }}</td>
                                             <td>{{ pago.prima_id}}</td>
                                             <td>{{ pago.fechaPago}}</td>
-                                            <td>{{ pago.monto}}</td>
+                                            <td>${{ pago.monto}}</td>
                                             <td>{{ pago.prima.conceptoPrima}}</td>
                                             <td>
                                                 <a class="btn btn-warning" href="{% url 'modificarPrima' idp=idp idv=object.id pk=pago.prima_id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
