@@ -37,7 +37,7 @@
                 <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
               </div>
               <div class="col-md-3">
-                <a class="btn btn-danger btn-block" href="{% url 'asignacionesLote' idp=idp pk=idl %}"> Cancelar </a>
+                <a class="btn btn-danger btn-block" href="javascript:history.back()"> Cancelar </a>
               </div>
             </div>
           </form>
@@ -61,7 +61,10 @@
       {% for error in form.non_field_errors %}
         errors += '{{ error }}\n';
       {% endfor %}
-        alert(errors)
+      Swal.fire({
+        icon: 'error',
+        text: errors,
+      })
   {% endif %}
 
 {%if messages%}
@@ -76,7 +79,6 @@ if(msg != ''){
 Swal.fire({
     icon: 'error',
     text: msg,
-    //footer: '<a href="">Why do I have this issue?</a>'
   })
 }
 {% endif %} 

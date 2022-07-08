@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
-from django.forms import ModelForm
-from .models import propietario, detalleVenta, lote, proyectoTuristico
+from django.forms import ModelForm, ValidationError
+from .models import asignacionProyecto, propietario, detalleVenta, lote, proyectoTuristico
 from apps.monitoreo.models import condicionesPago
 from django import forms
 
@@ -9,13 +9,14 @@ class DateInput(forms.DateInput):
 
 class PropietarioForm(ModelForm):
     def __init__(self, *args, **kwargs):
-            super(PropietarioForm, self).__init__(*args, **kwargs)
-            self.fields['dui'].widget.attrs['pattern'] = "[0-9]{8}[ -][0-9]{1}"
-            self.fields['telefonoTrabajo'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
-            self.fields['nombrePropietario'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
-            self.fields['telefonoCasa'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
-            self.fields['telefonoCelular'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
-            self.fields['correoElectronico'].widget.attrs['pattern'] = "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 4}$"
+        self.idp = kwargs.pop('idp', None)
+        super(PropietarioForm, self).__init__(*args, **kwargs)
+        self.fields['dui'].widget.attrs['pattern'] = "[0-9]{8}[ -][0-9]{1}"
+        self.fields['telefonoTrabajo'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
+        self.fields['nombrePropietario'].widget.attrs['pattern'] = "^([A-ZÑÁÉÍÓÚa-zñáéíóú]{1}[A-ZÑÁÉÍÓÚa-zñáéíóú]+[\s]*)+$"
+        self.fields['telefonoCasa'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
+        self.fields['telefonoCelular'].widget.attrs['pattern'] = "[0-9]{4}[ -][0-9]{4}"
+        self.fields['correoElectronico'].widget.attrs['pattern'] = "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 4}$"
 
     class Meta:
         model=propietario
@@ -45,11 +46,12 @@ class PropietarioForm(ModelForm):
             'telefonoCelular': _('Campo Obligatorio'),
             'correoElectronico': _('Campo Opcional'),
         }
-        error_messages = {
-            'nombrePropietario': {
-                'max_length': _("El dato ingresado es demasiado largo"),
-            },
-        }
+    def clean_dui(self):
+        dui = self.cleaned_data["dui"]
+        asigPro = asignacionProyecto.objects.filter(propietario__dui = dui, proyectoTuristico__id = self.idp).exists()
+        if asigPro is True:
+            raise ValidationError("Ya existe una persona registrada con este dui, en este proyecto Turistico")
+        return dui
 
 class DetalleVentaForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -68,8 +70,20 @@ class DetalleVentaForm(ModelForm):
             'descuento': _('Campo Obligatorio'),
             'estado': _('Campo Obligatorio'),
         }
+    def clean_descuento(self):
+        descuento = self.cleaned_data["descuento"]
+        precioV = self.cleaned_data["precioVenta"]
+        if descuento > precioV:
+            raise ValidationError("El descuento no puede ser mayor al precio de venta")
+        return descuento
+    
 
 class detalleVentaPropietarioForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        idp = kwargs.pop('idp', None)
+        super().__init__(*args, **kwargs)
+        if idp:        
+            self.fields['propietarios'].queryset = asignacionProyecto.objects.filter(proyectoTuristico__id=idp)
 
     class Meta:
         model=detalleVenta
@@ -101,6 +115,15 @@ class LoteForm(ModelForm):
             'areaMCuadrado': _('Campo Obligatorio'),
             'areaVCuadrada': _('Campo Obligatorio'),
         }
+    
+    def clean_matriculaLote(self):
+        data = self.cleaned_data["matriculaLote"]
+        existe = lote.objects.filter(matriculaLote=data).exists
+        if existe is True:
+            raise ValidationError("Ya existe un lote registrado con la matricula ingresada.")
+        return data
+    
+
 
 class agregarProyectoForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -152,4 +175,4 @@ class condicionPagoForm(ModelForm):
             'multaFinanciamiento': _('multaFinanciamiento. Solo números'),
         }
 
-        widgets = { 'fechaEscrituracion': DateInput(), }
+        widgets = { 'fechaEscrituracion': DateInput(format=('%Y-%m-%d')), }

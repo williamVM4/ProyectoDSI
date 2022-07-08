@@ -22,7 +22,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='propietario',
             fields=[
-                ('dui', models.CharField(max_length=10, primary_key=True, serialize=False)),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('dui', models.CharField(max_length=10)),
                 ('nombrePropietario', models.CharField(max_length=60)),
                 ('direccion', models.CharField(max_length=50)),
                 ('profesion', models.CharField(max_length=50)),
@@ -84,6 +85,18 @@ class Migration(migrations.Migration):
             model_name='asignacionlote',
             name='propietario',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='inventario.propietario'),
+        ),
+        migrations.CreateModel(
+            name='asignacionProyecto',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('dui', models.CharField(max_length=10)),
+                ('propietario', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='inventario.propietario')),
+                ('proyectoTuristico', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='inventario.proyectoturistico')),
+            ],
+            options={
+                'unique_together': {('dui', 'proyectoTuristico')},
+            },
         ),
         migrations.AlterUniqueTogether(
             name='asignacionlote',

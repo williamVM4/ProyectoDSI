@@ -136,18 +136,24 @@
                                         <th>Fecha de Pago</th>
                                         <th>Monto</th>
                                         <th>Concepto</th>
-                                        <!--th></th>
-                                        <th></th-->
+                                        <th>Opciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for prima in object_list %}
+                                    {% for pago in pagos %}
                                     <tr>
-                                        <td>{{ prima.matricula}}</td>
-                                        <td>{{ prima.numeroReciboPrima}}</td>
-                                        <td>{{ prima.fechaPago}}</td>
-                                        <td>{{ prima.monto}}</td>
-                                        <td>{{ prima.conceptoPrima}}</td>
+                                        {% if pago.prima.detalleVenta_id == detalleV.id %}
+                                            <td>{{ pago.prima.detalleVenta.lote.identificador }}</td>
+                                            <td>{{ pago.prima_id}}</td>
+                                            <td>{{ pago.fechaPago}}</td>
+                                            <td>${{ pago.monto}}</td>
+                                            <td>{{ pago.prima.conceptoPrima}}</td>
+                                            <td>
+                                                <a class="btn btn-warning" href="{% url 'modificarPrima' idp=idp idv=object.id pk=pago.prima_id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                                <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
+                                                <a class="btn btn-danger" onclick="eliminarPrima({{idp}},{{object.id}},{{pago.prima_id}})"><b><i class="fa-solid fa-trash-can"></i></b></a>
+                                            </td>
+                                        {% endif %}
                                         <!--td><a class="btn btn-default btn-block" href="#"> Editar </a></td>
                                         <td><a class="btn btn-default btn-block" href="#"> Eliminar </a></td-->
                                     </tr>
@@ -171,7 +177,43 @@
                             </div>
                             <h4> Condiciones de Pago</h4>
                         </div>
+                        
                         <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha de Escrituraciòn</th>
+                                            <th>Monto Financiamiento</th>
+                                            <th>Plazo</th>
+                                            <th>Interes</th>
+                                            <th>Opciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for c in condiciones %}
+                                        <tr>
+                                            {% if c.detalleVenta_id == detalleV.id %}
+                                                <td>{{ c.fechaEscrituracion }}</td>
+                                                <td>{{ c.montoFinanciamiento }}</td>
+                                                <td>{{ c.plazo }} meses</td>
+                                                <td>{{ c.tasaInteres }}%</td>
+                                                <td>
+                                                    <a class="btn btn-warning" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                                    <a class="btn btn-danger" href="#"><b><i class="fa-solid fa-trash-can"></i></b></a>
+                                                </td>
+                                                
+                                            {% endif %}
+                                            <!--td><a class="btn btn-default btn-block" href="#"> Editar </a></td>
+                                            <td><a class="btn btn-default btn-block" href="#"> Eliminar </a></td-->
+                                        </tr>
+                                        {%endfor%}
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <br>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -250,5 +292,26 @@
               })
         }
     {% endif %} 
+  </script>
+
+  <script>
+      function eliminarPrima(proyecto, detalleVenta, id){
+          Swal.fire({
+            "title":"¿Esta seguro de eliminar la prima?",
+            "text":"Se eliminara de manera permanente",
+            "icon":"question",
+            "showCancelButton":true,
+            "cancelButtonText":"Cancelar",
+            "confirmButtonText":"Eliminar",
+            "confirmButtonColor":"Red",
+
+          })
+          .then(function(result){
+              if(result.isConfirmed)[
+                  window.location.href = "/eliminarPrima/"+proyecto+"/"+detalleVenta+"/"+id+"/"
+              ]
+          })
+      }
+
   </script>
 {% endblock %}
