@@ -7,8 +7,8 @@ from django.views.generic import TemplateView, CreateView, FormView, ListView, D
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from apps.facturacion.models import pago, prima
-from apps.monitoreo.models import estadoCuenta
+from apps.facturacion.models import pago, pagoMantenimiento, prima
+from apps.monitoreo.models import cuotaEstadoCuenta, estadoCuenta
 from apps.inventario.models import asignacionLote, asignacionProyecto, detalleVenta, lote, proyectoTuristico
 from apps.autenticacion.mixins import *
 from django.contrib import messages
@@ -502,8 +502,9 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
         idv = self.kwargs.get('idv', None)
         detalle = detalleVenta.objects.get(pk=idv)
         pagosprimas = pago.objects.filter(prima__detalleVenta__id = idv)
+        suma = 0
         for pag in pagosprimas:
-          suma =+ pag.monto
+          suma = suma + pag.monto
         montof = detalle.precioVenta - suma - detalle.descuento
         """Se asigna el monto como valor inicial y se deshabilitan los campos del monto y cuota ki"""
         form.fields['montoFinanciamiento'].initial = montof
@@ -541,6 +542,9 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
             proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])  
             try:
                 detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
+                if detallev.estado == False:
+                    messages.error(self.request, 'Ocurrió un error, el detalle de venta no esta activo')
+                    return HttpResponseRedirect(reverse_lazy('home'))
                 try:
                     condicion = condicionesPago.objects.get(id=self.kwargs['pk'])
                     if condicion.detalleVenta != detallev:
@@ -574,14 +578,36 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
         form = super().get_form(form_class)
         form.fields['montoFinanciamiento'].disabled = True 
         form.fields['cuotaKi'].disabled = True
-        
-        return form
+        detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
+        estado = estadoCuenta.objects.get(detalleVenta_id = detallev.id)
+        try:
+            cuota = cuotaEstadoCuenta.objects.filter(estadoCuenta_id = estado.id)
+            for c in cuota:
+                if estado.id == c.estadoCuenta_id:
+                    form.fields['plazo'].disabled = True
+                    form.fields['fechaEscrituracion'].disabled = True
+            return form
+        except Exception:
+            form.fields['fechaEscrituracion'].disabled = False
+            form.fields['plazo'].disabled = False
+            return form
 
-    def post(self, request, form_class = None, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         self.object = self.get_object
         id_condicion = kwargs['pk']
         condicion = self.model.objects.get(id = id_condicion)
         form = self.form_class(request.POST, instance = condicion)
+        detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
+        estado = estadoCuenta.objects.get(detalleVenta_id = detallev.id)
+        try:
+            cuota = cuotaEstadoCuenta.objects.filter(estadoCuenta_id = estado.id)
+            for c in cuota:
+                if estado.id == c.estadoCuenta_id:
+                    form.fields['fechaEscrituracion'].disabled = True
+                    form.fields['plazo'].disabled = True
+        except Exception:
+            form.fields['fechaEscrituracion'].disabled = False
+            form.fields['plazo'].disabled = False
         form.fields['montoFinanciamiento'].disabled = True 
         form.fields['cuotaKi'].disabled = True
         idp = self.kwargs.get('idp', None) 
