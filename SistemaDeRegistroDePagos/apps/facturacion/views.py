@@ -1,7 +1,9 @@
+from ast import If
 from asyncio import current_task
 from email.headerregistry import Group
 from importlib.resources import contents
 from multiprocessing import context
+import re
 from urllib import response
 from xml.dom.minidom import Identified
 from django.forms import NullBooleanField
@@ -9,8 +11,8 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView
-from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
-from apps.inventario.models import cuentaBancaria,proyectoTuristico, asignacionLote
+from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta, condicionesPago
+from apps.inventario.models import cuentaBancaria,proyectoTuristico, asignacionLote, detalleVenta
 from apps.autenticacion.mixins import *
 from .forms import *
 from .models import *
@@ -23,9 +25,13 @@ from openpyxl import Workbook
 from openpyxl.styles import *
 from django.contrib.auth.models import User
 
+from math import floor
+from decimal import Decimal
+from datetime import date, timedelta, time, datetime
+from dateutil.relativedelta import relativedelta
+from django.utils.dateparse import parse_datetime
+import dateutil.parser
 
-
-from apps.inventario.models import detalleVenta
 # Create your views here.
 
 class caja(GroupRequiredMixin,TemplateView):
@@ -45,7 +51,7 @@ class caja(GroupRequiredMixin,TemplateView):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('idp', None) 
         context['idp'] = id
-        context['pagos'] = pago.objects.all().order_by('-fechaPago')
+        context['pagos'] = pago.objects.all().order_by('-fechaRegistro')
         return context
 
         
@@ -103,6 +109,7 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             except Exception:
                 pass  
             pago.prima = prima
+            pago.fechaRegistro=datetime.now()
             prima.detalleVenta = detalle
             if pago.monto > (detalle.precioVenta - detalle.descuento):
                 messages.error(self.request, 'Ocurrió un error, el monto de la prima debe ser menor al precio de venta')
@@ -155,37 +162,472 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
 
     def form_valid(self, form, **kwargs):
         context=super().get_context_data(**kwargs)
+        
         lotef = self.third_form_class(self.request.POST).data['matricula']
         detalle = detalleVenta.objects.get(id = lotef)
-        asig = asignacionLote.objects.filter(detalleVenta = detalle)
-        if asig:
-            pass
-        else:
+
+        #Validacion de asignacion
+        try:
+             asig = asignacionLote.objects.filter(detalleVenta = detalle)
+        except Exception:
             messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene propietarios')
             return self.render_to_response(self.get_context_data(form=form)) 
+
+        asig = asignacionLote.objects.filter(detalleVenta = detalle)
+
+        #Validacion de estado de cuenta
         try:
             estaC = estadoCuenta.objects.get(detalleVenta = detalle)
         except Exception:
-            messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene un estado de cuenta generado. Genere un estado de cuenta para poder agregar un pago')
-            return self.render_to_response(self.get_context_data(form=form))   
-        pagoM = form.save(commit=False)
-        pago = self.second_form_class(self.request.POST).save(commit=False)
+            messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene un estado de cuenta generado. Establezca la venta para poder agregar un pago')
+            return self.render_to_response(self.get_context_data(form=form))
+
+        estadoC = estadoCuenta.objects.get(detalleVenta = detalle)
+        condicion=condicionesPago.objects.get(detalleVenta=detalle)
+        stringFechaPago=self.second_form_class(self.request.POST).data['fechaPago']
+        stringFechaPago=stringFechaPago[0:4]+"-"+stringFechaPago[6:7]+"-"+stringFechaPago[8:10]
+        fechaPago=dateutil.parser.parse(stringFechaPago).date()
+        listadoPagos=pagoMantenimiento.objects.filter(numeroCuotaEstadoCuenta__estadoCuenta=estadoC).order_by('-fechaRegistro')
+        primeraCuota="NO"
+        saldoUltimaCuota=0
+        saldoUltimoRecargo=0
+        monto=0
+        descuento=0
+        montoOtros=0
+        conceptoDescuento=""
+        conceptoOtros=""
+        observaciones=""
         
-        cuotaE = cuotaEstadoCuenta(estadoCuenta = estaC,numeroCuota= 0, diasInteres= 0, 
-                                    tasaInteres = 0, interesGenerado = 0, interesPagado = 0, 
-                                    subTotal = 0, abonoCapital = 0, saldoCapital = 0, saldoInteres = 0,)                            
-        cuotaE.save()
-        pagoM.numeroCuotaEstadoCuenta = cuotaE
-        user = get_current_user()
-        if user is not None:
-            pagoM.usuarioCreacion = user
-        pagoM.save()
-        pago.pagoMantenimiento = pagoM
-        if pago.tipoPago == 1:
-            pago.referencia = ''
-            pago.cuentaBancaria = None
-        pago.save()
+        #Verificar que existan cuotas de mantenimiento en el estado de cuenta
+        try: 
+            ultimoPagoListado=listadoPagos[0]
+            ultimoPago=pago.objects.get(pagoMantenimiento = ultimoPagoListado)
+        except Exception:
+            primeraCuota="SI"
+            pass
+
+        #Validacion del monto
+        try:
+            monto=Decimal(self.second_form_class(self.request.POST).data['monto'])
+            if monto==0:
+                messages.error(self.request, 'Ocurrió un error, el monto no es un valor válido.')
+                return self.render_to_response(self.get_context_data(form=form))  
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el monto no debe ser cero.')
+            return self.render_to_response(self.get_context_data(form=form))
+
+        #Obtenemos la fechas del corte, la cuota de pago, inicio y fin de mes
+        fechaCorte=condicion.fechaEscrituracion
+        stringFechaCadaMes="Fecha de pago "+fechaCorte.strftime("%d")+" de cada mes.\n"
+        fechaUltimoRecargo=fechaCorte
+        stringObservaciones=""
+        stringRecargo=""
+        valorPagado=monto
+        fechaUltimoPago=fechaCorte
+
+        #Validacion del monto en concepto de otros
+        try:
+            montoOtros=Decimal(self.form_class(self.request.POST).data['montoOtros'])
+        except Exception:
+            pass
+
+        #Validacion del monto en concepto de descuento
+        try:
+            descuento=Decimal(self.form_class(self.request.POST).data['descuento'])
+        except Exception:
+            pass    
+
+        #Si existe un monto en concepto de otros se lo restamos al valor pagado
+        monto-=montoOtros
+        valorRecargo=0
+        abono=0
+
+        #Calculo del ultimo pago ingresado
+        if primeraCuota=="NO":
+            fechaCorte=ultimoPago.pagoMantenimiento.fechaUltimoMtto
+            saldoUltimaCuota=ultimoPago.pagoMantenimiento.abono
+            fechaUltimoRecargo=ultimoPago.pagoMantenimiento.fechaUltimoRecargo
+            saldoUltimoRecargo=ultimoPago.pagoMantenimiento.saldoRecargo
+            fechaUltimoPago=ultimoPago.fechaPago
+        
+        #Validacion del concepto del descuento
+        try:
+            conceptoDescuento=self.form_class(self.request.POST).data['conceptoDescuento']
+        except Exception:
+            pass
+
+        #Validacion del concepto de otros cargos
+        try:
+            conceptoOtros=self.form_class(self.request.POST).data['conceptoOtros']
+        except Exception:
+            pass
+
+        #Validacion del concepto de las observaciones
+        try:
+            observaciones=self.second_form_class(self.request.POST).data['observaciones']
+        except Exception:
+            pass
+            
+        #Validacion de la fecha de pago
+        if fechaPago<fechaUltimoPago:
+            messages.error(self.request, 'Ocurrió un error, la fecha de pago debe ser mayor al último pago registrado en el estado de cuenta del lote. Fecha último pago '+fechaUltimoPago.strftime("%d/%m/%Y"))
+            return self.render_to_response(self.get_context_data(form=form)) 
+        
+        #Validacion del concepto por descuento
+        if descuento!=0 and conceptoDescuento=="":
+            messages.error(self.request, 'Ocurrió un error, no se ha asignado un concepto al monto del descuento.')
+            return self.render_to_response(self.get_context_data(form=form))
+
+        #Validacion del concepto por otros pagos
+        if montoOtros!=0 and conceptoOtros=="":
+            messages.error(self.request, 'Ocurrió un error, no se ha asignado un concepto al monto por otros pagos.')
+            return self.render_to_response(self.get_context_data(form=form))  
+
+        #Validacion del monto a cancelar
+        if montoOtros!=0 and descuento!=0:
+            if valorPagado<(montoOtros+descuento):
+                messages.error(self.request, 'Ocurrió un error, el monto no corresponde al valor a cancelar.')
+                return self.render_to_response(self.get_context_data(form=form))
+        elif montoOtros>valorPagado and descuento==0:
+            messages.error(self.request, 'Ocurrió un error, el monto no corresponde al valor a cancelar en concepto de otros pagos.')
+            return self.render_to_response(self.get_context_data(form=form))
+        elif descuento>valorPagado and montoOtros==0:
+            messages.error(self.request, 'Ocurrió un error, el monto no corresponde al valor a cancelar en concepto de descuento por recargo.')
+            return self.render_to_response(self.get_context_data(form=form))
+
+        #Validacion del monto de descuento, exista un recargo para cobrarlo
+        fechaValidacion=fechaCorte + relativedelta(months=1)
+        fechaValidacionActualizada=fechaActualizada(fechaValidacion,condicion.fechaEscrituracion)
+        if  descuento !=0:
+            if fechaPago>fechaValidacionActualizada:
+                cantidadMeses=int(cantMeses(fechaPago,fechaUltimoRecargo))
+                fechaRecargo=fechaUltimoRecargo+relativedelta(months=cantidadMeses)
+                fechaRecargo=fechaActualizada(fechaRecargo, condicion.fechaEscrituracion)
+                if fechaPago<=fechaRecargo:
+                    cantidadMeses-=1
+                montoMensajeRecargo=Decimal(cantidadMeses*condicion.multaMantenimiento)
+                if descuento>montoMensajeRecargo:
+                    messages.error(self.request, 'Ocurrió un error, el monto del descuento no debe ser mayor al cálculo del recargo. Recargo calculado: $ '+str(round(montoMensajeRecargo,2)))
+                    return self.render_to_response(self.get_context_data(form=form)) 
+            else:
+                messages.error(self.request, 'Ocurrió un error, no existe un recargo al cual aplicar el descuento.')
+                return self.render_to_response(self.get_context_data(form=form)) 
+
+        #Calculo del recargo
+        if monto>0:
+            fechaValidacion=fechaCorte + relativedelta(months=1)
+            if fechaPago>fechaActualizada(fechaValidacion,condicion.fechaEscrituracion):
+                stringRecargo="\nRecargo:\n"
+                cantidadMeses=int(cantMeses(fechaPago,fechaUltimoRecargo))
+                fechaRecargo=fechaUltimoRecargo+relativedelta(months=cantidadMeses)
+                fechaRecargo=fechaActualizada(fechaRecargo, condicion.fechaEscrituracion)
+                if fechaPago<=fechaRecargo:
+                    cantidadMeses-=1                
+                monto=(cantidadMeses*condicion.multaMantenimiento)-saldoUltimoRecargo
+                if valorPagado<monto:
+                    monto=valorPagado
+                if saldoUltimoRecargo==0:
+                    if monto==condicion.multaMantenimiento:
+                        fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                        stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento,2))+"\n"
+                        monto-=condicion.multaMantenimiento
+                    elif monto<condicion.multaMantenimiento:
+                        fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                        stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\nSaldo "+printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento-monto,2))+"\n"
+                    elif monto>condicion.multaMantenimiento:
+                        abonoCuota=monto%condicion.multaMantenimiento
+                        cantCuotas=floor(monto/condicion.multaMantenimiento)
+                        if abonoCuota==0.0:
+                            if cantCuotas>1:
+                                for i in range(cantCuotas):
+                                    fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                                    if i==0:
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" a "
+                                    elif i==cantCuotas-1:
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                    monto-=condicion.multaMantenimiento
+                            else:
+                                fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                                stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                monto-=condicion.multaMantenimiento
+                        else:
+                            if cantCuotas>1:
+                                for i in range(cantCuotas):
+                                    fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                                    if i==0:
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" a "
+                                    elif i==cantCuotas-1:
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                    monto-=condicion.multaMantenimiento
+                            else:
+                                fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                                stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                monto-=condicion.multaMantenimiento
+                            fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\n"
+                else:
+                    valorCompl=condicion.multaMantenimiento-saldoUltimaCuota
+                    if monto<=condicion.multaMantenimiento:
+                        if monto==valorCompl:
+                            stringRecargo+="Compl. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\n"
+                            monto=0.0
+                        elif monto<valorCompl:
+                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\n"
+                            monto+=saldoUltimoRecargo
+                        elif monto>valorCompl:
+                            stringRecargo+="Compl. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(valorCompl,2))+"\n"
+                            monto-=valorCompl
+                            fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\n"
+                    elif monto>condicion.multaMantenimiento:
+                        stringRecargo+="Compl. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(valorCompl,2))+"\n"
+                        monto-=valorCompl
+                        abonoCuota=monto%condicion.multaMantenimiento
+                        cantCuotas=floor(monto/condicion.multaMantenimiento)
+                        if abonoCuota==0.0:
+                            if cantCuotas>1:
+                                for i in range(cantCuotas):
+                                    fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                                    if i==0:
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" a "
+                                    elif i==cantCuotas-1:
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                    monto-=condicion.multaMantenimiento
+                            else:
+                                fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                                stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                monto-=condicion.multaMantenimiento
+                        else:
+                            if cantCuotas>1:
+                                for i in range(cantCuotas):
+                                    fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                                    if i==0:
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" a "
+                                    elif i==cantCuotas-1:
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                    monto-=condicion.multaMantenimiento
+                            else:
+                                fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                                stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                monto-=condicion.multaMantenimiento
+                            fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
+                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\n"
+                    if monto!=0:
+                        stringRecargo+="Saldo "+printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento-monto,2))+"\n"
+                
+                #Guardamos en variables locales lo obtenido del calculo del recargo, para proceder al calculo del mantenimiento
+                valorRecargo=cantidadMeses*condicion.multaMantenimiento-descuento
+                saldoUltimoRecargo=monto
+                monto=valorPagado-valorRecargo
+                abono=saldoUltimaCuota
+                stringObservaciones=stringFechaCadaMes+"\nMantenimiento:\n"+"Saldo "+printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota-saldoUltimaCuota,2))+"\n"
+        
+        #Calulo del mantenimiento
+        if monto>0:
+            stringObservaciones=stringFechaCadaMes+"\nMantenimiento:\n"
+            if saldoUltimaCuota==0:
+                if monto==condicion.mantenimientoCuota:
+                    fechaCorte=fechaCorte + relativedelta(months=1)
+                    stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota,2))+"\n"
+                    monto-=condicion.mantenimientoCuota
+                elif monto<condicion.mantenimientoCuota:
+                    fechaCorte=fechaCorte + relativedelta(months=1)
+                    stringObservaciones+="Ab. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\nSaldo "+printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota-monto,2))+"\n"
+                elif monto>condicion.mantenimientoCuota:
+                    abonoCuota=monto%condicion.mantenimientoCuota
+                    cantCuotas=floor(monto/condicion.mantenimientoCuota)
+                    if abonoCuota==0.0:
+                        if cantCuotas>1:
+                            for i in range(cantCuotas):
+                                fechaCorte=fechaCorte + relativedelta(months=1)
+                                if i==0:
+                                    stringObservaciones+=printFecha(fechaCorte)+" a "
+                                elif i==cantCuotas-1:
+                                    stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                                monto-=condicion.mantenimientoCuota
+                        else:
+                            fechaCorte=fechaCorte + relativedelta(months=1)
+                            stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                            monto-=condicion.mantenimientoCuota
+                    else:
+                        if cantCuotas>1:
+                            for i in range(cantCuotas):
+                                fechaCorte=fechaCorte + relativedelta(months=1)
+                                if i==0:
+                                    stringObservaciones+=printFecha(fechaCorte)+" a "
+                                elif i==cantCuotas-1:
+                                    stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                                monto-=condicion.mantenimientoCuota
+                        else:
+                            fechaCorte=fechaCorte + relativedelta(months=1)
+                            stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                            monto-=condicion.mantenimientoCuota
+                        fechaCorte=fechaCorte + relativedelta(months=1)
+                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\n"
+            else:
+                valorCompl=condicion.mantenimientoCuota-saldoUltimaCuota
+                if monto<=condicion.mantenimientoCuota:
+                    if monto==valorCompl:
+                        stringObservaciones+="Compl. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\n"
+                        monto=0.0
+                    elif monto<valorCompl:
+                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\n"
+                        monto+=saldoUltimaCuota
+                    elif monto>valorCompl:
+                        stringObservaciones+="Compl. "+printFecha(fechaCorte)+" $ "+str(round(valorCompl,2))+"\n"
+                        monto-=valorCompl
+                        fechaCorte=fechaCorte + relativedelta(months=1)
+                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\n"
+                elif monto>condicion.mantenimientoCuota:
+                    stringObservaciones+="Compl. "+printFecha(fechaCorte)+" $ "+str(round(valorCompl,2))+"\n"
+                    monto-=valorCompl
+                    abonoCuota=monto%condicion.mantenimientoCuota
+                    cantCuotas=floor(monto/condicion.mantenimientoCuota)
+                    if abonoCuota==0.0:
+                        if cantCuotas>1:
+                            for i in range(cantCuotas):
+                                fechaCorte=fechaCorte + relativedelta(months=1)
+                                if i==0:
+                                    stringObservaciones+=printFecha(fechaCorte)+" a "
+                                elif i==cantCuotas-1:
+                                    stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                                monto-=condicion.mantenimientoCuota
+                        else:
+                            fechaCorte=fechaCorte + relativedelta(months=1)
+                            stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                            monto-=condicion.mantenimientoCuota
+                    else:
+                        if cantCuotas>1:
+                            for i in range(cantCuotas):
+                                fechaCorte=fechaCorte + relativedelta(months=1)
+                                if i==0:
+                                    stringObservaciones+=printFecha(fechaCorte)+" a "
+                                elif i==cantCuotas-1:
+                                    stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                                monto-=condicion.mantenimientoCuota
+                        else:
+                            fechaCorte=fechaCorte + relativedelta(months=1)
+                            stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                            monto-=condicion.mantenimientoCuota
+                        fechaCorte=fechaCorte + relativedelta(months=1)
+                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\n"
+            if monto!=0:
+                stringObservaciones+="Saldo "+printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota-monto,2))+"\n"
+        
+        #Actualizamos el abono de la cuota de acuerdo a lo cancelado
+        abono=monto
+        if valorPagado==montoOtros:
+            fechaCorte=ultimoPago.pagoMantenimiento.fechaUltimoMtto
+            saldoUltimaCuota=ultimoPago.pagoMantenimiento.abono
+            fechaUltimoRecargo=ultimoPago.pagoMantenimiento.fechaUltimoRecargo
+            saldoUltimoRecargo=ultimoPago.pagoMantenimiento.saldoRecargo
+            abono=saldoUltimaCuota
+            valorPagado=0
+            valorRecargo=0
+
+        #Actualizamos la fecha del recargo de acuerdo a lo cancelado
+        if saldoUltimoRecargo==0:
+            if fechaUltimoRecargo<=fechaCorte:
+                if fechaPago<=fechaCorte:
+                    fechaUltimoRecargo=fechaCorte
+        stringObservaciones+=stringRecargo
+        
+        #Imprimir el monto de otros si existe
+        if montoOtros!=0:
+            if montoOtros==valorPagado:
+                stringObservaciones+="Otros:\n"+conceptoOtros+" $ "+str(round(montoOtros,2))+"\n"
+            else:
+                stringObservaciones+="\nOtros:\n"+conceptoOtros+" $ "+str(round(montoOtros,2))+"\n"
+        
+        #Imprimir el descuento si existe
+        if descuento!=0:
+            stringObservaciones+="\nDescuento de Recargo: $ "+str(round(descuento,2))+"\n"+conceptoDescuento+"\n"
+        
+        #Imprimir las observaciones si existen
+        if observaciones!="":
+            stringObservaciones+="\nObservaciones:\n"+observaciones
+
+        #Guardamos el pago de mantenimiento en la base de datos
+        pagoM = form.save(commit=False)
+        pagoF = self.second_form_class(self.request.POST).save(commit=False)
+        try:
+            cuotaE = cuotaEstadoCuenta(estadoCuenta = estaC,numeroCuota= 0, diasInteres= 0, tasaInteres = 0, interesGenerado = 0, interesPagado = 0, subTotal = 0, abonoCapital = 0, saldoCapital = 0, saldoInteres = 0,)                            
+            cuotaE.save()
+            pagoM.numeroCuotaEstadoCuenta = cuotaE
+            pagoM.fechaUltimoMtto=fechaActualizada(fechaCorte,condicion.fechaEscrituracion)
+            pagoM.abono=abono
+            pagoM.fechaUltimoRecargo=fechaActualizada(fechaUltimoRecargo,condicion.fechaEscrituracion)
+            pagoM.saldoRecargo=saldoUltimoRecargo
+            pagoM.mantenimiento=valorPagado-valorRecargo-montoOtros
+            pagoM.recargoMtto=valorRecargo
+            pagoM.conceptoDescuento=conceptoDescuento
+            pagoM.descuento=descuento
+            pagoM.conceptoOtros=conceptoOtros
+            pagoM.montoOtros=montoOtros
+            user = get_current_user()
+            if user is not None:
+                pagoM.usuarioCreacion = user
+            pagoM.save()
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no se le ha establecido una venta. Establezca las condiciones de pago del lote para poder agregar un pago')
+            return self.render_to_response(self.get_context_data(form=form))   
+        pagoF.pagoMantenimiento = pagoM
+        pagoF.monto = valorPagado
+        pagoF.observaciones = stringObservaciones
+        if pagoF.tipoPago == 1:
+            pagoF.referencia = ''
+            pagoF.cuentaBancaria = None
+        pagoF.save()
         return HttpResponseRedirect(self.get_url_redirect())
+
+#Función que calcula la cantidad de meses entre dos meses
+def cantMeses(fechaMayor, fechaMenor):
+    return (fechaMayor.year - fechaMenor.year) * 12 + fechaMayor.month - fechaMenor.month
+
+#Función que valida el día de la fecha
+def fechaActualizada(fecha, fechaEscrituracion):
+    diaFecha=int(fecha.strftime('%d'))
+    diaFechaEscrituracion=int(fechaEscrituracion.strftime('%d'))
+    if diaFecha == diaFechaEscrituracion:
+        return fecha
+    elif diaFecha<diaFechaEscrituracion:
+        diferencia=diaFechaEscrituracion-diaFecha
+        fecha=fecha+relativedelta(days=diferencia)
+        return fecha
+    else:
+        diferencia=diaFecha-diaFechaEscrituracion
+        fecha=fecha-relativedelta(days=diferencia)
+        return fecha
+
+#Función que convierte fecha en formato español
+def printFecha(fecha):
+    mes=int(fecha.strftime('%m'))
+    stringFecha=""
+    if mes==1:
+        stringFecha="Enero/"+fecha.strftime('%y')
+    elif mes==2:
+        stringFecha="Febrero/"+fecha.strftime('%y')
+    elif mes==3:
+        stringFecha= "Marzo/"+fecha.strftime('%y')
+    elif mes==4:
+        stringFecha="Abril/"+fecha.strftime('%y')
+    elif mes==5:
+        stringFecha="Mayo/"+fecha.strftime('%y')
+    elif mes==6:
+        stringFecha="Junio/"+fecha.strftime('%y')
+    elif mes==7:
+        stringFecha="Julio/"+fecha.strftime('%y')
+    elif mes==8:
+        stringFecha="Agosto/"+fecha.strftime('%y')
+    elif mes==9:
+        stringFecha="Septiembre/"+fecha.strftime('%y')
+    elif mes==10:
+        stringFecha="Octubre/"+fecha.strftime('%y')
+    elif mes==11:
+        stringFecha="Noviembre/"+fecha.strftime('%y')
+    elif mes==12:
+        stringFecha="Diciembre/"+fecha.strftime('%y')
+    return stringFecha
         
 # Views de cuentas Bancarias
 class gestionarCuentasBancarias(GroupRequiredMixin,ListView):

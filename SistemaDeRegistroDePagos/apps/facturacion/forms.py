@@ -63,16 +63,20 @@ class agregarPagoMantenimientoForm(ModelForm):
 
     class Meta:
         model = pagoMantenimiento
-        fields = {'numeroReciboMantenimiento','conceptoOtros','montoOtros'}
+        fields = {'numeroReciboMantenimiento','conceptoOtros','montoOtros','conceptoDescuento','descuento'}
         label= {
-            'numeroReciboMantenimiento': ('Numero de Recibo'),
-            'conceptoOtros': ('Concepto Otros'),
-            'montoOtros': ('Monto Otros'),
+            'numeroReciboMantenimiento': ('Número de Recibo'),
+            'conceptoOtros': ('Concepto por Otros Pagos'),
+            'montoOtros': ('Monto por Otros Pagos'),
+            'conceptoDescuento': ('Concepto por Descuento de Recargo'),
+            'descuento': ('Monto por Descuento de Recargo'),
         }
         help_texts = {
             'numeroReciboMantenimiento': ('Campo Obligatorio'),
             'conceptoOtros': ('Campo Opcional'),
             'montoOtros': ('Campo Opcional'),
+            'conceptoDescuento': ('Campo Opcional'),
+            'descuento': ('Campo Opcional'),
         }
         #error_messages={'required':_("First name is required.")}
         
