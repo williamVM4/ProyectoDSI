@@ -25,7 +25,7 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Lotes
+                            Propietarios
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -36,20 +36,18 @@
                                             <th>DUI</th>
                                             <th>Nombre</th>
                                             <th>Direccion</th>
-                                            <th>Profesion</th>
                                             <th>Telefono</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for propietario in propietarios %}
-                                        {% ifchanged propietario.propietario.dui %} 
+                                        {% ifchanged propietario.propietario.dui %}
                                         <tr>
-                                            <td>{{ propietario.propietario.dui}}</td>
-                                            <td>{{ propietario.propietario.nombrePropietario}}</td>
-                                            <td>{{ propietario.propietario.direccion}}</td>
-                                            <td>{{ propietario.propietario.profesion}}</td>
-                                            <td>{{ propietario.propietario.telefonoCelular}}</td>
+                                            <td class="linkDetalle" data-href="{% url 'detallePropietario' idp=idp pk=propietario.propietario.id %}">{{ propietario.propietario.dui}}</td>
+                                            <td class="linkDetalle" data-href="{% url 'detallePropietario' idp=idp pk=propietario.propietario.id %}">{{ propietario.propietario.nombrePropietario}}</td>
+                                            <td class="linkDetalle" data-href="{% url 'detallePropietario' idp=idp pk=propietario.propietario.id %}">{{ propietario.propietario.direccion}}</td>
+                                            <td class="linkDetalle" data-href="{% url 'detallePropietario' idp=idp pk=propietario.propietario.id %}">{{ propietario.propietario.telefonoCelular}}</td>
                                             <td></td>
                                         </tr>
                                         {% endifchanged %}
@@ -75,6 +73,10 @@
 <script src="{% static 'js/dataTables/jquery.dataTables.min.js'%}"></script>
 <script src="{% static 'js/dataTables/dataTables.bootstrap.min.js'%}"></script>
 <script type= application/javascript>
+    $('#dataTables-example').on( 'click', 'tbody .linkDetalle', function () {
+        window.location.href = $(this).data('href');
+      });
+
     {%if messages%}
         var msg = '';
         var msg1 = '';
@@ -101,6 +103,6 @@
                 text: msg1,
               })
         }
-    {% endif %} 
+    {% endif %}
   </script>
 {% endblock %}

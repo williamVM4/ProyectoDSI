@@ -146,10 +146,10 @@
                                             <td>{{ pago.prima.detalleVenta.lote.identificador }}</td>
                                             <td>{{ pago.prima_id}}</td>
                                             <td>{{ pago.fechaPago}}</td>
-                                            <td>{{ pago.monto}}</td>
+                                            <td>${{ pago.monto}}</td>
                                             <td>{{ pago.prima.conceptoPrima}}</td>
                                             <td>
-                                                <a class="btn btn-warning" href="#"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                                <a class="btn btn-warning" href="{% url 'modificarPrima' idp=idp idv=object.id pk=pago.prima_id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
                                                 <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                 <a class="btn btn-danger" onclick="eliminarPrima({{idp}},{{object.id}},{{pago.prima_id}})"><b><i class="fa-solid fa-trash-can"></i></b></a>
                                             </td>
@@ -199,7 +199,8 @@
                                                 <td>{{ c.plazo }} meses</td>
                                                 <td>{{ c.tasaInteres }}%</td>
                                                 <td>
-                                                    <a class="btn btn-warning" href="#"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                                    <a class="btn btn-warning" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                                    <a class="btn btn-danger" href="#"><b><i class="fa-solid fa-trash-can"></i></b></a>
                                                 </td>
                                                 
                                             {% endif %}

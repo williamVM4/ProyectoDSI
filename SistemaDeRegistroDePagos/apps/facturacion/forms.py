@@ -52,7 +52,8 @@ class pagoForm(ModelForm):
             'observaciones':('Campo opcional')
         }
 
-        widgets = { 'fechaPago': DateInput(), }
+        widgets = { 'fechaPago': DateInput(format=('%Y-%m-%d')), }
+      
         
         
 
@@ -76,8 +77,6 @@ class agregarPagoMantenimientoForm(ModelForm):
         }
         #error_messages={'required':_("First name is required.")}
         
-
-    
 
 class lotePagoForm(forms.Form):
     matricula = forms.ModelChoiceField(queryset=detalleVenta.objects.all(),label='Lote',help_text = 'Campo Obligatorio. Se muestran solo los lotes que tiene una venta activa')
