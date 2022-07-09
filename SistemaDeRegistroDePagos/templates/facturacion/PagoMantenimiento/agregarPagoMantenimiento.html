@@ -20,12 +20,12 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <p class="label-form">{{form3.matricula.label}}</p>
-                                        {{form3.matricula|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo de la Prima'}}
+                                        {{form3.matricula|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el número del recibo del mantenimiento'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form3.matricula.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">Numero de recibo de mantenimiento</p>
-                                        {{form.numeroReciboMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el numero del recibo del pago en formato 00000000'|attr:'min:0'|attr:'max:999999'}}
+                                        {{form.numeroReciboMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el número del recibo de pago'|attr:'min:0'|attr:'max:99999'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboMantenimiento.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
@@ -46,7 +46,7 @@
                                     </div>
                                     <div id="referencia" class="form-group oculto">
                                         <p class="label-form">referencia</p>
-                                        {{form2.referencia|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la referencia'}}
+                                        {{form2.referencia|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la referencia del comprobante del banco'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.referencia.help_text}}</p></div>
                                     </div>
                                     <div id="cuentaBancaria" class="form-group oculto">
@@ -64,6 +64,17 @@
                                         <div class="input-group"><span class="input-group-addon">$</span>
                                         {{form.montoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por otros pagos'|attr:'min:0'}}</div>
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.montoOtros.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">Concepto por descuento</p>
+                                        {{form.conceptoDescuento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el concepto por descuento'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.conceptoDescuento.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">Monto por descuento</p>
+                                        <div class="input-group"><span class="input-group-addon">$</span>
+                                        {{form.descuento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por descuento'|attr:'min:0'}}</div>
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.descuento.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">Observaciones</p>
