@@ -10,7 +10,7 @@ from django.forms import NullBooleanField
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView
+from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView, UpdateView
 from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta, condicionesPago
 from apps.inventario.models import cuentaBancaria,proyectoTuristico, asignacionLote, detalleVenta
 from apps.autenticacion.mixins import *
