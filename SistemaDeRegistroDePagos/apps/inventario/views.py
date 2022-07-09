@@ -282,7 +282,7 @@ class detallePropietario(GroupRequiredMixin,DetailView):
         id = self.kwargs.get('idp', None)
         idPropietario = self.kwargs.get('pk', None)
         context['idp'] = id
-        context['lotes'] = asignacionLote.objects.filter(propietario__dui = idPropietario)
+        context['lotes'] = asignacionLote.objects.filter(propietario__id = idPropietario)
         return context
 
 """Vista de formulario para registrar un propietario en un lote determinado"""
