@@ -17,14 +17,14 @@
                         {% csrf_token %}
                         <fieldset>
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <p class="label-form">{{form3.matricula.label}}</p>
                                         {{form3.matricula|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el número del recibo del mantenimiento'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form3.matricula.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">Numero de recibo de mantenimiento</p>
+                                        <p class="label-form">Número de recibo de mantenimiento</p>
                                         {{form.numeroReciboMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el número del recibo de pago'|attr:'min:0'|attr:'max:99999'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboMantenimiento.help_text}}</p></div>
                                     </div>
@@ -45,7 +45,7 @@
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.tipoPago.help_text}}</p></div>
                                     </div>
                                     <div id="referencia" class="form-group oculto">
-                                        <p class="label-form">referencia</p>
+                                        <p class="label-form">Referencia del comprobante de pago</p>
                                         {{form2.referencia|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la referencia del comprobante del banco'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.referencia.help_text}}</p></div>
                                     </div>
@@ -54,31 +54,33 @@
                                         {{form2.cuentaBancaria|add_class:' form-control'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.cuentaBancaria.help_text}}</p></div>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <p class="label-form">Concepto por otros</p>
+                                        <p class="label-form">Concepto por otros pagos</p>
                                         {{form.conceptoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el concepto por otros pagos'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.conceptoOtros.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">Monto por otros</p>
+                                        <p class="label-form">Monto por otros pagos</p>
                                         <div class="input-group"><span class="input-group-addon">$</span>
                                         {{form.montoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por otros pagos'|attr:'min:0'}}</div>
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.montoOtros.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">Concepto por descuento</p>
+                                        <p class="label-form">Concepto de descuento por recargo</p>
                                         {{form.conceptoDescuento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el concepto por descuento'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.conceptoDescuento.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
-                                        <p class="label-form">Monto por descuento</p>
+                                        <p class="label-form">Monto de descuento por recargo</p>
                                         <div class="input-group"><span class="input-group-addon">$</span>
                                         {{form.descuento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por descuento'|attr:'min:0'}}</div>
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form.descuento.help_text}}</p></div>
                                     </div>
                                     <div class="form-group">
                                         <p class="label-form">Observaciones</p>
-                                        {{form2.observaciones|add_class:'form-control'|attr:'rows:3' |attr:'colm:40'|attr:'autocomplete:off'|attr:'placeholder:'}}
+                                        {{form2.observaciones|add_class:'form-control'|attr:'rows:9' |attr:'colm:40'|attr:'autocomplete:off'|attr:'placeholder:'}}
                                         <div class ="help-block"><p class="text-muted label-help-form">{{form2.observaciones.help_text}}</p></div>
                                     </div>
                                 </div>
