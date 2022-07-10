@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView
+from django.views.generic import ListView,TemplateView
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -10,10 +10,10 @@ from apps.facturacion.models import pago, pagoMantenimiento
 from apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
-from django.views.generic import TemplateView
 from openpyxl import Workbook
 from openpyxl.styles import *
 from django.http.response import HttpResponse
+from django.db.models import Sum
 
 class estadoCuentaView(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
@@ -45,9 +45,24 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
         estado = estadoCuenta.objects.get(detalleVenta=id)
         cuotas = cuotaEstadoCuenta.objects.filter(estadoCuenta=estado)
         pagosm = pago.objects.filter(pagoMantenimiento__numeroCuotaEstadoCuenta__estadoCuenta=estado)
+        pagosp = pago.objects.filter(prima__detalleVenta=id)
+        sumPrima=0
+        sumMantenimiento=0
+        sumRecargoMantenimiento=0
+        for pagoObject in pagosp:
+            if pagoObject.prima !=None:
+                sumPrima+=pagoObject.monto
+        for pagoObject in pagosm:
+            sumMantenimiento+=pagoObject.pagoMantenimiento.mantenimiento
+        for pagoObject in pagosm:
+            sumRecargoMantenimiento+=pagoObject.pagoMantenimiento.recargoMtto
+
         context['idp'] = idp
         context['id'] = id  
         context['pagosm'] = pagosm
+        context['sumPrima'] = sumPrima
+        context['sumMantenimiento'] = sumMantenimiento
+        context['sumRecargoMantenimiento'] = sumRecargoMantenimiento
         return context
 
 class EstadoCuentaReporte(TemplateView):
