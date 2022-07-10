@@ -22,6 +22,14 @@
     justify-content: center;
     color: rgb(119, 116, 116);
 }
+
+#observacionesPago {
+    background-color: white;
+    border: 0;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 #pol{
     padding: 0;
     margin: 0;

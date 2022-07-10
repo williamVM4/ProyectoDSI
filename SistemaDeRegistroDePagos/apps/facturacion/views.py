@@ -57,7 +57,7 @@ class caja(GroupRequiredMixin,TemplateView):
 class agregarPrima(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     model = prima
-    template_name = 'facturacion/Prima/agregarPrima.html'
+    template_name = 'facturacion/Pago/Prima/agregarPrima.html'
     form_class = agregarPrimaForm #formulario con datos del modelo prima
     second_form_class = pagoForm #formulario con datos del modelo pago
     third_form_class = lotePagoForm #formulario con el detalle de venta
@@ -123,6 +123,31 @@ class agregarPrima(GroupRequiredMixin,CreateView):
             messages.error(self.request, 'Ocurrió un error al guardar la prima')
         return HttpResponseRedirect(self.get_url_redirect())
 
+"Vista de formulario para consultar pago por mantenimiento"
+class detallePago(GroupRequiredMixin,DetailView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    template_name = 'facturacion/Pago/detallePago.html'
+    model = pago
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        """Validacion de que exista proyecto"""
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        """Se recuperan los parametros necesarios pasados por url y se envia por contexto la lista
+        de pagos por proyecto turistico"""
+        id = self.kwargs.get('idp', None)
+        idPago = self.kwargs.get('pk', None)
+        context['idp'] = id
+        context['pago'] = pago.objects.get(id = idPago)
+        return context
+
 "Vista de formulario para agregar pago por mantenimiento"
 class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
@@ -139,7 +164,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     form_class = agregarPagoMantenimientoForm
     second_form_class = pagoForm
     third_form_class = lotePagoForm
-    template_name = 'facturacion/PagoMantenimiento/agregarPagoMantenimiento.html'
+    template_name = 'facturacion/Pago/PagoMantenimiento/agregarPagoMantenimiento.html'
 
     def get_context_data(self, **kwargs):
         context = super(agregarPagoMantenimiento, self).get_context_data(**kwargs)
@@ -214,7 +239,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
 
         #Obtenemos la fechas del corte, la cuota de pago, inicio y fin de mes
         fechaCorte=condicion.fechaEscrituracion
-        stringFechaCadaMes="Fecha de pago "+fechaCorte.strftime("%d")+" de cada mes.\n"
+        stringFechaCadaMes="FECHA DE PAGO: "+fechaCorte.strftime("%d")+" de cada mes.\n"
         fechaUltimoRecargo=fechaCorte
         stringObservaciones=""
         stringRecargo=""
@@ -313,7 +338,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
         if monto>0:
             fechaValidacion=fechaCorte + relativedelta(months=1)
             if fechaPago>fechaActualizada(fechaValidacion,condicion.fechaEscrituracion):
-                stringRecargo="\nRecargo:\n"
+                stringRecargo="\nRECARGO:\n"
                 cantidadMeses=int(cantMeses(fechaPago,fechaUltimoRecargo))
                 fechaRecargo=fechaUltimoRecargo+relativedelta(months=cantidadMeses)
                 fechaRecargo=fechaActualizada(fechaRecargo, condicion.fechaEscrituracion)
@@ -325,11 +350,11 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
                 if saldoUltimoRecargo==0:
                     if monto==condicion.multaMantenimiento:
                         fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
-                        stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento,2))+"\n"
+                        stringRecargo+=printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento,2))+"\n"
                         monto-=condicion.multaMantenimiento
                     elif monto<condicion.multaMantenimiento:
                         fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
-                        stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\nSaldo "+printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento-monto,2))+"\n"
+                        stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+"   $ "+str(round(monto,2))+"\nSaldo "+printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento-monto,2))+"\n"
                     elif monto>condicion.multaMantenimiento:
                         abonoCuota=monto%condicion.multaMantenimiento
                         cantCuotas=floor(monto/condicion.multaMantenimiento)
@@ -340,11 +365,11 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
                                     if i==0:
                                         stringRecargo+=printFecha(fechaUltimoRecargo)+" a "
                                     elif i==cantCuotas-1:
-                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
                                     monto-=condicion.multaMantenimiento
                             else:
                                 fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
-                                stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                stringRecargo+=printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
                                 monto-=condicion.multaMantenimiento
                         else:
                             if cantCuotas>1:
@@ -353,30 +378,30 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
                                     if i==0:
                                         stringRecargo+=printFecha(fechaUltimoRecargo)+" a "
                                     elif i==cantCuotas-1:
-                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
                                     monto-=condicion.multaMantenimiento
                             else:
                                 fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
-                                stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                stringRecargo+=printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
                                 monto-=condicion.multaMantenimiento
                             fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
-                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\n"
+                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+"   $ "+str(round(monto,2))+"\n"
                 else:
                     valorCompl=condicion.multaMantenimiento-saldoUltimaCuota
                     if monto<=condicion.multaMantenimiento:
                         if monto==valorCompl:
-                            stringRecargo+="Compl. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\n"
+                            stringRecargo+="Compl. "+printFecha(fechaUltimoRecargo)+"   $ "+str(round(monto,2))+"\n"
                             monto=0.0
                         elif monto<valorCompl:
-                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\n"
+                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+"   $ "+str(round(monto,2))+"\n"
                             monto+=saldoUltimoRecargo
                         elif monto>valorCompl:
-                            stringRecargo+="Compl. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(valorCompl,2))+"\n"
+                            stringRecargo+="Compl. "+printFecha(fechaUltimoRecargo)+"   $ "+str(round(valorCompl,2))+"\n"
                             monto-=valorCompl
                             fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
-                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\n"
+                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+"   $ "+str(round(monto,2))+"\n"
                     elif monto>condicion.multaMantenimiento:
-                        stringRecargo+="Compl. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(valorCompl,2))+"\n"
+                        stringRecargo+="Compl. "+printFecha(fechaUltimoRecargo)+"   $ "+str(round(valorCompl,2))+"\n"
                         monto-=valorCompl
                         abonoCuota=monto%condicion.multaMantenimiento
                         cantCuotas=floor(monto/condicion.multaMantenimiento)
@@ -387,11 +412,11 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
                                     if i==0:
                                         stringRecargo+=printFecha(fechaUltimoRecargo)+" a "
                                     elif i==cantCuotas-1:
-                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
                                     monto-=condicion.multaMantenimiento
                             else:
                                 fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
-                                stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                stringRecargo+=printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
                                 monto-=condicion.multaMantenimiento
                         else:
                             if cantCuotas>1:
@@ -400,35 +425,35 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
                                     if i==0:
                                         stringRecargo+=printFecha(fechaUltimoRecargo)+" a "
                                     elif i==cantCuotas-1:
-                                        stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                        stringRecargo+=printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
                                     monto-=condicion.multaMantenimiento
                             else:
                                 fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
-                                stringRecargo+=printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
+                                stringRecargo+=printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento*cantCuotas,2))+"\n"
                                 monto-=condicion.multaMantenimiento
                             fechaUltimoRecargo=fechaUltimoRecargo + relativedelta(months=1)
-                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+" $ "+str(round(monto,2))+"\n"
+                            stringRecargo+="Ab. "+printFecha(fechaUltimoRecargo)+"   $ "+str(round(monto,2))+"\n"
                     if monto!=0:
-                        stringRecargo+="Saldo "+printFecha(fechaUltimoRecargo)+" $ "+str(round(condicion.multaMantenimiento-monto,2))+"\n"
+                        stringRecargo+="Saldo "+printFecha(fechaUltimoRecargo)+"   $ "+str(round(condicion.multaMantenimiento-monto,2))+"\n"
                 
                 #Guardamos en variables locales lo obtenido del calculo del recargo, para proceder al calculo del mantenimiento
                 valorRecargo=cantidadMeses*condicion.multaMantenimiento-descuento
                 saldoUltimoRecargo=monto
                 monto=valorPagado-valorRecargo
                 abono=saldoUltimaCuota
-                stringObservaciones=stringFechaCadaMes+"\nMantenimiento:\n"+"Saldo "+printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota-saldoUltimaCuota,2))+"\n"
+                stringObservaciones=stringFechaCadaMes+"\nMANTENIMIENTO:\n"+"Saldo "+printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota-saldoUltimaCuota,2))+"\n"
         
         #Calulo del mantenimiento
         if monto>0:
-            stringObservaciones=stringFechaCadaMes+"\nMantenimiento:\n"
+            stringObservaciones=stringFechaCadaMes+"\nMANTENIMIENTO:\n"
             if saldoUltimaCuota==0:
                 if monto==condicion.mantenimientoCuota:
                     fechaCorte=fechaCorte + relativedelta(months=1)
-                    stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota,2))+"\n"
+                    stringObservaciones+=printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota,2))+"\n"
                     monto-=condicion.mantenimientoCuota
                 elif monto<condicion.mantenimientoCuota:
                     fechaCorte=fechaCorte + relativedelta(months=1)
-                    stringObservaciones+="Ab. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\nSaldo "+printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota-monto,2))+"\n"
+                    stringObservaciones+="Ab. "+printFecha(fechaCorte)+"   $ "+str(round(monto,2))+"\nSaldo "+printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota-monto,2))+"\n"
                 elif monto>condicion.mantenimientoCuota:
                     abonoCuota=monto%condicion.mantenimientoCuota
                     cantCuotas=floor(monto/condicion.mantenimientoCuota)
@@ -439,11 +464,11 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
                                 if i==0:
                                     stringObservaciones+=printFecha(fechaCorte)+" a "
                                 elif i==cantCuotas-1:
-                                    stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                                    stringObservaciones+=printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
                                 monto-=condicion.mantenimientoCuota
                         else:
                             fechaCorte=fechaCorte + relativedelta(months=1)
-                            stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                            stringObservaciones+=printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
                             monto-=condicion.mantenimientoCuota
                     else:
                         if cantCuotas>1:
@@ -452,30 +477,30 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
                                 if i==0:
                                     stringObservaciones+=printFecha(fechaCorte)+" a "
                                 elif i==cantCuotas-1:
-                                    stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                                    stringObservaciones+=printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
                                 monto-=condicion.mantenimientoCuota
                         else:
                             fechaCorte=fechaCorte + relativedelta(months=1)
-                            stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                            stringObservaciones+=printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
                             monto-=condicion.mantenimientoCuota
                         fechaCorte=fechaCorte + relativedelta(months=1)
-                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\n"
+                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+"   $ "+str(round(monto,2))+"\n"
             else:
                 valorCompl=condicion.mantenimientoCuota-saldoUltimaCuota
                 if monto<=condicion.mantenimientoCuota:
                     if monto==valorCompl:
-                        stringObservaciones+="Compl. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\n"
+                        stringObservaciones+="Compl. "+printFecha(fechaCorte)+"   $ "+str(round(monto,2))+"\n"
                         monto=0.0
                     elif monto<valorCompl:
-                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\n"
+                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+"   $ "+str(round(monto,2))+"\n"
                         monto+=saldoUltimaCuota
                     elif monto>valorCompl:
-                        stringObservaciones+="Compl. "+printFecha(fechaCorte)+" $ "+str(round(valorCompl,2))+"\n"
+                        stringObservaciones+="Compl. "+printFecha(fechaCorte)+"   $ "+str(round(valorCompl,2))+"\n"
                         monto-=valorCompl
                         fechaCorte=fechaCorte + relativedelta(months=1)
-                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\n"
+                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+"   $ "+str(round(monto,2))+"\n"
                 elif monto>condicion.mantenimientoCuota:
-                    stringObservaciones+="Compl. "+printFecha(fechaCorte)+" $ "+str(round(valorCompl,2))+"\n"
+                    stringObservaciones+="Compl. "+printFecha(fechaCorte)+"   $ "+str(round(valorCompl,2))+"\n"
                     monto-=valorCompl
                     abonoCuota=monto%condicion.mantenimientoCuota
                     cantCuotas=floor(monto/condicion.mantenimientoCuota)
@@ -486,11 +511,11 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
                                 if i==0:
                                     stringObservaciones+=printFecha(fechaCorte)+" a "
                                 elif i==cantCuotas-1:
-                                    stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                                    stringObservaciones+=printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
                                 monto-=condicion.mantenimientoCuota
                         else:
                             fechaCorte=fechaCorte + relativedelta(months=1)
-                            stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                            stringObservaciones+=printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
                             monto-=condicion.mantenimientoCuota
                     else:
                         if cantCuotas>1:
@@ -499,16 +524,16 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
                                 if i==0:
                                     stringObservaciones+=printFecha(fechaCorte)+" a "
                                 elif i==cantCuotas-1:
-                                    stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                                    stringObservaciones+=printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
                                 monto-=condicion.mantenimientoCuota
                         else:
                             fechaCorte=fechaCorte + relativedelta(months=1)
-                            stringObservaciones+=printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
+                            stringObservaciones+=printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota*cantCuotas,2))+"\n"
                             monto-=condicion.mantenimientoCuota
                         fechaCorte=fechaCorte + relativedelta(months=1)
-                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+" $ "+str(round(monto,2))+"\n"
+                        stringObservaciones+="Ab. "+printFecha(fechaCorte)+"   $ "+str(round(monto,2))+"\n"
             if monto!=0:
-                stringObservaciones+="Saldo "+printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota-monto,2))+"\n"
+                stringObservaciones+="Saldo "+printFecha(fechaCorte)+"   $ "+str(round(condicion.mantenimientoCuota-monto,2))+"\n"
         
         #Actualizamos el abono de la cuota de acuerdo a lo cancelado
         abono=monto
@@ -531,17 +556,17 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
         #Imprimir el monto de otros si existe
         if montoOtros!=0:
             if montoOtros==valorPagado:
-                stringObservaciones+="Otros:\n"+conceptoOtros+" $ "+str(round(montoOtros,2))+"\n"
+                stringObservaciones+="OTROS:\n"+conceptoOtros+"  $ "+str(round(montoOtros,2))+"\n"
             else:
-                stringObservaciones+="\nOtros:\n"+conceptoOtros+" $ "+str(round(montoOtros,2))+"\n"
+                stringObservaciones+="\nOTROS:\n"+conceptoOtros+"   $ "+str(round(montoOtros,2))+"\n"
         
         #Imprimir el descuento si existe
         if descuento!=0:
-            stringObservaciones+="\nDescuento de Recargo: $ "+str(round(descuento,2))+"\n"+conceptoDescuento+"\n"
+            stringObservaciones+="\nDESCUENTO DE RECARGO:    $ "+str(round(descuento,2))+"\n"+conceptoDescuento+"\n"
         
         #Imprimir las observaciones si existen
         if observaciones!="":
-            stringObservaciones+="\nObservaciones:\n"+observaciones
+            stringObservaciones+="\nOBSERVACIONES:\n"+observaciones
 
         #Guardamos el pago de mantenimiento en la base de datos
         pagoM = form.save(commit=False)
@@ -769,7 +794,7 @@ class ModificarPrima(GroupRequiredMixin, UpdateView):
     model = prima
     second_model = pago
     third_model = lote
-    template_name = 'facturacion/Prima/agregarPrima.html'
+    template_name = 'facturacion/Pago/Prima/agregarPrima.html'
     form_class = agregarPrimaForm
     second_form_class = pagoForm
     third_form_class = lotePagoForm
