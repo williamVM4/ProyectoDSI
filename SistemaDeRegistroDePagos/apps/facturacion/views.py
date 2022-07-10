@@ -414,7 +414,7 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
                 #Guardamos en variables locales lo obtenido del calculo del recargo, para proceder al calculo del mantenimiento
                 valorRecargo=cantidadMeses*condicion.multaMantenimiento-descuento
                 saldoUltimoRecargo=monto
-                monto=valorPagado-valorRecargo
+                monto=valorPagado-valorRecargo-montoOtros
                 abono=saldoUltimaCuota
                 stringObservaciones=stringFechaCadaMes+"\nMantenimiento:\n"+"Saldo "+printFecha(fechaCorte)+" $ "+str(round(condicion.mantenimientoCuota-saldoUltimaCuota,2))+"\n"
         
@@ -600,7 +600,7 @@ def printFecha(fecha):
     mes=int(fecha.strftime('%m'))
     stringFecha=""
     if mes==1:
-        stringFecha="Enero/"+fecha.strftime('%y')
+        stringFecha="Enero/"+fecha.strftime('%y') 
     elif mes==2:
         stringFecha="Febrero/"+fecha.strftime('%y')
     elif mes==3:
