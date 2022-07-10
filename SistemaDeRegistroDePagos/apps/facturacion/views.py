@@ -583,8 +583,18 @@ def cantMeses(fechaMayor, fechaMenor):
 #Función que valida el día de la fecha
 def fechaActualizada(fecha, fechaEscrituracion):
     diaFecha=int(fecha.strftime('%d'))
+    mesFecha=int(fecha.strftime('%m'))
     diaFechaEscrituracion=int(fechaEscrituracion.strftime('%d'))
     if diaFecha == diaFechaEscrituracion:
+        return fecha
+    elif diaFechaEscrituracion==29 and mesFecha==2:
+        fecha=fecha+relativedelta(day=31)
+        return fecha
+    elif diaFechaEscrituracion==30 and mesFecha==2:
+        fecha=fecha+relativedelta(day=31)
+        return fecha
+    elif diaFechaEscrituracion==31:
+        fecha=fecha+relativedelta(day=31)
         return fecha
     elif diaFecha<diaFechaEscrituracion:
         diferencia=diaFechaEscrituracion-diaFecha
