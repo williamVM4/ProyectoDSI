@@ -909,7 +909,7 @@ class Recibo(TemplateView):
             primaRecibo = prima.objects.get(numeroReciboPrima = pagoRecibo.prima_id )
             detalle = detalleVenta.objects.get(id = primaRecibo.detalleVenta_id)
             asigna = asignacionLote.objects.get(detalleVenta_id = detalle.id)
-            nombre = propietario.objects.get(dui = asigna.propietario_id)
+            nombre = propietario.objects.get(id = asigna.propietario_id)
             lotes = lote.objects.get(matriculaLote = detalle.lote_id)
             usuario = User.objects.get(id = primaRecibo.usuarioCreacion_id)
             ws['G1'] = "Nº "+primaRecibo.numeroReciboPrima  
@@ -992,7 +992,7 @@ class Recibo(TemplateView):
                 estadoC = estadoCuenta.objects.get(id = cuotaEstado.estadoCuenta_id)
                 detalle = detalleVenta.objects.get(id = estadoC.detalleVenta_id)
                 asigna = asignacionLote.objects.get(detalleVenta_id = detalle.id)
-                nombre = propietario.objects.get(dui = asigna.propietario_id)
+                nombre = propietario.objects.get(id = asigna.propietario_id)
                 lotes = lote.objects.get(matriculaLote = detalle.lote_id)
                 ws['H3'] = "Nº "+pagoMRecibo.numeroReciboMantenimiento
                 ws.merge_cells('B4:F4')
