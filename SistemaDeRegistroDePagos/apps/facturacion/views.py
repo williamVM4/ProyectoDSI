@@ -908,12 +908,14 @@ class Recibo(TemplateView):
             ws['B1'].number_format = '0.00'
             primaRecibo = prima.objects.get(numeroReciboPrima = pagoRecibo.prima_id )
             detalle = detalleVenta.objects.get(id = primaRecibo.detalleVenta_id)
-            asigna = asignacionLote.objects.get(detalleVenta_id = detalle.id)
-            nombre = propietario.objects.get(id = asigna.propietario_id)
+            asigna = asignacionLote.objects.filter(detalleVenta_id = detalle.id)
+            nombre = ""
+            for asignacion in asigna:
+                nombre = nombre + asignacion.propietario.nombrePropietario + " "
             lotes = lote.objects.get(matriculaLote = detalle.lote_id)
             usuario = User.objects.get(id = primaRecibo.usuarioCreacion_id)
             ws['G1'] = "Nº "+primaRecibo.numeroReciboPrima  
-            ws['B2'] = nombre.nombrePropietario
+            ws['B2'] = nombre
             ws['B2'].alignment = Alignment(horizontal="center",vertical="center")
             ws['B4'].alignment = Alignment(horizontal="center",vertical="center")
             ws['C4'].alignment = Alignment(horizontal="center",vertical="center")
@@ -991,8 +993,10 @@ class Recibo(TemplateView):
                 cuotaEstado = cuotaEstadoCuenta.objects.get(id = pagoMRecibo.numeroCuotaEstadoCuenta_id)
                 estadoC = estadoCuenta.objects.get(id = cuotaEstado.estadoCuenta_id)
                 detalle = detalleVenta.objects.get(id = estadoC.detalleVenta_id)
-                asigna = asignacionLote.objects.get(detalleVenta_id = detalle.id)
-                nombre = propietario.objects.get(id = asigna.propietario_id)
+                asigna = asignacionLote.objects.filter(detalleVenta_id = detalle.id)
+                nombre = ""
+                for asignacion in asigna:
+                    nombre = nombre + asignacion.propietario.nombrePropietario + " "
                 lotes = lote.objects.get(matriculaLote = detalle.lote_id)
                 ws['H3'] = "Nº "+pagoMRecibo.numeroReciboMantenimiento
                 ws.merge_cells('B4:F4')
@@ -1019,7 +1023,7 @@ class Recibo(TemplateView):
                 ws['F12'] = pagoMRecibo.montoOtros
                 ws['B12'] = "  "+pagoMRecibo.conceptoOtros
                 ws['B4'].alignment = Alignment(horizontal="center",vertical="center")
-                ws['B4'] = nombre.nombrePropietario
+                ws['B4'] = nombre
                 ws['D5'].alignment = Alignment(horizontal="center",vertical="center")
                 ws['E5'].alignment = Alignment(horizontal="center",vertical="center")
                 ws['D5'] = lotes.numeroLote
