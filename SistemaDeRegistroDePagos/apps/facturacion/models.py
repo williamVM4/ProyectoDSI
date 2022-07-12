@@ -71,7 +71,22 @@ class pagoFinanciamiento(BasePagoModel):
 
 class pagoMantenimiento(BasePagoModel):
     numeroReciboMantenimiento = models.CharField(max_length=30, primary_key=True)
-    usuarioCreacion = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null = True, related_name='user_creation_mantenimiento')
+    usuarioCreacion = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null = True, related_name='user_creation_mantenimiento') 
+
+    def __str__(self):
+        return self.numeroReciboMantenimiento
+
+class pagoCuotaMantenimiento(models.Model):
+    usuarioCreacion = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null = True, related_name='user_creation_cuotaMantenimiento')
+    fechaRegistro=models.DateTimeField(auto_now_add=True,blank=True)
+    numeroReciboMantenimiento = models.CharField(max_length=30, primary_key=True)
+    fechaPago = models.DateField()
+    monto = models.DecimalField(max_digits=8, decimal_places=2)
+    fechaCorte = models.DateField()
+    rubro = models.CharField(max_length=100,blank=True, default="")
+    concepto = models.CharField(max_length=100,blank=True, default="")
+    mantenimiento = models.DecimalField(max_digits=8, decimal_places=2)
+    recargo = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
         return self.numeroReciboMantenimiento
