@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_templatetag %}
+
+{% block head %}
+ <!-- DataTables CSS -->
+ <link rel="stylesheet" href="{% static 'css/dataTables/dataTables.bootstrap.css'%}" type="text/css">
+ <!-- DataTables Responsive CSS -->
+ <link rel="stylesheet" href="{% static 'css/dataTables/dataTables.responsive.css'%}" type="text/css">
+{% endblock %}
+
+{% block content %}
+
+<div id="wrapper">
+    {% include 'navbar.html' %}
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-11">
+                                                <h4><b>RECIBO DE PAGO POR
+                                                {% if pago.pagoMantenimiento%}
+                                                    MANTENIMIENTO
+                                                {% else %}
+                                                    {% if pago.prima%}
+                                                        PRIMA
+                                                    {% else %}
+                                                        {% if pago.pagoFinanciamiento%}
+                                                            FINANCIAMIENTO
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}</b></h4>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <td><a class="btn btn-default" href="{% url 'recibo' idp=idp pk=pago.id  %}"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                                                <td><a class="btn btn-default" href="{% url 'recibo' idp=idp pk=pago.id  %}"><i class="fa-solid fa-print"></i></a></td>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p><b>Número Recibo:</b> {{pago.pagoMantenimiento.numeroReciboMantenimiento}}</p>
+                                                <p><b>Fecha de Pago:</b> {{pago.fechaPago}}</p>
+                                                <p><b>Monto:</b> $ {{pago.monto}}</p>
+                                                <p><b>Tipo de Pago:</b>{% if pago.tipoPago == 1%} Efectivo {% else%} Banco <p><b>Referencia:</b> {{pago.referencia}}</p><p><b>Cuenta:</b> {{pago.cuentaBancaria}}</p>{% endif%}</p>
+                                                <p><b>Detalle del pago:</b><br><pre id="observacionesPago">{% if pago.observaciones != ""%} {{pago.observaciones}} {% else%} N/A {% endif%}</pre></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.col-->
+                        </div>
+                    </div>
+                    {% comment %} <div class="panel-footer">
+                        Panel Footer
+                    </div> {% endcomment %}
+                </div>
+                <!-- /.col-->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<!-- DataTables JavaScript -->
+<script src="{% static 'js/dataTables/jquery.dataTables.min.js'%}"></script>
+<script src="{% static 'js/dataTables/dataTables.bootstrap.min.js'%}"></script>
+{% endblock %}
