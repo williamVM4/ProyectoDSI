@@ -3,7 +3,7 @@ import math
 from operator import truediv
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, FormView, ListView, DetailView, UpdateView
+from django.views.generic import TemplateView, CreateView, FormView, ListView, DetailView, UpdateView, DeleteView
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -619,5 +619,37 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
             messages.error(self.request, 'Ocurrió un error, no se actualizo las condiciones de pago')
         return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id}))  
     
+#eliminar condiciones de pago
+class eliminarCondicionesP(GroupRequiredMixin, DeleteView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    model = condicionesPago
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_url_redirect(self, **kwargs):
+        idp = self.kwargs.get('idp', None) 
+        id = self.kwargs.get('idv', None) 
+        try:
+            detalleVenta.objects.get(pk = id)
+            return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})
+        except Exception:
+            return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
+
+    def post(self,request,*args,**kwargs):
+        condicion = self.get_object()
+        print(condicion.id)
+        #condicion.delete()
+        return HttpResponseRedirect(self.get_url_redirect())
+
+        
+
+    
+
 
     

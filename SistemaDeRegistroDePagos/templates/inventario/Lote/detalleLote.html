@@ -121,9 +121,12 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
+                            {%if condiciones%}
+                            {%else%}
                             <div class="pull-right">
                                 <a class="btn btn-primary btn-block" href="{% url 'agregarprima' idp=idp %}"> Agregar Prima </a>
                             </div>
+                            {%endif%}
                             <h4>Prima</h4>
                         </div>
                         <!--div class="panel-body"-->
@@ -170,11 +173,14 @@
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
+                            {%if condiciones%}
+                            {%else%}
                             <div class="pull-right">
                                 <a type="button" class="btn btn-primary btn-block" href="{% url 'agregarCondicionP' idp=idp idv=object.id %}">
                                     Agregar condiciones de pago
                                 </a>
                             </div>
+                            {%endif%}
                             <h4> Condiciones de Pago</h4>
                         </div>
                         
@@ -200,7 +206,10 @@
                                                 <td>{{ c.tasaInteres }}%</td>
                                                 <td>
                                                     <a class="btn btn-warning" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
-                                                    <a class="btn btn-danger" href="#"><b><i class="fa-solid fa-trash-can"></i></b></a>
+                                                    <button onclick="confirmacionEliminarCondiciones()" class="btn btn-danger"><b><i class="fa-solid fa-trash-can"></i></b></button>
+                                                    <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
+                                                        {% csrf_token %}
+                                                     </form>
                                                 </td>
                                                 
                                             {% endif %}
@@ -294,24 +303,4 @@
     {% endif %} 
   </script>
 
-  <script>
-      function eliminarPrima(proyecto, detalleVenta, id){
-          Swal.fire({
-            "title":"¿Esta seguro de eliminar la prima?",
-            "text":"Se eliminara de manera permanente",
-            "icon":"question",
-            "showCancelButton":true,
-            "cancelButtonText":"Cancelar",
-            "confirmButtonText":"Eliminar",
-            "confirmButtonColor":"Red",
-
-          })
-          .then(function(result){
-              if(result.isConfirmed)[
-                  window.location.href = "/eliminarPrima/"+proyecto+"/"+detalleVenta+"/"+id+"/"
-              ]
-          })
-      }
-
-  </script>
 {% endblock %}
