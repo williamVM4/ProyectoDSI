@@ -1014,8 +1014,15 @@ class Recibo(TemplateView):
             detalle = detalleVenta.objects.get(id = primaRecibo.detalleVenta_id)
             asigna = asignacionLote.objects.filter(detalleVenta_id = detalle.id)
             nombre = ""
+            cantidad = 1
             for asignacion in asigna:
-                nombre = nombre + asignacion.propietario.nombrePropietario + " "
+                if cantidad == 1:
+                    nombre = asignacion.propietario.nombrePropietario
+                else:
+                    if cantidad <= 2:
+                        nombre = nombre + " y Otros" 
+                cantidad = cantidad +1
+
             lotes = lote.objects.get(matriculaLote = detalle.lote_id)
             usuario = User.objects.get(id = primaRecibo.usuarioCreacion_id)
             ws['G1'] = "Nº "+primaRecibo.numeroReciboPrima  
@@ -1099,8 +1106,14 @@ class Recibo(TemplateView):
                 detalle = detalleVenta.objects.get(id = estadoC.detalleVenta_id)
                 asigna = asignacionLote.objects.filter(detalleVenta_id = detalle.id)
                 nombre = ""
+                cantidad = 1
                 for asignacion in asigna:
-                    nombre = nombre + asignacion.propietario.nombrePropietario + " "
+                    if cantidad == 1:
+                        nombre = asignacion.propietario.nombrePropietario
+                    else:
+                        if cantidad <= 2:
+                            nombre = nombre + " y Otros" 
+                    cantidad = cantidad +1
                 lotes = lote.objects.get(matriculaLote = detalle.lote_id)
                 ws['H3'] = "Nº "+pagoMRecibo.numeroReciboMantenimiento
                 ws.merge_cells('B4:F4')
