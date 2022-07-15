@@ -20,7 +20,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <p class="label-form">{{form.dui.label}}</p>
-                  {{form.dui|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000-0'}}
+                  {{form.dui|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000-0'|attr:'data-mask:00000000-0'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.dui.help_text}}</p></div>
                 </div>
                 <div class="form-group">
@@ -52,17 +52,17 @@
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.telefonoTrabajo.label}}</p>
-                  {{form.telefonoTrabajo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'}}
+                  {{form.telefonoTrabajo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'|attr:'data-mask:0000-0000'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.telefonoTrabajo.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.telefonoCasa.label}}</p>
-                  {{form.telefonoCasa|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'}}
+                  {{form.telefonoCasa|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'|attr:'data-mask:0000-0000'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.telefonoCasa.help_text}}</p></div>
                 </div>
                 <div class="form-group">
                   <p class="label-form">{{form.telefonoCelular.label}}</p>
-                  {{form.telefonoCelular|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'}}
+                  {{form.telefonoCelular|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'|attr:'data-mask:0000-0000'}}
                   <div class ="help-block"><p class="text-muted label-help-form">{{form.telefonoCelular.help_text}}</p></div>
                 </div>
                 <div class="form-group">
@@ -91,6 +91,8 @@
 {% endblock content %}
 
 {% block scripts %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 <script type= application/javascript>
   {%if form.errors%}
       var errors = '';
@@ -107,25 +109,5 @@
         text: errors,
       })
   {% endif %}
-
-  Inputmask("9{8}[-]9{1}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_dui');
-
-  Inputmask("9{4}[-]9{4}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_telefonoTrabajo');
-
-  Inputmask("9{4}[-]9{4}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_telefonoCasa');
-
-  Inputmask("9{4}[-]9{4}", {
-    placeholder: "",
-    greedy: false
-  }).mask('#id_telefonoCelular');
 </script>
   {% endblock %}

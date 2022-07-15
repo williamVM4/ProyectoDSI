@@ -647,6 +647,8 @@ class eliminarCondicionesP(GroupRequiredMixin, DeleteView):
         #condicion.delete()
         return HttpResponseRedirect(self.get_url_redirect())
 
+
+
         
 
     

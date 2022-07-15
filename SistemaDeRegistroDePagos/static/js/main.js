@@ -1,3 +1,28 @@
+
+
+
+//---------Para que el menu se active segun cada url-------
+// $(function() {
+//   $('#menu').metisMenu();
+// });
+$(function() {
+  var url = window.location;
+
+  var element = $('ul.nav a').filter(function() {
+      return this.href == url || url.href.indexOf(this.href) == 0;
+  }).addClass('active').parent().parent().addClass('in').parent();
+  if (element.is('li')) {
+      element.addClass('active');
+  }
+
+  $('#li-inicio-menu').removeClass('active');
+  $('#a-inicio-menu').removeClass('active');
+  $('#sub-item-1').removeClass("in");
+
+});
+//----------Fin de menu--------------
+
+/*Plugin para el idioma del datatable*/
 $(document).ready(function() {
     $('#dataTables-example').DataTable({
       "language": {
@@ -6,7 +31,8 @@ $(document).ready(function() {
     });
   });
 
-  function myFunction() {
+// Funcion para buscar propietarios en vista seleccionar propietario ya registrado
+function buscarPropietarios() {
     // Declare variables
     var input, filter, select, option, txtValue;
     input = document.getElementById('myInput');
@@ -23,8 +49,9 @@ $(document).ready(function() {
         option[i].style.display = "none";
       }
     }
-  }
+}
 
+// Funciones para eliminar condiciones de pago
 function eliminar_con(){
   let form = document.getElementById("eliminarCondiciones");
   form.submit();
@@ -48,6 +75,7 @@ function eliminar_con(){
   })
 }
 
+// Funciones para eliminar prima
 function eliminarPrima(proyecto, detalleVenta, id){
   Swal.fire({
     "title":"¿Esta seguro de eliminar la prima?",
@@ -64,6 +92,31 @@ function eliminarPrima(proyecto, detalleVenta, id){
           window.location.href = "/eliminarPrima/"+proyecto+"/"+detalleVenta+"/"+id+"/"
       ]
   })
+
 }
+
+/* Validaciones formulario agregar propietario*/
+(function(){
+
+  // Inputmask("9{8}[-]9{1}", {
+  //   placeholder: "",
+  //   greedy: false
+  // }).mask('#id_dui');
+
+  Inputmask("9{4}[-]9{4}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_telefonoTrabajo');
+
+  Inputmask("9{4}[-]9{4}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_telefonoCasa');
+
+  Inputmask("9{4}[-]9{4}", {
+    placeholder: "",
+    greedy: false
+  }).mask('#id_telefonoCelular');
+})();
 
  

@@ -735,7 +735,6 @@ class EliminarPrima(GroupRequiredMixin,TemplateView):
         return super().dispatch(request, *args, **kwargs)
     
     def get_url_redirect(self, **kwargs):
-        context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None) 
         id = self.kwargs.get('idv', None) 
         try:
@@ -745,7 +744,6 @@ class EliminarPrima(GroupRequiredMixin,TemplateView):
             return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
 
     def get(self,request,*args,**kwargs):
-        context=super().get_context_data(**kwargs) 
         id = self.kwargs.get('id', None)
         try:
             primas = prima.objects.get(numeroReciboPrima = id)

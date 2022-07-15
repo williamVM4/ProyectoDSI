@@ -86,7 +86,7 @@
                                     <tr>
                                         <td>{{proyectoTuristico.nombreProyectoTuristico}}</td>
                                         <td>{{proyectoTuristico.empresa}}</td>
-                                        <td><a class="btn btn-default btn-block" href="{% url 'homeProyecto' idp=proyectoTuristico.id %}"> Ver detalle </a></td>
+                                        <td><a class="btn btn-default btn-block" href="{% url 'detalleProyecto' idp=proyectoTuristico.id %}"> Ver detalle </a></td>
                                     </tr>
                                     
                                     {%endfor%}
@@ -120,7 +120,6 @@
         Swal.fire({
             icon: 'error',
             text: msg,
-            //footer: '<a href="">Why do I have this issue?</a>'
           })
         }
         {%for message in messages%}
