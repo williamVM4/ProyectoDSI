@@ -147,6 +147,11 @@ class agregarProyectoForm(ModelForm):
                 'max_length': _("El dato ingresado es demasiado largo"),
             },
         }
+    def clean_nombreProyectoTuristico(self):
+        nombreProyectoTuristico = self.cleaned_data["nombreProyectoTuristico"]
+        if proyectoTuristico.objects.filter(nombreProyectoTuristico = nombreProyectoTuristico).exists():
+            raise ValidationError("Ya existe un Proyecto Turistico registrado con este nombre")
+        return nombreProyectoTuristico
 
 class condicionPagoForm(ModelForm):
 

@@ -77,7 +77,7 @@
                                     <tr>
                                         <th>Nombre de Proyecto Turístico </th>
                                         <th>Empresa</th>
-                                        <th></th>
+                                        <th>Opciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -86,7 +86,11 @@
                                     <tr>
                                         <td>{{proyectoTuristico.nombreProyectoTuristico}}</td>
                                         <td>{{proyectoTuristico.empresa}}</td>
-                                        <td><a class="btn btn-default btn-block" href="{% url 'detalleProyecto' idp=proyectoTuristico.id %}"> Ver detalle </a></td>
+                                        <td>
+                                            <a class="btn btn-info" href="{% url 'homeProyecto' idp=proyectoTuristico.id %}"><b><i class="fa-solid fa-eye"></i></b></a>
+                                            <a class="btn btn-warning" href="{% url 'modificarProyectoTuristico' pk=proyectoTuristico.id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                            <a class="btn btn-danger" href="#"><b><i class="fa-solid fa-trash-can"></i></b></a>
+                                        </td>
                                     </tr>
                                     
                                     {%endfor%}

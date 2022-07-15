@@ -1,6 +1,9 @@
+from contextlib import redirect_stderr
 import decimal
 import math
 from operator import truediv
+from pydoc import render_doc
+from sre_constants import SUCCESS
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, FormView, ListView, DetailView, UpdateView, DeleteView
@@ -82,7 +85,7 @@ class detalleLote(GroupRequiredMixin,DetailView):
 """Vista donde se muestra la lista de todas las ventas de un lote en especifico"""
 class asignacionesLote(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
-    template_name = 'inventario/asignacionLote.html'
+    template_name = 'inventario/Asignaciones/asignacionLote.html'
     model = detalleVenta
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -429,7 +432,7 @@ class proyectoTuristicoView(ListView):
 "Vista del formulario para agregar nuevo proyecto turistico"
 class agregarProyectoTuristico(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
-    template_name = 'inventario/agregarProyecto.html'
+    template_name = 'inventario/Proyecto/agregarProyecto.html'
     form_class = agregarProyectoForm
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -444,6 +447,47 @@ class agregarProyectoTuristico(GroupRequiredMixin,CreateView):
         proyecto.save()
         messages.success(self.request, 'Proyecto guardado con exito')
         return HttpResponseRedirect(self.get_url_redirect())
+
+"""Vista de formulario para modificar proyecto turistico"""
+class ModificarProyectoTuristico(GroupRequiredMixin, UpdateView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['pk'])  
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        return super().dispatch(request, *args, **kwargs)
+
+    model = proyectoTuristico
+    template_name = 'inventario/Proyecto/agregarProyecto.html'
+    form_class = agregarProyectoForm
+    
+    def get_context_data(self, **kwargs):
+        context = super(ModificarProyectoTuristico, self).get_context_data(**kwargs)
+        pk = self.kwargs.get('idp', None)  
+        if 'form' not in context:
+            context['form'] = self.form_class()
+        context['idp'] = pk   
+        return context
+
+    def get_form(self, form_class = None, **kwargs):
+        form = super().get_form(form_class)        
+        return form
+
+    def post(self, request, form_class = None, *args, **kwargs):
+        self.object = self.get_object
+        form = self.form_class(request.POST, instance=self.object)
+        
+        if form.is_valid():
+            proyectoM = form.save(commit=False)
+            proyectoM.save()
+            messages.success(self.request, 'EL proyecto fue actualizado exitosamente')
+        else: 
+            messages.error(self.request, 'Ocurrió un error, no se actualizo el proyecto')
+        return HttpResponseRedirect(reverse_lazy('home'))
+
 
 #-------------------------Views de condicion de pago----------------------------------------
 """Vista de formulario para agregar condiciones de pago"""
