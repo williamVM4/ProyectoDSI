@@ -82,12 +82,11 @@
                                 </thead>
                                 <tbody>
                                     {% for proyectoTuristico in object_list %}
-                                    
                                     <tr>
                                         <td>{{proyectoTuristico.nombreProyectoTuristico}}</td>
                                         <td>{{proyectoTuristico.empresa}}</td>
                                         <td>
-                                            <a class="btn btn-info" href="{% url 'homeProyecto' idp=proyectoTuristico.id %}"><b><i class="fa-solid fa-eye"></i></b></a>
+                                            <a class="btn btn-info" href="{% url 'detalleProyecto' idp=proyectoTuristico.id %}"><b><i class="fa-solid fa-eye"></i></b></a>
                                             <a class="btn btn-warning" href="{% url 'modificarProyectoTuristico' pk=proyectoTuristico.id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
                                             <a class="btn btn-danger" href="#"><b><i class="fa-solid fa-trash-can"></i></b></a>
                                         </td>
