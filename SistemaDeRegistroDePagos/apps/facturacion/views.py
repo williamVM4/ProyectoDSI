@@ -4,7 +4,7 @@ from email.headerregistry import Group
 from importlib.resources import contents
 from multiprocessing import context
 import re
-from tkinter import FALSE
+'from tkinter import FALSE'
 from urllib import response
 from xml.dom.minidom import Identified
 from django.forms import NullBooleanField
