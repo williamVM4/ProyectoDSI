@@ -139,8 +139,8 @@ class agregarProyectoForm(ModelForm):
             'empresa': _('Empresa:'),
         }
         help_texts = {
-            'nombreProyectoTuristico': _('Campo Obligatorio. No se permiten números, ni otros caracteres especiales'),
-            'empresa': _('Campo Obligatorio. No se permiten números, ni otros caracteres especiales'),
+            'nombreProyectoTuristico': _('Campo Obligatorio. Escriba un nombre propio, teniendo en cuenta que no se permiten números ni caracteres especiales.'),
+            'empresa': _('Campo Obligatorio. Escriba un nombre propio, teniendo en cuenta que no se permiten números ni caracteres especiales.'),
         }
         error_messages = {
             'nombreProyectoTuristico': {
