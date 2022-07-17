@@ -2,7 +2,9 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block head %} {% endblock %}
+{% block head %} 
+<link rel="stylesheet" href="../../../static/css/estilos.css">
+{% endblock %}
 
 {% block content %} 
 <div class="container">
@@ -13,44 +15,64 @@
           <h3 class="panel-title">Agregar lote</h3>
         </div>
         <div class="panel-body">
-          <form role="form" action="." method="post" novalidate>
-            {% csrf_token %}  
-            <div class="row">
+          <form role="form" action="." method="post" novalidate class="AgregarLote" id="AgregarLote">
+            {% csrf_token %} 
+            <fieldset>
               <div class="col-md-12">
-                <div class="form-group">
-                  <p class="label-form">{{form.matriculaLote.label}}</p>
-                  {{form.matriculaLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.matriculaLote.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__matriculaLote">
+                  <label for="matriculaLote" class="formulario__label">{{form.matriculaLote.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="matriculaLote" id="matriculaLote" placeholder="00000000">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.matriculaLote.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.numeroLote.label}}</p>
-                  {{form.numeroLote|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroLote.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__numeroLote">
+                  <label for="numeroLote" class="formulario__label">{{form.numeroLote.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="numeroLote" id="numeroLote" placeholder="000">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.numeroLote.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.poligono.label}}</p>
-                  {{form.poligono|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Pa=Polígono(P)Porcion(a)'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.poligono.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__poligono">
+                  <label for="poligono" class="formulario__label">{{form.poligono.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="poligono" id="poligono" placeholder="Pa=Polígono(P)Porcion(a)">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.poligono.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.areaMCuadrado.label}}</p>
-                  {{form.areaMCuadrado|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'|attr:'min:0'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.areaMCuadrado.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__areaMCuadrado">
+                  <label for="areaMCuadrado" class="formulario__label">{{form.areaMCuadrado.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="areaMCuadrado" id="areaMCuadrado" placeholder="000000.00">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.areaMCuadrado.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.areaVCuadrada.label}}</p>
-                  {{form.areaVCuadrada|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'|attr:'min:0'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.areaVCuadrada.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__areaVCuadrada">
+                  <label for="areaVCuadrada" class="formulario__label">{{form.areaVCuadrada.label}}</label>
+                  <div class="formulario__grupo-input">
+                    {{form.areaVCuadrada|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'|attr:'min:0'}}
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.areaVCuadrada.help_text}}</p>
+                </div>
+                
+                <div class="formulario__mensaje" id="formulario__mensaje">
+                  <p><i class="fas fa-exclamation-triangle"></i> <b>Error:</b> Por favor rellene el formulario correctamente. </p>
                 </div>
               </div>
-            </div>
+            </fieldset>
+
             <div class="row">
               <div class="col-md-6"></div>
               <div class="col-md-3">
-                <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+                  <button type="submit" class="btn btn-primary">Agregar</button>
               </div>
-              <div class="col-md-3">
-                <a class="btn btn-danger btn-block" href="{% url 'gestionarLotes' idp=idp %}"> Cancelar </a>
+              <div class="col-md-2">
+                  <a class="btn btn-danger" href="{% url 'gestionarLotes' idp=idp %}"> Cancelar </a>
               </div>
             </div>
           </form>
@@ -61,6 +83,7 @@
 </div>
 {% endblock content %}
 {% block scripts %}
+<script src="../../../static/js/formularioLote.js"></script>
 <script type= application/javascript>
   {%if form.errors%}
       var errors = '';

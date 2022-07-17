@@ -2,57 +2,72 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block head %} {% endblock %}
+{% block head %} 
+<link rel="stylesheet" href="../../../static/css/estilos.css">
+{% endblock %}
 
 {% block content %} 
 <div class="container">
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-md-8 col-md-offset-2">
       <div class="form-panel panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">Agregar Cuenta Bancaria</h3>
         </div>
         <div class="panel-body">
-          <form role="form" action="." method="post">
-            {% csrf_token %}  
-            <div class="row">
+          <form role="form" action="." method="post" class="AgregarCuentaBancaria" id="AgregarCuentaBancaria">
+            {% csrf_token %}
+            <fieldset>
               <div class="col-md-12">
-
-                <div class="form-group">
-                  <p class="label-form">Numero de cuenta bancaria</p>
-                  {{form.numeroCuentaBancaria|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroCuentaBancaria.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__numeroCuentaBancaria">
+                  <label for="numeroCuentaBancaria" class="formulario__label">{{form.numeroCuentaBancaria.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="numeroCuentaBancaria" id="numeroCuentaBancaria" placeholder="000000">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.numeroCuentaBancaria.help_text}}</p>
+                </div>
+                <div class="formulario__grupo" id="grupo__nombreCuentaBancaria">
+                  <label for="nombreCuentaBancaria" class="formulario__label">{{form.nombreCuentaBancaria.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="nombreCuentaBancaria" id="nombreCuentaBancaria" placeholder="Ejemplo: Nombre Cuenta">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.nombreCuentaBancaria.help_text}}</p>
+                </div>
+                <div class="formulario__grupo" id="grupo__tipoCuenta">
+                  <label for="tipoCuenta" class="formulario__label">{{form.tipoCuenta.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="tipoCuenta" id="tipoCuenta" placeholder="Ejemplo: Cuenta Corriente">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.tipoCuenta.help_text}}</p>
+                </div>
+                <div class="formulario__grupo" id="grupo__banco">
+                  <label for="banco" class="formulario__label">{{form.banco.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="banco" id="banco" placeholder="Ejemplo: Banco Agrícola">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.banco.help_text}}</p>
+                </div>
+              
+                <div class="formulario__mensaje" id="formulario__mensaje">
+                  <p><i class="fas fa-exclamation-triangle"></i> <b>Error:</b> Por favor rellene el formulario correctamente. </p>
                 </div>
 
-                <div class="form-group">
-                  <p class="label-form">Nombre de la cuenta bancaria</p>
-                  {{form.nombreCuentaBancaria|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ejemplo: Nombre cuenta'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.nombreCuentaBancaria.help_text}}</p></div>
-                </div>
-
-                <div class="form-group">
-                  <p class="label-form">Tipo de la cuenta</p>
-                  {{form.tipoCuenta|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ejemplo: Tipo cuenta'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.tipoCuenta.help_text}}</p></div>
-                </div>
-
-                <div class="form-group">
-                  <p class="label-form">Banco</p>
-                  {{form.banco|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ejemplo: Nombre banco'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.banco.help_text}}</p></div>
-                </div>
-                
               </div>
-            </div>
+            </fieldset>
+
             <div class="row">
-              <div class="col-md-6"></div>
-              <div class="col-md-3">
-                <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+              <div class="col-md-7"></div>
+              <div class="col-md-2">
+                  <button type="submit" class="btn btn-primary">Agregar</button>
               </div>
-              <div class="col-md-3">
-                <a class="btn btn-danger btn-block" href="{% url 'cuentas' idp=idp %}"> Cancelar </a>
+              <div class="col-md-2">
+                  <a class="btn btn-danger" href="{% url 'cuentas' idp=idp %}"> Cancelar </a>
               </div>
-            </div>
+          </div>
           </form>
         </div>
       </div>
@@ -62,6 +77,7 @@
 {% endblock content %}
 
 {% block scripts %}
+<script src="../../../static/js/formularioCuentaBancaria.js"></script>
 <script type= application/javascript>
   {%if form.errors%}
       var errors = '';

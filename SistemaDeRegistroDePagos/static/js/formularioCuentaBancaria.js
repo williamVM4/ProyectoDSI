@@ -1,27 +1,28 @@
-const formulario = document.getElementById('AgregarProyectoTuristico');
-const inputs = document.querySelectorAll('#AgregarProyectoTuristico input');
-
+/*FORMULARIO DE AGREGAR CUENTA BANCARIA*/
+const formularioCuentaBancaria = document.getElementById('AgregarCuentaBancaria');
+const inputsCuentaBancaria = document.querySelectorAll('#AgregarCuentaBancaria input');
 const expresiones = {
 	nombrePropio: /^([A-ZÀ-ÿ]{1}[A-Za-zÀ-ÿ]+[\s]*)+$/,
+	numeroCuentabancaria:/[0-9]{6,20}/,
 }
 
 const campos = {
-	//Proyecto turístico
-	nombreProyectoTuristico: false,
-	empresa:false
+	//Cuentas bancarias
+	numeroCuentaBancaria:false,
+	nombreCuentaBancaria:false,
+	tipoCuenta:false,
+	banco:false
 }
 
-/*FORMULARIO DE AGREGAR PROYECTO*/
-const validarFormulario = (e) => {
+const validarFormularioCuentaBancaria = (e) => {
 	switch (e.target.name) {
-		case "nombreProyectoTuristico":
-			validarCampo(expresiones.nombrePropio, e.target, 'nombreProyectoTuristico'); //(expresion regular, input,nombre del campo)
-		break;
-		case "empresa": validarCampo(expresiones.nombrePropio, e.target, 'empresa');  break;
+		case "numeroCuentaBancaria": validar(expresiones.numeroCuentabancaria, e.target, 'numeroCuentaBancaria');break;
+		case "nombreCuentaBancaria": validar(expresiones.nombrePropio, e.target, 'nombreCuentaBancaria'); break;
+		case "tipoCuenta": validar(expresiones.nombrePropio, e.target, 'tipoCuenta'); break;
+		case "banco": validar(expresiones.nombrePropio, e.target, 'banco'); break;
 	}
 }
-
-const validarCampo = (expresion, input, campo) => {
+const validar = (expresion, input, campo) => {
 	if(expresion.test(input.value)){
 		document.getElementById(`grupo__${campo}`).classList.remove('formulario__grupo-incorrecto');
 		document.getElementById(`grupo__${campo}`).classList.add('formulario__grupo-correcto');
@@ -40,15 +41,13 @@ const validarCampo = (expresion, input, campo) => {
 	}
 }
 
-//aqui es donde luego de escribir algo "keyup" hacemos que se valide algo
-//El blur es para validar si está fuera del campo
-inputs.forEach((input) => {
-	input.addEventListener('keyup', validarFormulario);
-	input.addEventListener('blur', validarFormulario);
+inputsCuentaBancaria.forEach((input) => {
+	input.addEventListener('keyup', validarFormularioCuentaBancaria);
+	input.addEventListener('blur', validarFormularioCuentaBancaria);
 });
 
-formulario.addEventListener('submit', (e) => {
-	if(campos.nombreProyectoTuristico && campos.empresa){
+formularioCuentaBancaria.addEventListener('submit', (e) => {
+	if(campos.numeroCuentaBancaria && campos.nombreCuentaBancaria && campos.tipoCuenta && campos.banco){
 		$('form').submit(function(e){
 			$('form').unbind('submit').submit()
 		});
@@ -57,7 +56,3 @@ formulario.addEventListener('submit', (e) => {
 		document.getElementById('formulario__mensaje').classList.add('formulario__mensaje-activo');
 	}
 });
-
-
-
-

@@ -111,9 +111,9 @@ class LoteForm(ModelForm):
         }
         help_texts = {
             'matriculaLote': _('Campo Obligatorio. Solo se permiten números, minimo 8 carácteres numericos'),
-            'numeroLote': _('Campo Obligatorio. Solo se permiten números, minimo 3 carácteres numericos'),
+            'numeroLote': _('Campo Obligatorio. Solo se permiten números, minimo 1 carácter numérico'),
             'poligono': _('Campo Obligatorio. Pa=Polígono(P)Porcion(a)'),
-            'areaMCuadrado': _('Campo Obligatorio'),
+            'areaMCuadrado': _('Campo numérico Obligatorio'),
             'areaVCuadrada': _('Campo Obligatorio'),
         }
     
@@ -139,8 +139,8 @@ class agregarProyectoForm(ModelForm):
             'empresa': _('Empresa:'),
         }
         help_texts = {
-            'nombreProyectoTuristico': _('Campo Obligatorio. No se permiten números, ni otros caracteres especiales'),
-            'empresa': _('Campo Obligatorio. No se permiten números, ni otros caracteres especiales'),
+            'nombreProyectoTuristico': _('Campo Obligatorio. Escriba un nombre propio, teniendo en cuenta que no se permiten números ni caracteres especiales.'),
+            'empresa': _('Campo Obligatorio. Escriba un nombre propio, teniendo en cuenta que no se permiten números ni caracteres especiales.'),
         }
         error_messages = {
             'nombreProyectoTuristico': {

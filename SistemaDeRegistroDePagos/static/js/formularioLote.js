@@ -1,27 +1,29 @@
-const formulario = document.getElementById('AgregarProyectoTuristico');
-const inputs = document.querySelectorAll('#AgregarProyectoTuristico input');
-
+/*FORMULARIO DE AGREGAR LOTE*/
+const formulario = document.getElementById('AgregarLote');
+const inputs = document.querySelectorAll('#AgregarLote input');
 const expresiones = {
-	nombrePropio: /^([A-ZÀ-ÿ]{1}[A-Za-zÀ-ÿ]+[\s]*)+$/,
+	matricula: /^\d{8}/,
+	numero:/^\d{1}(\d+)?/,
+	pol: /^([A-Z]{1}[a-z]?)/,
+	area: /^\d+(.{1}\d{2})?/,
 }
 
 const campos = {
-	//Proyecto turístico
-	nombreProyectoTuristico: false,
-	empresa:false
+	matriculaLote:false,
+	numeroLote:false,
+	poligono:false,
+	areaMCuadrado:false
 }
 
-/*FORMULARIO DE AGREGAR PROYECTO*/
 const validarFormulario = (e) => {
 	switch (e.target.name) {
-		case "nombreProyectoTuristico":
-			validarCampo(expresiones.nombrePropio, e.target, 'nombreProyectoTuristico'); //(expresion regular, input,nombre del campo)
-		break;
-		case "empresa": validarCampo(expresiones.nombrePropio, e.target, 'empresa');  break;
+		case "matriculaLote": validar(expresiones.matricula, e.target, 'matriculaLote');break;
+		case "numeroLote": validar(expresiones.numero, e.target, 'numeroLote'); break;
+		case "poligono": validar(expresiones.pol, e.target, 'poligono'); break;
+		case "areaMCuadrado": validar(expresiones.area, e.target, 'areaMCuadrado'); break;
 	}
 }
-
-const validarCampo = (expresion, input, campo) => {
+const validar = (expresion, input, campo) => {
 	if(expresion.test(input.value)){
 		document.getElementById(`grupo__${campo}`).classList.remove('formulario__grupo-incorrecto');
 		document.getElementById(`grupo__${campo}`).classList.add('formulario__grupo-correcto');
@@ -40,15 +42,13 @@ const validarCampo = (expresion, input, campo) => {
 	}
 }
 
-//aqui es donde luego de escribir algo "keyup" hacemos que se valide algo
-//El blur es para validar si está fuera del campo
 inputs.forEach((input) => {
 	input.addEventListener('keyup', validarFormulario);
 	input.addEventListener('blur', validarFormulario);
 });
 
 formulario.addEventListener('submit', (e) => {
-	if(campos.nombreProyectoTuristico && campos.empresa){
+	if(campos.matriculaLote && campos.numeroLote && campos.poligono && campos.areaMCuadrado){
 		$('form').submit(function(e){
 			$('form').unbind('submit').submit()
 		});
@@ -57,7 +57,3 @@ formulario.addEventListener('submit', (e) => {
 		document.getElementById('formulario__mensaje').classList.add('formulario__mensaje-activo');
 	}
 });
-
-
-
-
