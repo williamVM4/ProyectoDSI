@@ -1,29 +1,24 @@
-/*FORMULARIO DE AGREGAR LOTE*/
-const formulario = document.getElementById('AgregarLote');
-const inputs = document.querySelectorAll('#AgregarLote input');
+const formulario = document.getElementById('AgregarDetalleVenta');
+const inputs = document.querySelectorAll('#AgregarDetalleVenta input');
+
 const expresiones = {
-	matricula: /^\d{8}/,
-	numero:/^\d{1}(\d+)?/,
-	pol: /^([A-Z]{1}[a-z]?)/,
-	area: /^\d+(.{1}\d{1,2})?$/,
+	flotante: /^\d+(.{1}\d{1,2})?$/,
 }
 
 const campos = {
-	matriculaLote:false,
-	numeroLote:false,
-	poligono:false,
-	areaMCuadrado:false
+	precioVenta: false,
+	descuento:false
 }
 
+/*FORMULARIO DE AGREGAR DETALLE DE VENTA*/
 const validarFormulario = (e) => {
 	switch (e.target.name) {
-		case "matriculaLote": validar(expresiones.matricula, e.target, 'matriculaLote');break;
-		case "numeroLote": validar(expresiones.numero, e.target, 'numeroLote'); break;
-		case "poligono": validar(expresiones.pol, e.target, 'poligono'); break;
-		case "areaMCuadrado": validar(expresiones.area, e.target, 'areaMCuadrado'); break;
+		case "precioVenta": validarCampo(expresiones.flotante, e.target, 'precioVenta'); break;
+		case "descuento": validarCampo(expresiones.flotante, e.target, 'descuento');  break;
 	}
 }
-const validar = (expresion, input, campo) => {
+
+const validarCampo = (expresion, input, campo) => {
 	if(expresion.test(input.value)){
 		document.getElementById(`grupo__${campo}`).classList.remove('formulario__grupo-incorrecto');
 		document.getElementById(`grupo__${campo}`).classList.add('formulario__grupo-correcto');
@@ -48,7 +43,7 @@ inputs.forEach((input) => {
 });
 
 formulario.addEventListener('submit', (e) => {
-	if(campos.matriculaLote && campos.numeroLote && campos.poligono && campos.areaMCuadrado){
+	if(campos.precioVenta && campos.descuento){
 		$('form').submit(function(e){
 			$('form').unbind('submit').submit()
 		});
@@ -57,3 +52,7 @@ formulario.addEventListener('submit', (e) => {
 		document.getElementById('formulario__mensaje').classList.add('formulario__mensaje-activo');
 	}
 });
+
+
+
+

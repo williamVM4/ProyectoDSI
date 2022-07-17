@@ -2,7 +2,9 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block head %} {% endblock %}
+{% block head %} 
+  <link rel="stylesheet" href="../../../static/css/estilos.css">
+{% endblock %}
 
 {% block content %} 
 <div class="container">
@@ -13,33 +15,48 @@
           <h3 class="panel-title">Agregar Detalle de Venta</h3>
         </div>
         <div class="panel-body">
-          <form role="form" action="." method="post">
-            {% csrf_token %}  
-            <div class="row">
+          <form role="form" action="." method="post" class="AgregarDetalleVenta" id="AgregarDetalleVenta">
+            {% csrf_token %}
+            <fieldset>
               <div class="col-md-12">
-                <div class="form-group">
-                  <p class="label-form">{{form.precioVenta.label}}</p>
-                  <div class="input-group"><span class="input-group-addon">$</span>
-                    {{form.precioVenta|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'|attr:'min:0'}}</div>
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.precioVenta.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__precioVenta">
+                  <label for="precioVenta" class="formulario__label">{{form.precioVenta.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <div class="input-group">
+                      <span class="input-group-addon">$</span>
+                      <input type="text" class="formulario__input" name="precioVenta" id="precioVenta" placeholder="000000.00">
+                    </div>
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.precioVenta.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.descuento.label}}</p>
-                  <div class="input-group"><span class="input-group-addon">$</span>
-                    {{form.descuento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:000000.00'|attr:'min:0'}}</div>
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.descuento.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__descuento">
+                  <label for="descuento" class="formulario__label">{{form.descuento.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <div class="input-group">
+                      <span class="input-group-addon">$</span>
+                    <input type="text" class="formulario__input" name="descuento" id="descuento" placeholder="000000.00">
+                    </div>
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.descuento.help_text}}</p>
+                </div>
+              
+                <div class="formulario__mensaje" id="formulario__mensaje">
+                  <p><i class="fas fa-exclamation-triangle"></i> <b>Error:</b> Por favor rellene el formulario correctamente. </p>
                 </div>
               </div>
-            </div>
+            </fieldset>  
+            
             <div class="row">
               <div class="col-md-6"></div>
               <div class="col-md-3">
-                <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+                  <button type="submit" class="btn btn-primary">Agregar</button>
               </div>
-              <div class="col-md-3">
-                <a class="btn btn-danger btn-block" href="javascript:history.back()"> Cancelar </a>
+              <div class="col-md-2">
+                  <a class="btn btn-danger" href="javascript:history.back()"> Cancelar </a>
               </div>
-            </div>
+          </div>
           </form>
         </div>
       </div>
@@ -49,6 +66,7 @@
 {% endblock content %}
 
 {% block scripts %}
+<script src="../../../static/js/formularioAgregarVenta.js"></script>
 
 <script type= application/javascript>
   {%if form.errors%}
