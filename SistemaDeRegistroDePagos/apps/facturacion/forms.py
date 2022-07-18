@@ -1,5 +1,6 @@
+from dataclasses import fields
 from django.utils.translation import gettext_lazy as _
-from django.forms import ModelForm
+from django.forms import CheckboxInput, ModelForm, widgets
 from .models import *
 from apps.inventario.models import cuentaBancaria, detalleVenta, lote
 from django import forms
@@ -101,15 +102,25 @@ class agregarCuentaBancariaForm(ModelForm):
         model = cuentaBancaria
         fields = ('numeroCuentaBancaria','nombreCuentaBancaria','tipoCuenta','banco')
         label= {
-            'numeroCuentaBancaria': _('Numero cuenta bancaria'),
+            'numeroCuentaBancaria': _('Numero de cuenta bancaria'),
             'nombreCuentaBancaria': _('Nombre de cuenta'),
             'tipoCuenta': _('Tipo de cuenta'),
             'banco': _('Banco'),
         }
         help_texts = {
-            'numeroCuentaBancaria': _('Campo Obligatorio. Solo se permiten numeros'),
-            'nombreCuentaBancaria': _('Campo Obligatorio. El nombre de la cuenta debe iniciar con mayuscula, no debe contener numeros'),
-            'tipoCuenta': _('Campo Obligatorio. El nombre del tipo de cuenta debe iniciar con mayuscula, no debe contener numeros'),
-            'banco': _('Campo Obligatorio. El nombre del banco debe iniciar con mayuscula, no debe contener numeros'),
+            'numeroCuentaBancaria': _('Campo Obligatorio. Solo se permiten numeros con un minímo de 6 dígitos y máximo 20.'),
+            'nombreCuentaBancaria': _('Campo Obligatorio. Escriba un nombre propio, teniendo en cuenta que no se permiten números.'),
+            'tipoCuenta': _('Campo Obligatorio. Escriba un nombre propio, teniendo en cuenta que no se permiten números.'),
+            'banco': _('Campo Obligatorio. Escriba un nombre propio, teniendo en cuenta que no se permiten números.'),
         }
+
+
+class resumenForm(forms.Form):
+   
+    resumenPrima = forms.BooleanField(required=False, initial=False)
+    resumenPagoM = forms.BooleanField(required=False, initial=False)
+    resumenPagoF = forms.BooleanField(required=False, initial=False)
+    fechaInicio = forms.DateField(widget=DateInput())
+    fechaFin = forms.DateField(widget=DateInput())
+   
 

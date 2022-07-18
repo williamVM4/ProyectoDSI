@@ -5,9 +5,11 @@ from importlib.resources import contents
 from inspect import _void
 from multiprocessing import context
 import re
+'from tkinter import FALSE'
 from urllib import response
 from xml.dom.minidom import Identified
 from django.forms import NullBooleanField
+from django.http import request
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -33,9 +35,10 @@ from django.utils.dateparse import parse_datetime
 import dateutil.parser
 
 "Vista donde se listaran todos los pagos que se vayan registrando"
-class caja(GroupRequiredMixin,TemplateView):
+class caja(GroupRequiredMixin, FormView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     template_name = 'facturacion/caja.html'
+    
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         "Se valida que exista el proyecto turistico"
@@ -53,6 +56,107 @@ class caja(GroupRequiredMixin,TemplateView):
         context['idp'] = id
         context['pagos'] = pago.objects.all().order_by('-fechaRegistro')
         return context
+
+    def get_url_redirect(self, **kwargs):
+        idp = self.kwargs.get('idp', None)
+        return reverse_lazy('caja', kwargs={'idp': idp})
+
+    form_class = resumenForm
+
+    def form_valid(self, form, **kwargs):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Resumen"
+        rPrima = form.cleaned_data.get("resumenPrima")
+        rPagoM = form.cleaned_data.get("resumenPagoM")
+        rPagoF = form.cleaned_data.get("resumenPagoF")
+        fechaI = form.cleaned_data.get("fechaInicio")
+        fechaF = form.cleaned_data.get("fechaFin")
+        pagos = pago.objects.all()
+        valido = False
+        if fechaI <= fechaF:#Validar fechas
+            rows = 2
+            bordes = borders.Side(style = None, color = 'FF000000', border_style = 'thin')
+            borde = Border(left = bordes, right = bordes, bottom = bordes, top = bordes)
+            ws.merge_cells('B1:E1')
+            ws['B1'] = 'Resumen de pagos'
+            ws['B1'].alignment = Alignment(horizontal="center",vertical="center")
+            ws['B2'] = 'Fecha'
+            ws['C2'] = 'Lote'
+            ws['D2'] = 'Monto'
+            ws['E2'] = 'Concepto'
+
+            if rPrima is True and rPagoM is True and rPagoF is True:
+                pagos = pago.objects.filter()
+            if rPrima is True and rPagoM is True and rPagoF is False: 
+                pagos = pago.objects.filter(pagoFinanciamiento = None)
+            if rPrima is True and rPagoM is False and rPagoF is True:
+                pagos = pago.objects.filter(pagoMantenimiento = None)
+            if rPrima is True and rPagoM is False and rPagoF is False:
+                pagos = pago.objects.filter(pagoMantenimiento = None, pagoFinanciamiento = None)
+            if rPrima is False and rPagoM is True and rPagoF is False:
+                pagos = pago.objects.filter(prima = None, pagoFinanciamiento = None)
+            if rPrima is False and rPagoM is True and rPagoF is True:
+                pagos = pago.objects.filter(prima = None)
+            if rPrima is False and rPagoM is False and rPagoF is True:
+                pagos = pago.objects.filter(prima = None, pagoMantenimiento = None)
+            if rPrima is False and rPagoM is False and rPagoF is False:
+                messages.error(self.request, 'Seleccione el tipo de pago que desea imprimir')
+                return HttpResponseRedirect(self.get_url_redirect())
+
+            rows = 3
+            totalPagos = 3
+            for p in pagos:
+                lote = ''
+                concepto = ''
+                if p.prima != None:
+                    lote = p.prima.detalleVenta.lote.identificador
+                    concepto = 'Prima'
+                if p.pagoFinanciamiento != None:
+                    lote = p.pagoFinanciamiento.numeroCuotaEstadoCuenta.estadoCuenta.detalleVenta.lote.identificador
+                    concepto = 'Pago Financiamiento'
+                if p.pagoMantenimiento != None:
+                    lote = p.pagoMantenimiento.numeroCuotaEstadoCuenta.estadoCuenta.detalleVenta.lote.identificador
+                    concepto = 'Pago Mantenimiento'
+                if p.prima == None and p.pagoFinanciamiento == None and p.pagoMantenimiento == None:
+                    messages.error(self.request, 'x')
+                    return HttpResponseRedirect(self.get_url_redirect())
+                if p.fechaPago >= fechaI and p.fechaPago <= fechaF:   
+                    ws.cell(row=rows,column=2).value = p.fechaPago
+                    ws.cell(row=rows,column=3).value = lote
+                    ws.cell(row=rows,column=4).value = p.monto
+                    ws.cell(row=rows,column=5).value = concepto
+                    ws.cell(row=rows,column=4).number_format = '$ 0.00' 
+                    rows = rows+1
+                    totalPagos = totalPagos + 1
+                    valido = True
+            ws.cell(row=rows,column=4).number_format = '$ 0.00'               
+            ws.cell(row=rows,column=4).value = ("=SUM(D"+str(3)+":D"+str(rows-1)+")") 
+            ws.cell(row=rows,column=2).value = 'Total'  
+            
+            rows = 1
+            for p in range(totalPagos):
+                ws.cell(row=rows,column=2).border = borde
+                ws.cell(row=rows,column=3).border = borde
+                ws.cell(row=rows,column=4).border = borde
+                ws.cell(row=rows,column=5).border = borde 
+                rows = rows+1  
+                      
+        else: 
+            messages.error(self.request, 'La fecha de fin no debe ser menor que la fecha inicio')
+            return HttpResponseRedirect(self.get_url_redirect())
+        if valido:
+            nombre_archivo = "Resumen.xlsx"
+            response = HttpResponse()
+            contenido = "attachment; filename = {0}".format(nombre_archivo)
+            response["Content-Disposition"]= contenido
+            wb.save(response)
+            return response
+        else: 
+            messages.error(self.request, 'No existen ingresos en ese intervalo de fechas')
+            return HttpResponseRedirect(self.get_url_redirect())
+
+
 
 "Vista de formulario para agregar prima"
 class agregarPrima(GroupRequiredMixin,CreateView):
@@ -789,7 +893,6 @@ class EliminarPrima(GroupRequiredMixin,TemplateView):
         return super().dispatch(request, *args, **kwargs)
     
     def get_url_redirect(self, **kwargs):
-        context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None) 
         id = self.kwargs.get('idv', None) 
         try:
@@ -799,7 +902,6 @@ class EliminarPrima(GroupRequiredMixin,TemplateView):
             return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
 
     def get(self,request,*args,**kwargs):
-        context=super().get_context_data(**kwargs) 
         id = self.kwargs.get('id', None)
         try:
             primas = prima.objects.get(numeroReciboPrima = id)
@@ -962,12 +1064,21 @@ class Recibo(TemplateView):
             ws['B1'].number_format = '0.00'
             primaRecibo = prima.objects.get(numeroReciboPrima = pagoRecibo.prima_id )
             detalle = detalleVenta.objects.get(id = primaRecibo.detalleVenta_id)
-            asigna = asignacionLote.objects.get(detalleVenta_id = detalle.id)
-            nombre = propietario.objects.get(dui = asigna.propietario_id)
+            asigna = asignacionLote.objects.filter(detalleVenta_id = detalle.id)
+            nombre = ""
+            cantidad = 1
+            for asignacion in asigna:
+                if cantidad == 1:
+                    nombre = asignacion.propietario.nombrePropietario
+                else:
+                    if cantidad <= 2:
+                        nombre = nombre + " y Otros" 
+                cantidad = cantidad +1
+
             lotes = lote.objects.get(matriculaLote = detalle.lote_id)
             usuario = User.objects.get(id = primaRecibo.usuarioCreacion_id)
             ws['G1'] = "Nº "+primaRecibo.numeroReciboPrima  
-            ws['B2'] = nombre.nombrePropietario
+            ws['B2'] = nombre
             ws['B2'].alignment = Alignment(horizontal="center",vertical="center")
             ws['B4'].alignment = Alignment(horizontal="center",vertical="center")
             ws['C4'].alignment = Alignment(horizontal="center",vertical="center")
@@ -1044,8 +1155,16 @@ class Recibo(TemplateView):
                 usuario = User.objects.get(id = pagoMRecibo.usuarioCreacion_id)
                 estadoC = estadoCuenta.objects.get(id = pagoMRecibo.estadoCuenta_id)
                 detalle = detalleVenta.objects.get(id = estadoC.detalleVenta_id)
-                asigna = asignacionLote.objects.get(detalleVenta_id = detalle.id)
-                nombre = propietario.objects.get(dui = asigna.propietario_id)
+                asigna = asignacionLote.objects.filter(detalleVenta_id = detalle.id)
+                nombre = ""
+                cantidad = 1
+                for asignacion in asigna:
+                    if cantidad == 1:
+                        nombre = asignacion.propietario.nombrePropietario
+                    else:
+                        if cantidad <= 2:
+                            nombre = nombre + " y Otros" 
+                    cantidad = cantidad +1
                 lotes = lote.objects.get(matriculaLote = detalle.lote_id)
                 ws['H3'] = "Nº "+pagoMRecibo.numeroReciboMantenimiento
                 ws.merge_cells('B4:F4')
@@ -1072,7 +1191,7 @@ class Recibo(TemplateView):
                 ws['F12'] = pagoMRecibo.montoOtros
                 ws['B12'] = "  "+pagoMRecibo.conceptoOtros
                 ws['B4'].alignment = Alignment(horizontal="center",vertical="center")
-                ws['B4'] = nombre.nombrePropietario
+                ws['B4'] = nombre
                 ws['D5'].alignment = Alignment(horizontal="center",vertical="center")
                 ws['E5'].alignment = Alignment(horizontal="center",vertical="center")
                 ws['D5'] = lotes.numeroLote

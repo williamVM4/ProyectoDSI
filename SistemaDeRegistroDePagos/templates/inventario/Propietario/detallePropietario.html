@@ -51,9 +51,30 @@
                                     <div class="panel panel-default">
                                         <div class="panel-body">
                                             <div class="encabezado-propietario"><h4>Lotes</h4></div>
-                                            {% for lote in lotes%}
-                                            <p><b>Lote: </b> {{lote.detalleVenta.lote.identificador}}<b> Estado:</b> {{lote.detalleVenta.estado}}</p>
-                                            {%endfor%}
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Lote</th>
+                                                            <th>Estado</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            {% for lote in lotes%}
+                                                            <td>{{lote.detalleVenta.lote.identificador}}</td>
+                                                            {% if lote.detalleVenta.estado is True%}
+                                                            <td>Activo</td>
+                                                            {%else%}
+                                                            <td>Inactivo</td>
+                                                            {% endif %}
+                                                            {% comment %} {% empty %} {% endcomment %}
+                                                            {%endfor%}
+                                                            
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

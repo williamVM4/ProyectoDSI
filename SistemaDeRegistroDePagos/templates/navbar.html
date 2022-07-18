@@ -2,16 +2,14 @@
 {% load my_templatetag %}
 <!-- Navigation -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse"><span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-    </button>
+        <span class="icon-bar"></span></button>
 
     <!-- Top Navigation: Left Menu -->
     <ul class="nav navbar-nav navbar-left navbar-top-links">
-        <li><a href="{% url 'homeProyecto' idp=idp %}"><i class="fa fa-home fa-fw"></i> Inicio</a></li>
+        <li><a href="{% url 'detalleProyecto' idp=idp %}"><i class="fa fa-home fa-fw"></i> Inicio</a></li>
     </ul>
 
     <!-- Top Navigation: Right Menu -->
@@ -35,12 +33,12 @@
     </ul>
 
     <!-- Sidebar -->
-    <div class="navbar-default sidebar" role="navigation">
+    {% comment %} <div class="navbar-default sidebar" role="navigation">
         <div class="sidebar-nav navbar-collapse">
 
             <ul class="nav" id="side-menu">
                 <li>
-                    <a href="{% url 'homeProyecto' idp=idp %}"><i class="fa-solid fa-explosion"></i>    Proyecto<span class="fa arrow"></span></a>
+                    <a href="{% url 'detalleProyecto' idp=idp %}"><i class="fa-solid fa-explosion"></i>    Proyecto<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
                             <a href="{% url 'home'%}">Seleccionar proyecto</a>
@@ -78,5 +76,51 @@
             </ul>
 
         </div>
-    </div>
+    </div> {% endcomment %}
 </nav>
+<div id="sidebar-collapse" class=" sidebar">
+		<ul id="menu" class="nav menu">
+			<li id="li-inicio-menu" class="parent"><a data-toggle="collapse" href="#sub-item-1">
+				<em class="fa fa-dashboard">&nbsp;</em> Proyecto <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
+				</a>
+				<ul class="children collapse" id="sub-item-1">
+					<li><a id="a-inicio-menu" class="" href="{% url 'home'%}">
+						<span class="fa fa-arrow-right">&nbsp;</span> Seleccionar Proyecto
+					</a></li>
+				</ul>
+			</li>
+            <li class="parent"><a data-toggle="collapse" href="#sub-item-2">
+				<em class="fa-solid fa-hand-holding-dollar">&nbsp;</em> Facturación <span data-toggle="collapse" href="#sub-item-2" class="icon pull-right"><em class="fa fa-plus"></em></span>
+				</a>
+				<ul class="children collapse" id="sub-item-2">
+					<li><a class="" href="{% url 'caja' idp=idp%}">
+						<span class="fa fa-arrow-right">&nbsp;</span> Caja
+					</a></li>
+					<li><a class="" href="{% url 'cuentas' idp=idp%}">
+						<span class="fa fa-arrow-right">&nbsp;</span> Cuentas Bancarias
+					</a></li>
+				</ul>
+			</li>
+            <li class="parent"><a data-toggle="collapse" href="#sub-item-3">
+				<em class="fa-solid fa-earth-americas">&nbsp;</em> Inventario <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
+				</a>
+				<ul class="children collapse" id="sub-item-3">
+					<li><a class="" href="{% url 'gestionarLotes' idp=idp%}">
+						<span class="fa fa-arrow-right">&nbsp;</span> Lotes
+					</a></li>
+					<li><a class="" href="{% url 'historicoVentas' idp=idp%}">
+						<span class="fa fa-arrow-right">&nbsp;</span> Ventas
+					</a></li>
+					<li><a class="" href="{% url 'consultarPropietarios' idp=idp%}">
+						<span class="fa fa-arrow-right">&nbsp;</span> Propietarios
+					</a></li>
+				</ul>
+			</li>
+            <li class="parent"><a data-toggle="collapse" href="#sub-item-4">
+				<em class="fa-solid fa-chart-line">&nbsp;</em> Monitoreo <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
+				</a>
+				<ul class="children collapse" id="sub-item-4">
+				</ul>
+			</li>
+		</ul>
+	</div><!--/.sidebar-->

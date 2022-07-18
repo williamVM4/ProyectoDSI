@@ -81,6 +81,7 @@ class Migration(migrations.Migration):
             name='pago',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+
                 ('fechaRegistro', models.DateTimeField(auto_now_add=True)),
                 ('monto', models.DecimalField(decimal_places=2, max_digits=8)),
                 ('tipoPago', models.IntegerField(choices=[(1, 'Efectivo'), (2, 'Banco')])),
