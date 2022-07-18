@@ -8,7 +8,7 @@ from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from apps.facturacion.models import pago, pagoMantenimiento, prima
-from apps.monitoreo.models import cuotaEstadoCuenta, estadoCuenta
+from apps.monitoreo.models import estadoCuenta
 from apps.inventario.models import asignacionLote, asignacionProyecto, detalleVenta, lote, proyectoTuristico
 from apps.autenticacion.mixins import *
 from django.contrib import messages
@@ -152,7 +152,7 @@ class agregarLote(GroupRequiredMixin,CreateView):
         lote = form.save(commit=False)
         try:
             lote.proyectoTuristico = proyectoTuristico.objects.get(id=idp)
-            lote.identificador = str(lote.poligono) + str(lote.numeroLote)
+            lote.identificador = str(lote.numeroLote)+str(lote.poligono)
             lote.areaVCuadrada = lote.areaMCuadrado * decimal.Decimal(1.431)
             lote.save()
             messages.success(self.request, 'Lote guardado con éxito')

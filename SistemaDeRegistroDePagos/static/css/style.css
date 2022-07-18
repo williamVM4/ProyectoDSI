@@ -5,6 +5,16 @@
 .label-help-form{
     font-size: 11px;
 }
+
+.Options{
+    display: none;
+}
+
+.botonesOpciones{
+    outline:none !important;
+    border-radius:10px;
+}
+
 #proyecto{
     padding-top: 3%;
     margin: 0;

@@ -53,7 +53,17 @@
                                                 <p><b>Fecha de Pago:</b> {{pago.fechaPago}}</p>
                                                 <p><b>Monto:</b> $ {{pago.monto}}</p>
                                                 <p><b>Tipo de Pago:</b>{% if pago.tipoPago == 1%} Efectivo {% else%} Banco <p><b>Referencia:</b> {{pago.referencia}}</p><p><b>Cuenta:</b> {{pago.cuentaBancaria}}</p>{% endif%}</p>
-                                                <p><b>Detalle del pago:</b><br><pre id="observacionesPago">{% if pago.observaciones != ""%} {{pago.observaciones}} {% else%} N/A {% endif%}</pre></p>
+                                                {% if pago.pagoMantenimiento%}
+                                                <p><b>Detalle del pago:</b><pre id="observacionesPago">{% if pago.observaciones != ""%} {{pago.observaciones}} {% else%} N/A {% endif%}</pre></p>
+                                                {% else %}
+                                                    {% if pago.prima%}
+                                                <p><b>Concepto:</b> {{pago.prima.conceptoPrima}}</p>
+                                                    {% else %}
+                                                        {% if pago.pagoFinanciamiento%}
+                                                <p><b>Detalle del pago:</b><pre id="observacionesPago">{% if pago.observaciones != ""%} {{pago.observaciones}} {% else%} N/A {% endif%}</pre></p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>

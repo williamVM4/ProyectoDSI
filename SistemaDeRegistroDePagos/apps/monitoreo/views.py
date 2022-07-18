@@ -5,8 +5,8 @@ from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from apps.inventario.models import asignacionLote, detalleVenta, proyectoTuristico
-from apps.monitoreo.models import estadoCuenta, cuotaEstadoCuenta
-from apps.facturacion.models import pago, pagoMantenimiento
+from apps.monitoreo.models import estadoCuenta, condicionesPago
+from apps.facturacion.models import pago, pagoMantenimiento, pagoCuotaMantenimiento
 from apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
@@ -14,6 +14,7 @@ from openpyxl import Workbook
 from openpyxl.styles import *
 from django.http.response import HttpResponse
 from django.db.models import Sum
+from decimal import Decimal
 
 class estadoCuentaView(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
@@ -43,26 +44,52 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
         idp = self.kwargs.get('idp', None)
         id = self.kwargs.get('pk', None)
         estado = estadoCuenta.objects.get(detalleVenta=id)
-        cuotas = cuotaEstadoCuenta.objects.filter(estadoCuenta=estado)
-        pagosm = pago.objects.filter(pagoMantenimiento__numeroCuotaEstadoCuenta__estadoCuenta=estado)
+        condicion=condicionesPago.objects.get(detalleVenta=id)
+        pagosm = pago.objects.filter(pagoMantenimiento__estadoCuenta=estado).order_by('-fechaRegistro')
+        pagosCuotas = pagoCuotaMantenimiento.objects.filter(estadoCuenta=estado).order_by('-fechaRegistro')
         pagosp = pago.objects.filter(prima__detalleVenta=id)
-        sumPrima=0
-        sumMantenimiento=0
-        sumRecargoMantenimiento=0
+        listadoPagosMantenimiento=pagoMantenimiento.objects.filter(estadoCuenta=estado).order_by('-fechaRegistro')
+        sumPrima=0.00
+        sumMantenimiento=0.00
+        sumRecargoMantenimiento=0.00
+        sumOtros=0.00
+        sumDescuento=0.00
+        try:
+            saldoUltimoPago=listadoPagosMantenimiento[0].abono
+            saldoUltimoRecargo=listadoPagosMantenimiento[0].saldoRecargo
+            pagoUltimaCuota=pagosCuotas[0]
+        except Exception:
+            pagoUltimaCuota=pagoCuotaMantenimiento(numeroReciboMantenimiento="N/A", fechaRegistro="N/A",fechaPago="N/A", fechaCorte="N/A", concepto="N/A", mantenimiento=0.00, recargo=0.00, otros=0.00,descuento=0.00)
+            saldoUltimoPago=0.00
+            saldoUltimoRecargo=0.00
         for pagoObject in pagosp:
             if pagoObject.prima !=None:
-                sumPrima+=pagoObject.monto
+                sumPrima=sumPrima+float(pagoObject.monto)
         for pagoObject in pagosm:
-            sumMantenimiento+=pagoObject.pagoMantenimiento.mantenimiento
+            sumMantenimiento=sumMantenimiento+float(pagoObject.pagoMantenimiento.mantenimiento)
         for pagoObject in pagosm:
-            sumRecargoMantenimiento+=pagoObject.pagoMantenimiento.recargoMtto
+            sumRecargoMantenimiento=sumRecargoMantenimiento+float(pagoObject.pagoMantenimiento.recargoMtto)
+        for pagoObject in pagosm:
+            sumOtros=sumOtros+float(pagoObject.pagoMantenimiento.montoOtros)
+        for pagoObject in pagosm:
+            sumDescuento=sumDescuento+float(pagoObject.pagoMantenimiento.descuento)
+        if saldoUltimoPago !=0:
+            saldoUltimoPago=condicion.mantenimientoCuota-saldoUltimoPago
+        if saldoUltimoRecargo !=0:
+            saldoUltimoRecargo=condicion.multaMantenimiento-saldoUltimoRecargo
 
         context['idp'] = idp
         context['id'] = id  
         context['pagosm'] = pagosm
-        context['sumPrima'] = sumPrima
-        context['sumMantenimiento'] = sumMantenimiento
-        context['sumRecargoMantenimiento'] = sumRecargoMantenimiento
+        context['pagosCuotas'] = pagosCuotas
+        context['pagoUltimaCuota'] = pagoUltimaCuota
+        context['saldoUltimoPago'] = saldoUltimoPago
+        context['saldoUltimoRecargo'] = saldoUltimoRecargo
+        context['sumPrima'] = round(sumPrima,2)
+        context['sumMantenimiento'] = round(sumMantenimiento,2)
+        context['sumRecargoMantenimiento'] = round(sumRecargoMantenimiento,2)
+        context['sumOtros'] = round(sumOtros,2)
+        context['sumDescuento'] = round(sumDescuento,2)
         return context
 
 class EstadoCuentaReporte(TemplateView):

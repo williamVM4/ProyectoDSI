@@ -34,30 +34,18 @@ class prima(models.Model):
     def __str__(self):
         return self.numeroReciboPrima
 
-
-
-class BasePagoModel(models.Model):
+class pagoFinanciamiento(models.Model):
+    numeroReciboFinanciamiento = models.CharField(max_length=30, primary_key=True)
+    usuarioCreacion = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null = True, related_name='user_creation_financiamiento')
     fechaRegistro=models.DateTimeField(auto_now_add=True,blank=True)
-    numeroCuotaEstadoCuenta = models.ForeignKey('monitoreo.cuotaEstadoCuenta',blank=True, on_delete=models.CASCADE)
-    fechaUltimoMtto = models.DateField(blank=True)
-    abono = models.DecimalField(blank=True,default=0.0,max_digits=8, decimal_places=2)
-    fechaUltimoRecargo = models.DateField(blank=True)
-    saldoRecargo = models.DecimalField(blank=True,default=0.0,max_digits=8, decimal_places=2)
-    mantenimiento = models.DecimalField(max_digits=8, decimal_places=2)
-    recargoMtto = models.DecimalField(blank=True,default=0.0,max_digits=8, decimal_places=2)
+    estadoCuenta = models.ForeignKey('monitoreo.estadoCuenta',blank=True, on_delete=models.CASCADE)
+    capital = models.DecimalField(blank=True,max_digits=8, decimal_places=2)
+    comision = models.DecimalField(max_digits=8, decimal_places=2)
+    recargoFinanciamiento = models.DecimalField(blank=True,default=0,max_digits=8, decimal_places=2)
     conceptoOtros = models.CharField(max_length=100,blank=True, default="")
     montoOtros = models.DecimalField(blank=True,max_digits=8, decimal_places=2)
     conceptoDescuento = models.CharField(max_length=100,blank=True, default="")
     descuento = models.DecimalField(blank=True,max_digits=8, decimal_places=2)
-
-    class Meta:
-        abstract = True
-
-class pagoFinanciamiento(BasePagoModel):
-    numeroReciboFinanciamiento = models.CharField(max_length=30, primary_key=True)
-    usuarioCreacion = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null = True, related_name='user_creation_financiamiento')
-    comision = models.DecimalField(max_digits=8, decimal_places=2)
-    recargoFinanciamiento = models.DecimalField(blank=True,default=0,max_digits=8, decimal_places=2)
 
     def __str__(self):
         return self.numeroReciboFinanciamiento
@@ -69,24 +57,36 @@ class pagoFinanciamiento(BasePagoModel):
                 self.user_creation_financiamiento = user
         super(pagoFinanciamiento,self).save()
 
-class pagoMantenimiento(BasePagoModel):
+class pagoMantenimiento(models.Model):
     numeroReciboMantenimiento = models.CharField(max_length=30, primary_key=True)
-    usuarioCreacion = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null = True, related_name='user_creation_mantenimiento') 
+    usuarioCreacion = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null = True, related_name='user_creation_mantenimiento')
+    fechaRegistro=models.DateTimeField(auto_now_add=True,blank=True)
+    estadoCuenta = models.ForeignKey('monitoreo.estadoCuenta',blank=True, on_delete=models.CASCADE)
+    fechaUltimoMtto = models.DateField(blank=True)
+    abono = models.DecimalField(blank=True,default=0.0,max_digits=8, decimal_places=2)
+    fechaUltimoRecargo = models.DateField(blank=True)
+    saldoRecargo = models.DecimalField(blank=True,default=0.0,max_digits=8, decimal_places=2)
+    mantenimiento = models.DecimalField(max_digits=8, decimal_places=2)
+    recargoMtto = models.DecimalField(blank=True,default=0.0,max_digits=8, decimal_places=2)
+    conceptoOtros = models.CharField(max_length=100,blank=True, default="")
+    montoOtros = models.DecimalField(blank=True,max_digits=8, decimal_places=2)
+    conceptoDescuento = models.CharField(max_length=100,blank=True, default="")
+    descuento = models.DecimalField(blank=True,max_digits=8, decimal_places=2) 
 
     def __str__(self):
         return self.numeroReciboMantenimiento
 
 class pagoCuotaMantenimiento(models.Model):
-    usuarioCreacion = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null = True, related_name='user_creation_cuotaMantenimiento')
+    numeroReciboMantenimiento = models.CharField(max_length=30)
     fechaRegistro=models.DateTimeField(auto_now_add=True,blank=True)
-    numeroReciboMantenimiento = models.CharField(max_length=30, primary_key=True)
+    estadoCuenta = models.ForeignKey('monitoreo.estadoCuenta',blank=True, on_delete=models.CASCADE)
     fechaPago = models.DateField()
-    monto = models.DecimalField(max_digits=8, decimal_places=2)
     fechaCorte = models.DateField()
-    rubro = models.CharField(max_length=100,blank=True, default="")
     concepto = models.CharField(max_length=100,blank=True, default="")
     mantenimiento = models.DecimalField(max_digits=8, decimal_places=2)
     recargo = models.DecimalField(max_digits=8, decimal_places=2)
+    otros = models.DecimalField(max_digits=8, decimal_places=2)
+    descuento = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
         return self.numeroReciboMantenimiento

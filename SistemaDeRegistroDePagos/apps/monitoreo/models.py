@@ -55,18 +55,4 @@ class cuotaAmortizacion(models.Model):
 
 class estadoCuenta(models.Model):
     detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, on_delete=models.CASCADE)
-
-class cuotaEstadoCuenta(models.Model):
-    numeroCuota = models.IntegerField()
-    estadoCuenta = models.ForeignKey(estadoCuenta, on_delete=models.CASCADE)
     cuotaAmortizacion = models.ForeignKey(cuotaAmortizacion, on_delete=models.CASCADE, null=True)
-    diasInteres = models.IntegerField()
-    tasaInteres = models.DecimalField(max_digits=8, decimal_places=2)
-    interesGenerado = models.DecimalField(max_digits=8, decimal_places=2)
-    interesPagado = models.DecimalField(max_digits=8, decimal_places=2)
-    subTotal = models.DecimalField(max_digits=8, decimal_places=2)
-    abonoCapital = models.DecimalField(max_digits=8, decimal_places=2)
-    saldoCapital = models.DecimalField(max_digits=8, decimal_places=2)
-    saldoInteres = models.DecimalField(max_digits=8, decimal_places=2)
-    def __str__(self):
-        return self.numeroCuota
