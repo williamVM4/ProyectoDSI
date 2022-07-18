@@ -2,7 +2,9 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block head %} {% endblock %}
+{% block head %} 
+  <link rel="stylesheet" href="../../../static/css/estilos.css">
+{% endblock %}
 
 {% block content %} 
 <div class="container">
@@ -13,31 +15,41 @@
                     <h3 class="panel-title">Agregar Proyecto Turistico</h3>
                 </div>
                 <div class="panel-body">
-                    <form role="form" action="." method="POST">
+                    <form role="form" action="." method="POST" class="AgregarProyectoTuristico" id="AgregarProyectoTuristico">
                         {% csrf_token %}
                         <fieldset>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <p class="label-form">{{form.nombreProyectoTuristico.label}}</p>
-                                        {{form.nombreProyectoTuristico|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ejemplo: La ventana'}}
-                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.nombreProyectoTuristico.help_text}}</p></div>
-                                    </div>
-                                    <div class="form-group">
-                                        <p class="label-form">{{form.empresa.label}}</p>
-                                        {{form.empresa|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ejemplo: Decatur'}}
-                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.empresa.help_text}}</p></div>
-                                    </div>
-                                </div>
+                          <div class="col-md-12">
+                            <div class="formulario__grupo" id="grupo__nombreProyectoTuristico">
+                              <label for="nombreProyectoTuristico" class="formulario__label">{{form.nombreProyectoTuristico.label}}</label>
+                              <div class="formulario__grupo-input">
+                                <input type="text" class="formulario__input" name="nombreProyectoTuristico" id="nombreProyectoTuristico" placeholder="Ejemplo: Decatur">
+                                <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                              </div>
+                              <p class="formulario__input-error">{{form.nombreProyectoTuristico.help_text}}</p>
                             </div>
+                            <div class="formulario__grupo" id="grupo__empresa">
+                              <label for="empresa" class="formulario__label">{{form.empresa.label}}</label>
+                              <div class="formulario__grupo-input">
+                                <input type="text" class="formulario__input" name="empresa" id="empresa" placeholder="Ejemplo: Decatur">
+                                <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                              </div>
+                              <p class="formulario__input-error">{{form.empresa.help_text}}</p>
+                            </div>
+                          
+                            <div class="formulario__mensaje" id="formulario__mensaje">
+                              <p><i class="fas fa-exclamation-triangle"></i> <b>Error:</b> Por favor rellene el formulario correctamente. </p>
+                            </div>
+
+                          </div>
                         </fieldset>
+                        
                         <div class="row">
                             <div class="col-md-8"></div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+                                <button type="submit" class="btn btn-primary">Agregar</button>
                             </div>
                             <div class="col-md-2">
-                                <a class="btn btn-danger btn-block" href="{% url 'home' %}"> Cancelar </a>
+                                <a class="btn btn-danger" href="{% url 'home' %}"> Cancelar </a>
                             </div>
                         </div>
                     </form>
@@ -49,6 +61,7 @@
 {% endblock content %}
 
 {% block scripts %}
+<script src="../../../static/js/formulario.js"></script>
 <script type= application/javascript>
     {%if form.errors%}
         var errors = '';

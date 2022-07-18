@@ -10,7 +10,7 @@ from apps.inventario.models import proyectoTuristico
 from apps.autenticacion.mixins import *
 
 # Create your views here.
-class homeProyecto(GroupRequiredMixin,TemplateView):
+class detalleProyecto(GroupRequiredMixin,TemplateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -21,7 +21,7 @@ class homeProyecto(GroupRequiredMixin,TemplateView):
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
-    template_name = 'home/homeProyecto.html'
+    template_name = 'detalleProyecto.html'
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)

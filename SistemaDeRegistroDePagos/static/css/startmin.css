@@ -15,7 +15,7 @@ body {
 #page-wrapper {
     padding-top: 30px;
     min-height: 568px;
-    background-color: #fff;
+    background-color: #f7f7f7;
 }
 
 @media(min-width:768px) {
@@ -105,7 +105,7 @@ body {
     right: 0;
     left: auto;
 }
-
+/* 
 .sidebar .sidebar-nav.navbar-collapse {
     padding-right: 0;
     padding-left: 0;
@@ -146,9 +146,9 @@ body {
 
 .sidebar .nav-third-level li a {
     padding-left: 52px;
-}
+} */
 
-@media(min-width:768px) {
+/* @media(min-width:768px) {
     .sidebar {
         z-index: 1;
         position: absolute;
@@ -161,7 +161,7 @@ body {
     .navbar-top-links .dropdown-alerts {
         margin-left: auto;
     }
-}
+} */
 
 .btn-outline {
     color: inherit;
