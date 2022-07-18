@@ -67,8 +67,8 @@ class DetalleVentaForm(ModelForm):
             'estado': _('Estado:'),
         }
         help_texts = {
-            'precioVenta': _('Campo Obligatorio'),
-            'descuento': _('Campo Obligatorio'),
+            'precioVenta': _('Campo Obligatorio. Solo se permiten números, punto decimal y su parte decimal no debe exceder 2 dígitos'),
+            'descuento': _('Campo Obligatorio. Solo se permiten números, punto decimal y su parte decimal no debe exceder 2 dígitos'),
             'estado': _('Campo Obligatorio'),
         }
     def clean_descuento(self):
@@ -113,7 +113,7 @@ class LoteForm(ModelForm):
             'matriculaLote': _('Campo Obligatorio. Solo se permiten números, minimo 8 carácteres numericos'),
             'numeroLote': _('Campo Obligatorio. Solo se permiten números, minimo 1 carácter numérico'),
             'poligono': _('Campo Obligatorio. Pa=Polígono(P)Porcion(a)'),
-            'areaMCuadrado': _('Campo numérico Obligatorio'),
+            'areaMCuadrado': _('Campo Obligatorio. Solo se permiten números, punto decimal y su parte decimal no debe exceder 2 dígitos'),
             'areaVCuadrada': _('Campo Obligatorio'),
         }
     
