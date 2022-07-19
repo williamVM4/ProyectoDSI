@@ -46,7 +46,7 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
         estado = estadoCuenta.objects.get(detalleVenta=id)
         condicion=condicionesPago.objects.get(detalleVenta=id)
         pagosm = pago.objects.filter(pagoMantenimiento__estadoCuenta=estado).order_by('-fechaRegistro')
-        pagosCuotas = pagoCuotaMantenimiento.objects.filter(estadoCuenta=estado).order_by('-fechaRegistro')
+        pagosCuotas = pagoCuotaMantenimiento.objects.filter(estadoCuenta=estado).order_by('-id')
         pagosp = pago.objects.filter(prima__detalleVenta=id)
         listadoPagosMantenimiento=pagoMantenimiento.objects.filter(estadoCuenta=estado).order_by('-fechaRegistro')
         sumPrima=0.00

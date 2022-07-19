@@ -2,7 +2,9 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block head %} {% endblock %}
+{% block head %} 
+<link rel="stylesheet" href="../../../static/css/estilos.css">
+{% endblock %}
 
 {% block content %} 
 <div class="container">
@@ -13,73 +15,106 @@
           <h3 class="panel-title">Agregar propietario</h3>
         </div>
         <div class="panel-body">
-          <form role="form" action="." method="post">
+          <form role="form" action="." method="post" class="agregarpropietario" id="agregarpropietario">
             {% csrf_token %}  
             <fieldset>
             <div class="row">
               <div class="col-md-6">
-                <div class="form-group">
-                  <p class="label-form">{{form.dui.label}}</p>
-                  {{form.dui|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:00000000-0'|attr:'data-mask:00000000-0'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.dui.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__dui">
+                  <label for="dui" class="formulario__label">{{form.dui.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="dui" id="dui" placeholder="00000000-0" data-mask="00000000-0">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.dui.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.nombrePropietario.label}}</p>
-                  {{form.nombrePropietario|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el nombre completo'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.nombrePropietario.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__nombrePropietario">
+                  <label for="nombrePropietario" class="formulario__label">{{form.nombrePropietario.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="nombrePropietario" id="nombrePropietario" placeholder="Ingrese el nombre completo">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.nombrePropietario.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.direccion.label}}</p>
-                  {{form.direccion|add_class:'form-control'|attr:'autocomplete:off'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.direccion.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__direccion">
+                  <label for="direccion" class="formulario__label">{{form.direccion.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="direccion" id="direccion">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.direccion.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.profesion.label}}</p>
-                  {{form.profesion|add_class:'form-control'|attr:'autocomplete:off'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.profesion.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__profesion">
+                  <label for="profesion" class="formulario__label">{{form.profesion.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="profesion" id="profesion">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.profesion.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.trabajo.label}}</p>
-                  {{form.trabajo|add_class:'form-control'|attr:'autocomplete:off'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.trabajo.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__trabajo">
+                  <label for="trabajo" class="formulario__label">{{form.trabajo.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="trabajo" id="trabajo">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.trabajo.help_text}}</p>
                 </div>
               </div>
               <div class="col-md-6">
-                <div class="form-group">
-                  <p class="label-form">{{form.direccionTrabajo.label}}</p>
-                  {{form.direccionTrabajo|add_class:'form-control'|attr:'autocomplete:off'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.direccionTrabajo.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__direccionTrabajo">
+                  <label for="direccionTrabajo" class="formulario__label">{{form.direccionTrabajo.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="direccionTrabajo" id="direccionTrabajo">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.direccionTrabajo.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.telefonoTrabajo.label}}</p>
-                  {{form.telefonoTrabajo|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'|attr:'data-mask:0000-0000'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.telefonoTrabajo.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__telefonoTrabajo">
+                  <label for="telefonoTrabajo" class="formulario__label">{{form.telefonoTrabajo.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="telefonoTrabajo" id="telefonoTrabajo" placeholder="0000-0000" data-mask="0000-0000">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.telefonoTrabajo.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.telefonoCasa.label}}</p>
-                  {{form.telefonoCasa|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'|attr:'data-mask:0000-0000'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.telefonoCasa.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__telefonoCasa">
+                  <label for="telefonoCasa" class="formulario__label">{{form.telefonoCasa.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="telefonoCasa" id="telefonoCasa" placeholder="0000-0000" data-mask="0000-0000">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.telefonoCasa.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.telefonoCelular.label}}</p>
-                  {{form.telefonoCelular|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:0000-0000'|attr:'data-mask:0000-0000'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.telefonoCelular.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__telefonoCelular">
+                  <label for="telefonoCelular" class="formulario__label">{{form.telefonoCelular.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="telefonoCelular" id="telefonoCelular" placeholder="0000-0000" data-mask="0000-0000">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.telefonoCelular.help_text}}</p>
                 </div>
-                <div class="form-group">
-                  <p class="label-form">{{form.correoElectronico.label}}</p>
-                  {{form.correoElectronico|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:ejemplo@ejemplo.com'}}
-                  <div class ="help-block"><p class="text-muted label-help-form">{{form.correoElectronico.help_text}}</p></div>
+                <div class="formulario__grupo" id="grupo__correoElectronico">
+                  <label for="correoElectronico" class="formulario__label">{{form.correoElectronico.label}}</label>
+                  <div class="formulario__grupo-input">
+                    <input type="text" class="formulario__input" name="correoElectronico" id="correoElectronico" placeholder="ejemplo@ejemplo.com">
+                    <i class="formulario__validacion-estado fas fa-times-circle"></i>
+                  </div>
+                  <p class="formulario__input-error">{{form.correoElectronico.help_text}}</p>
                 </div>
               </div>
+            </div>
+            <div class="formulario__mensaje" id="formulario__mensaje">
+              <p><i class="fas fa-exclamation-triangle"></i> <b>Error:</b> Por favor rellene el formulario correctamente. </p>
             </div>
             </fieldset>
             <div class="row">
               <div class="col-md-8"></div>
               <div class="col-md-2">
-                <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+                <button type="submit" class="btn btn-primary"> Agregar </button>
               </div>
               <div class="col-md-2">
-                <a class="btn btn-danger btn-block" href="{% url 'detalleLote' idp=idp pk=id %}"> Cancelar </a>
+                <a class="btn btn-danger" href="{% url 'detalleLote' idp=idp pk=id %}"> Cancelar </a>
                 </div>
             </div>
           </form>
@@ -91,6 +126,7 @@
 {% endblock content %}
 
 {% block scripts %}
+<script src="../../../static/js/formularioAgregarPropietario.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 <script type= application/javascript>

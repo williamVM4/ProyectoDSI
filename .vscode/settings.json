@@ -1,3 +1,7 @@
 {
+<<<<<<< HEAD
+    "python.linting.enabled": true
+=======
     "python.pythonPath": "C:\\Users\\Intel Gaming Basic\\.virtualenvs\\ProyectoDSI-w324IYYD\\Scripts\\python.exe"
+>>>>>>> 23fec0ac1cc907fae88fed6aea50f453fb64f7b1
 }
