@@ -207,7 +207,7 @@
                                                 <td>
                                                     <a class="btn btn-warning" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
                                                     <button onclick="confirmacionEliminarCondiciones()" class="btn btn-danger"><b><i class="fa-solid fa-trash-can"></i></b></button>
-                                                    <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
+                                                    <form id="eliminarCondiciones" method="POST" action="">
                                                         {% csrf_token %}
                                                      </form>
                                                 </td>
