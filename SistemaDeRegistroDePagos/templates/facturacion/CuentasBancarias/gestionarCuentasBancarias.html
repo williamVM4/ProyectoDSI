@@ -40,10 +40,10 @@
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="panel panel-default">
+                    <div class="panel panel-default" oncontextmenu="return false">
                         <div class="panel-heading">Cuentas Bancarias</div>
                         <div class="panel-body">
-                            <div class="table-responsive">
+                            <div>
                                 <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                     <thead>
                                         <tr>
@@ -51,19 +51,58 @@
                                             <th>Nombre</th>
                                             <th>Tipo</th>
                                             <th>Banco</th>
-                                            <th>Opciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for cuentaBancaria in cuentaBancaria %}
                                         <tr>
-                                            <td>{{ cuentaBancaria.numeroCuentaBancaria}}</td>
-                                            <td>{{ cuentaBancaria.nombreCuentaBancaria}}</td>
-                                            <td>{{ cuentaBancaria.tipoCuenta}}</td>
-                                            <td>{{ cuentaBancaria.banco}}</td>
-                                            <td>
-                                                <a class="btn btn-warning" href="#"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
-                                                <a class="btn btn-danger" href="#"><b><i class="fa-solid fa-trash-can"></i></b></a>
+                                            <td id="{{cuentaBancaria.id}}11" class="linkDetalle">{{ cuentaBancaria.numeroCuentaBancaria}}
+                                                <div class="dropdown">
+                                                    <div id="{{cuentaBancaria.id}}11O" class="dropdown-menu Options">
+                                                        <div class="opciones">
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar</a>
+                                                        </div>
+                                                        <div class="opciones">
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td id="{{cuentaBancaria.id}}22" class="linkDetalle">{{ cuentaBancaria.nombreCuentaBancaria}}
+                                                <div class="dropdown">
+                                                    <div id="{{cuentaBancaria.id}}22O" class="dropdown-menu Options">
+                                                        <div class="opciones">
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar</a>
+                                                        </div>
+                                                        <div class="opciones">
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td id="{{cuentaBancaria.id}}33" class="linkDetalle">{{ cuentaBancaria.tipoCuenta}}
+                                                <div class="dropdown">
+                                                    <div id="{{cuentaBancaria.id}}33O" class="dropdown-menu Options">
+                                                        <div class="opciones">
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar</a>
+                                                        </div>
+                                                        <div class="opciones">
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td id="{{cuentaBancaria.id}}44" class="linkDetalle">{{ cuentaBancaria.banco}}
+                                                <div class="dropdown">
+                                                    <div id="{{cuentaBancaria.id}}44O" class="dropdown-menu Options">
+                                                        <div class="opciones">
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar</a>
+                                                        </div>
+                                                        <div class="opciones">
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                         {%endfor%}
@@ -88,6 +127,17 @@
 <script src="{% static 'js/dataTables/jquery.dataTables.min.js'%}"></script>
 <script src="{% static 'js/dataTables/dataTables.bootstrap.min.js'%}"></script>
 <script type= application/javascript>
+    $('#dataTables-example tr td').contextmenu(function () {
+      ocultarOpciones();
+      var idTd=$(this).attr('id');
+      $("#"+idTd+"O").toggle();
+    });
+    $('#wrapper').click(function () {
+      ocultarOpciones();
+    });
+    function ocultarOpciones() {
+      $(".Options").hide();
+    }
     {%if messages%}
         var msg = '';
         var msg1 = '';
