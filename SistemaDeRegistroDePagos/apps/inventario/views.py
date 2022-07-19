@@ -113,6 +113,7 @@ class asignacionesLote(GroupRequiredMixin,ListView):
         context['detalles'] = detalleVenta.objects.filter(lote__matriculaLote=id).order_by('-estado')
         context['asignaciones'] = asignacionLote.objects.filter(detalleVenta__lote__matriculaLote = id)
         context['condiciones'] = condicionesPago.objects.filter(detalleVenta__lote__matriculaLote = id)
+        context['lote'] = lote.objects.filter(matriculaLote = id)[0]
         return context
 
 """Vista de formulario para agregar lote"""
