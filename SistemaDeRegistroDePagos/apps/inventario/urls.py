@@ -18,5 +18,6 @@ urlpatterns = [
     path('agregardetalleventa/<str:idp>/<str:idl>/',agregarDetalleVenta.as_view(),name='agregarDetalleVenta'),
     path('agregarcondicionpago/<str:idp>/<str:idv>/',agregarCondicionP.as_view(),name='agregarCondicionP'),
     path('modificarCondicionespago/<str:idp>/<str:idv>/<str:pk>/',modificarCondicionesP.as_view(),name='modificarCondicionesP'),
-    path('modificarProyecto/<str:pk>', ModificarProyectoTuristico.as_view(), name='modificarProyectoTuristico')
+    path('modificarProyecto/<str:pk>', ModificarProyectoTuristico.as_view(), name='modificarProyectoTuristico'),
+    path('modificarpropietario/<str:idp>/<str:pk>/', ModificarPropietario.as_view(), name='modificarPropietario')
 ]

@@ -63,7 +63,9 @@
                                             <td class="linkDetalle" data-href="{% url 'detallePropietario' idp=idp pk=propietario.propietario.id %}">{{ propietario.propietario.nombrePropietario}}</td>
                                             <td class="linkDetalle" data-href="{% url 'detallePropietario' idp=idp pk=propietario.propietario.id %}">{{ propietario.propietario.direccion}}</td>
                                             <td class="linkDetalle" data-href="{% url 'detallePropietario' idp=idp pk=propietario.propietario.id %}">{{ propietario.propietario.telefonoCelular}}</td>
-                                            <td></td>
+                                            <td>
+                                                <a class="btn btn-warning" href="{% url 'modificarPropietario' idp=idp pk=propietario.id %}"><b><i class="fa-solid fa-pen-to-square"></i></b></a>
+                                            </td>
                                         </tr>
                                         {% endifchanged %}
                                         {%endfor%}

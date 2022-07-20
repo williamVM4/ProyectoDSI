@@ -413,6 +413,59 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
             messages.error(self.request, 'Ocurrió un error al guardar el propietario, el detalle de venta no es valido')  
         return HttpResponseRedirect(self.get_url_redirect())
 
+
+        
+"""Vista del formulario modificar propietarios"""
+class ModificarPropietario(GroupRequiredMixin, UpdateView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp']) 
+            try:
+                propietarios = propietario.objects.get(id=self.kwargs['pk'])
+            except Exception:
+                messages.error(self.request, 'Ocurrió un error, el propietario no existe')
+                return HttpResponseRedirect(reverse_lazy('consultarpropietarios', kwargs={'idp': self.kwargs['idp']}))
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        return super().dispatch(request, *args, **kwargs)
+
+    model = propietario
+    template_name = 'inventario/Propietario/modificarPropietario.html'
+    form_class = PropietarioForm
+    
+    def get_context_data(self, **kwargs):
+        context = super(ModificarPropietario, self).get_context_data(**kwargs)
+        pk = self.kwargs.get('pk', None)
+        idp = self.kwargs.get('idp', None)     
+        if 'form' not in context:
+            context['form'] = self.form_class()
+        context['idp'] = idp 
+        context['pk'] = pk  
+        return context
+
+    def get_form(self, form_class = None, **kwargs):
+        form = super().get_form(form_class)
+        form.fields['nombrePropietario'].disabled = True        
+        return form
+
+    def post(self, request, form_class = None, *args, **kwargs):
+        self.object = self.get_object
+        id_propietario = kwargs['pk']       
+        propie= self.model.objects.get(id = id_propietario)
+        form = self.form_class(request.POST, instance = propie)
+        form.fields['nombrePropietario'].disabled = True 
+        
+        if form.is_valid():
+            propietarioF = form.save(commit = False)
+            propietarioF.save()
+            messages.success(self.request, 'Propietario actualizado exitosamente')
+        else: 
+            messages.error(self.request, 'Ocurrió un error, el propietario no se actualizo')
+        return HttpResponseRedirect(reverse_lazy('consultarPropietarios', kwargs={'idp': self.kwargs['idp']}))
+
 #------------------------------------Views de proyecto---------------------------------------
 "Vista de la lista de proyectos turisticos"
 class proyectoTuristicoView(ListView):
