@@ -22,7 +22,7 @@
                             <div class="formulario__grupo" id="grupo__nombreProyectoTuristico">
                               <label for="nombreProyectoTuristico" class="formulario__label">{{form.nombreProyectoTuristico.label}}</label>
                               <div class="formulario__grupo-input">
-                                <input type="text" class="formulario__input" name="nombreProyectoTuristico" id="nombreProyectoTuristico" placeholder="Ejemplo: Decatur">
+                                <input autocomplete="off" type="text" class="formulario__input" name="nombreProyectoTuristico" id="nombreProyectoTuristico" placeholder="Ejemplo: Decatur">
                                 <i class="formulario__validacion-estado fas fa-times-circle"></i>
                               </div>
                               <p class="formulario__input-error">{{form.nombreProyectoTuristico.help_text}}</p>
@@ -30,7 +30,7 @@
                             <div class="formulario__grupo" id="grupo__empresa">
                               <label for="empresa" class="formulario__label">{{form.empresa.label}}</label>
                               <div class="formulario__grupo-input">
-                                <input type="text" class="formulario__input" name="empresa" id="empresa" placeholder="Ejemplo: Decatur">
+                                <input autocomplete="off" type="text" class="formulario__input" name="empresa" id="empresa" placeholder="Ejemplo: Decatur">
                                 <i class="formulario__validacion-estado fas fa-times-circle"></i>
                               </div>
                               <p class="formulario__input-error">{{form.empresa.help_text}}</p>
