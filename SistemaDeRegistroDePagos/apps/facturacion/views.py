@@ -113,10 +113,10 @@ class caja(GroupRequiredMixin, FormView):
                     lote = p.prima.detalleVenta.lote.identificador
                     concepto = 'Prima'
                 if p.pagoFinanciamiento != None:
-                    lote = p.pagoFinanciamiento.numeroCuotaEstadoCuenta.estadoCuenta.detalleVenta.lote.identificador
+                    lote = p.pagoFinanciamiento.estadoCuenta.detalleVenta.lote.identificador
                     concepto = 'Pago Financiamiento'
                 if p.pagoMantenimiento != None:
-                    lote = p.pagoMantenimiento.numeroCuotaEstadoCuenta.estadoCuenta.detalleVenta.lote.identificador
+                    lote = p.pagoMantenimiento.estadoCuenta.detalleVenta.lote.identificador
                     concepto = 'Pago Mantenimiento'
                 if p.prima == None and p.pagoFinanciamiento == None and p.pagoMantenimiento == None:
                     messages.error(self.request, 'x')
