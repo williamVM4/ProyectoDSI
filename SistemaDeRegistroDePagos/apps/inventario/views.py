@@ -439,17 +439,15 @@ class ModificarPropietario(GroupRequiredMixin, UpdateView):
     
     def get_context_data(self, **kwargs):
         context = super(ModificarPropietario, self).get_context_data(**kwargs)
-        pk = self.kwargs.get('pk', None)
-        idp = self.kwargs.get('idp', None)     
+        pk = self.kwargs.get('pk', None)    
         if 'form' not in context:
             context['form'] = self.form_class()
-        context['idp'] = idp 
         context['pk'] = pk  
         return context
 
     def get_form(self, form_class = None, **kwargs):
         form = super().get_form(form_class)
-        form.fields['nombrePropietario'].disabled = True        
+        form.fields['dui'].disabled = True        
         return form
 
     def post(self, request, form_class = None, *args, **kwargs):
@@ -457,8 +455,7 @@ class ModificarPropietario(GroupRequiredMixin, UpdateView):
         id_propietario = kwargs['pk']       
         propie= self.model.objects.get(id = id_propietario)
         form = self.form_class(request.POST, instance = propie)
-        form.fields['nombrePropietario'].disabled = True 
-        
+        form.fields['dui'].disabled = True
         if form.is_valid():
             propietarioF = form.save(commit = False)
             propietarioF.save()
@@ -679,7 +676,7 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
         detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
         estado = estadoCuenta.objects.get(detalleVenta_id = detallev.id)
         try:
-            cuota = cuotaEstadoCuenta.objects.filter(estadoCuenta_id = estado.id)
+            cuota = pagoMantenimiento.objects.filter(estadoCuenta_id = estado.id)
             for c in cuota:
                 if estado.id == c.estadoCuenta_id:
                     form.fields['plazo'].disabled = True
@@ -698,7 +695,7 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
         detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
         estado = estadoCuenta.objects.get(detalleVenta_id = detallev.id)
         try:
-            cuota = cuotaEstadoCuenta.objects.filter(estadoCuenta_id = estado.id)
+            cuota = pagoMantenimiento.objects.filter(estadoCuenta_id = estado.id)
             for c in cuota:
                 if estado.id == c.estadoCuenta_id:
                     form.fields['fechaEscrituracion'].disabled = True

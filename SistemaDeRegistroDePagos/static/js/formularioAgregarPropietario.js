@@ -67,7 +67,7 @@ inputs.forEach((input) => {
 });
 
 formulario.addEventListener('submit', (e) => {
-	if(campos.dui && campos.nombrePropietario && campos.direccion && campos.profesion && campos.telefonoCelular){
+	if(campos.nombrePropietario && campos.direccion && campos.profesion && campos.telefonoCelular){
 		$('form').submit(function(e){
 			$('form').unbind('submit').submit()
 		});

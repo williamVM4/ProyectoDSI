@@ -165,7 +165,7 @@ class EstadoCuentaReporte(TemplateView):
         cont = 8
         nPagos = 1
         for q in datos:
-            cuotaEstado = cuotaEstadoCuenta.objects.get(id = q.numeroCuotaEstadoCuenta_id)
+            #cuotaEstado = cuotaEstadoCuenta.objects.get(id = q.numeroCuotaEstadoCuenta_id)
             pagos = pago.objects.get(pagoMantenimiento_id = q.numeroReciboMantenimiento)
             ws.cell(row=cont,column=3).value 
             ws.cell(row=cont,column=4).value
