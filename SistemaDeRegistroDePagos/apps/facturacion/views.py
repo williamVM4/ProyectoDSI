@@ -466,14 +466,16 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
             calculoRercargoC=(cantidadMesesPrint*condicion.multaMantenimiento)
             cantVecesRC=floor(calculoRercargoC/condicion.multaMantenimiento)
             cantVecesRM=cantVecesRC+floor(calculoRercargo/(condicion.mantenimientoCuota+condicion.multaMantenimiento))
-            descuentoInd=descuento/cantidadMesesPrint
+            if cantidadMesesPrint !=0:
+                descuentoInd=descuento/cantidadMesesPrint
         else:
             calculoRercargo=(cantidadMesesPrint*(condicion.mantenimientoCuota+condicion.multaMantenimiento))
             calculoRercargo=(montoVeces-calculoRercargo)
             calculoRercargoC=(cantidadMesesPrint*condicion.multaMantenimiento)
             cantVecesRC=floor(calculoRercargoC/condicion.multaMantenimiento)
             cantVecesRM=cantVecesRC+floor(calculoRercargo/(condicion.mantenimientoCuota+condicion.multaMantenimiento))
-            descuentoInd=descuento/cantidadMesesPrint
+            if cantidadMesesPrint !=0:
+                descuentoInd=descuento/cantidadMesesPrint
         cantVeces=floor(montoVeces/condicion.mantenimientoCuota)
         cantVecesR=floor(montoVeces/(condicion.mantenimientoCuota+condicion.multaMantenimiento))
         i=-1

@@ -49,8 +49,32 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <p><b>Número Recibo:</b> {{pago.pagoMantenimiento.numeroReciboMantenimiento}}</p>
+                                                <p><b>Número Recibo:</b>
+                                                    {% if pago.pagoMantenimiento%}
+                                                        {{pago.pagoMantenimiento.numeroReciboMantenimiento}}
+                                                    {% else %}
+                                                        {% if pago.prima%}
+                                                            {{pago.prima.numeroReciboPrima}}
+                                                        {% else %}
+                                                            {% if pago.pagoFinanciamiento%}
+                                                            {{pago.pagoFinanciamiento.numeroReciboMantenimiento}}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endif %}</p>
                                                 <p><b>Fecha de Pago:</b> {{pago.fechaPago}}</p>
+                                                <p><b>Lote:</b> 
+                                                    {% if pago.pagoMantenimiento%}
+                                                        {{pago.pagoMantenimiento.estadoCuenta.detalleVenta.lote.identificador}}
+                                                    {% else %}
+                                                        {% if pago.prima%}
+                                                            {{pago.prima.detalleVenta.lote.identificador}}
+                                                        {% else %}
+                                                            {% if pago.pagoFinanciamiento%}
+                                                                {{pago.pagoFinanciamiento.estadoCuenta.detalleVenta.lote.identificador}}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </p>
                                                 <p><b>Monto:</b> $ {{pago.monto}}</p>
                                                 <p><b>Tipo de Pago:</b>{% if pago.tipoPago == 1%} Efectivo {% else%} Banco <p><b>Referencia:</b> {{pago.referencia}}</p><p><b>Cuenta:</b> {{pago.cuentaBancaria}}</p>{% endif%}</p>
                                                 {% if pago.pagoMantenimiento%}

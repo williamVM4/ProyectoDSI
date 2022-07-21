@@ -127,7 +127,7 @@
 <script src="{% static 'js/dataTables/jquery.dataTables.min.js'%}"></script>
 <script src="{% static 'js/dataTables/dataTables.bootstrap.min.js'%}"></script>
 <script type= application/javascript>
-    $('#dataTables-example').on( 'click', 'tbody .linkDetalle', function () {
+    $('#dataTables-example tr td').dblclick(function () {
       window.location.href = $(this).data('href');
     });
     $('#dataTables-example tr td').contextmenu(function () {

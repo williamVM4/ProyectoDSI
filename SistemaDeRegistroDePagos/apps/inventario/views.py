@@ -2,6 +2,7 @@ from contextlib import redirect_stderr
 import decimal
 import math
 from operator import truediv
+from pickle import TRUE
 from pydoc import render_doc
 from sre_constants import SUCCESS
 from django.http import HttpResponseRedirect
@@ -72,14 +73,30 @@ class detalleLote(GroupRequiredMixin,DetailView):
         id = self.kwargs.get('pk', None)
         """Se obtiene el detalle de venta por medio del id del lote para poder imprimir todos los datos
         y se envian por contexto al template"""
+        sumPrima=0.00
+        cuotaFinanciamiento=0.0
         det = detalleVenta.objects.get(pk=id)
+        pagosp = pago.objects.filter(prima__detalleVenta=det.id)
+        condicion=condicionesPago.objects.filter(detalleVenta_id = det.id).exists()
+        estadosDeCuentaM=estadoCuenta.objects.filter(detalleVenta_id = det.id).exists()
+        if estadosDeCuentaM==True:
+            estadosDeCuentaM=estadoCuenta.objects.filter(detalleVenta_id = det.id)
+        if condicion==True:
+            condicionObj=condicionesPago.objects.get(detalleVenta_id = det.id)
+            cuotaFinanciamiento=condicionObj.cuotaKi + condicionObj.comisionCuota
+        for pagoObject in pagosp:
+            if pagoObject.prima !=None:
+                sumPrima=sumPrima+float(pagoObject.monto)
         context['idp'] = idp   
         context['id'] = id
-        context['asignaciones'] = asignacionLote.objects.filter()  
+        context['asignaciones'] = asignacionLote.objects.filter(detalleVenta_id = det.id)  
         context['primas'] = prima.objects.filter(detalleVenta_id = det.id)
         context['condiciones'] = condicionesPago.objects.filter(detalleVenta_id = det.id)
         context['pagos'] = pago.objects.filter() 
-        context['detalleV'] = det    
+        context['detalleV'] = det
+        context['sumPrima'] = round(sumPrima,2)
+        context['cuotaFinanciamiento'] = round(cuotaFinanciamiento,2)
+        context['estadosDeCuentaM'] = estadosDeCuentaM    
         return context 
 
 """Vista donde se muestra la lista de todas las ventas de un lote en especifico"""

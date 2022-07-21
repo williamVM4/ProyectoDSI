@@ -16,7 +16,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Estado de Cuenta</h1>
+                    <h1 class="page-header">Estado de Cuenta de Mantenimiento</h1>
                 </div>
             </div>
             <div class="row">
@@ -30,6 +30,7 @@
                                 <p><b>Recargo:</b> $ {{sumRecargoMantenimiento}}</p>
                                 <p><b>Otros pagos:</b> $ {{sumOtros}}</p>
                                 <p><b>Descuento:</b> $ {{sumDescuento}}</p>
+                                <p><br></p>
                             </div>
                         </div>
                     </div>
@@ -91,6 +92,7 @@
                                             <th>Recargo</th>
                                             <th>Otros</th>
                                             <th>Descuento</th>
+                                            <th>Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -104,6 +106,7 @@
                                             <td>{{pago.recargo}}</td>
                                             <td>{{pago.otros}}</td>
                                             <td>{{pago.descuento}}</td>
+                                            <td>{{pago.total}}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
