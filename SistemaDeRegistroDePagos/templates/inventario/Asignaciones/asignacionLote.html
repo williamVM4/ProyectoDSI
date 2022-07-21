@@ -55,7 +55,7 @@
                                             <td id="{{detalleVenta.id}}11" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalleVenta.id %}">
                                                 {% for condicion in condiciones%}
                                                     {% if condicion.detalleVenta == detalleVenta %}
-                                                        {{condicion.fechaEscrituracion}}
+                                                        {{condicion.fechaEscrituracion|date:"d \d\e F, Y" }}
                                                     {% endif %}
                                                 {% endfor %}
                                                 <div class="dropdown">
