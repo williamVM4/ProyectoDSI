@@ -39,11 +39,11 @@
                                     <tbody>
                                         {% for lote in lotes %}
                                         <tr>
-                                            <td class="linkDetalle" data-href="{% url 'asignacionesLote' idp=idp pk=lote.matriculaLote %}">{{ lote.poligono}}</td>
-                                            <td class="linkDetalle" data-href="{% url 'asignacionesLote' idp=idp pk=lote.matriculaLote %}">{{ lote.numeroLote}}</td>
-                                            <td class="linkDetalle" data-href="{% url 'asignacionesLote' idp=idp pk=lote.matriculaLote %}">{{ lote.matriculaLote}}</td>
-                                            <td class="linkDetalle" data-href="{% url 'asignacionesLote' idp=idp pk=lote.matriculaLote %}">{{ lote.areaMCuadrado}}</td>
-                                            <td class="linkDetalle" data-href="{% url 'asignacionesLote' idp=idp pk=lote.matriculaLote %}">{{ lote.areaVCuadrada}}</td>
+                                            <td class="linkDetalle" data-href="{% url 'historicoVentasLote' idp=idp pk=lote.matriculaLote %}">{{ lote.poligono}}</td>
+                                            <td class="linkDetalle" data-href="{% url 'historicoVentasLote' idp=idp pk=lote.matriculaLote %}">{{ lote.numeroLote}}</td>
+                                            <td class="linkDetalle" data-href="{% url 'historicoVentasLote' idp=idp pk=lote.matriculaLote %}">{{ lote.matriculaLote}}</td>
+                                            <td class="linkDetalle" data-href="{% url 'historicoVentasLote' idp=idp pk=lote.matriculaLote %}">{{ lote.areaMCuadrado}}</td>
+                                            <td class="linkDetalle" data-href="{% url 'historicoVentasLote' idp=idp pk=lote.matriculaLote %}">{{ lote.areaVCuadrada}}</td>
                                         {%endfor%}
                                     </tbody>
                                 </table>
