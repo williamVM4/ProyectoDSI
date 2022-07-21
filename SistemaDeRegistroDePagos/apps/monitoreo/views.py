@@ -36,7 +36,7 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
             messages.error(self.request, 'Ocurrió un error el lote no tiene estado de cuenta generado. Verifique que ingreso las condiciones de pago')
             return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['pk']}))    
         return super().dispatch(request, *args, **kwargs)
-    template_name = 'monitoreo/estadoCuenta.html'
+    template_name = 'monitoreo/estadoCuentaM.html'
     model = detalleVenta
 
     def get_context_data(self, **kwargs):
@@ -46,17 +46,19 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
         estado = estadoCuenta.objects.get(detalleVenta=id)
         condicion=condicionesPago.objects.get(detalleVenta=id)
         pagosm = pago.objects.filter(pagoMantenimiento__estadoCuenta=estado).order_by('-fechaRegistro')
-        pagosCuotas = pagoCuotaMantenimiento.objects.filter(estadoCuenta=estado).order_by('-fechaRegistro')
+        pagosCuotas = pagoCuotaMantenimiento.objects.filter(estadoCuenta=estado).order_by('-id')
         pagosp = pago.objects.filter(prima__detalleVenta=id)
-        listadoPagosMantenimiento=pagoMantenimiento.objects.filter(estadoCuenta=estado).order_by('-fechaRegistro')
         sumPrima=0.00
         sumMantenimiento=0.00
         sumRecargoMantenimiento=0.00
         sumOtros=0.00
         sumDescuento=0.00
+
+        pagosCuotas=pagoCuotaMantenimiento.objects.annotate(total=Sum('mantenimiento')+Sum('recargo') + Sum('otros')+ Sum('descuento')).order_by('-id')
+        
         try:
-            saldoUltimoPago=listadoPagosMantenimiento[0].abono
-            saldoUltimoRecargo=listadoPagosMantenimiento[0].saldoRecargo
+            saldoUltimoPago=pagosCuotas[0].mantenimiento
+            saldoUltimoRecargo=pagosCuotas[0].recargo
             pagoUltimaCuota=pagosCuotas[0]
         except Exception:
             pagoUltimaCuota=pagoCuotaMantenimiento(numeroReciboMantenimiento="N/A", fechaRegistro="N/A",fechaPago="N/A", fechaCorte="N/A", concepto="N/A", mantenimiento=0.00, recargo=0.00, otros=0.00,descuento=0.00)
@@ -106,7 +108,7 @@ class EstadoCuentaReporte(TemplateView):
         datos = pagoMantenimiento.objects.all()
         wb = Workbook()
         ws = wb.active
-        ws.title = "Estado de Cuenta"
+        ws.title = "Estado de Cuenta de Mantenimiento"
         ws.row_dimensions[6].height = 50.25
         ws.column_dimensions['C'].width = 12
         fuente = Font(size=9,bold=True)
@@ -165,7 +167,6 @@ class EstadoCuentaReporte(TemplateView):
         cont = 8
         nPagos = 1
         for q in datos:
-            #cuotaEstado = cuotaEstadoCuenta.objects.get(id = q.numeroCuotaEstadoCuenta_id)
             pagos = pago.objects.get(pagoMantenimiento_id = q.numeroReciboMantenimiento)
             ws.cell(row=cont,column=3).value 
             ws.cell(row=cont,column=4).value

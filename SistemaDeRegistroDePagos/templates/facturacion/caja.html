@@ -58,7 +58,7 @@
                         <tbody>
                               {% for pago in pagos%}
                               <tr>
-                              <td id="{{pago.id}}11" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.fechaPago}}
+                              <td id="{{pago.id}}11" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.fechaPago}}
                                 <div class="dropdown">
                                   <div id="{{pago.id}}11O" class="dropdown-menu Options">
                                     <div class="opciones">
@@ -73,7 +73,7 @@
                                   </div>
                                 </div>
                               </td>
-                              <td id="{{pago.id}}22" id="{{pago.id}}22" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id  %}">{{pago.monto}}
+                              <td id="{{pago.id}}22" id="{{pago.id}}22" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id  %}">{{pago.monto}}
                                 <div class="dropdown">
                                   <div id="{{pago.id}}22O" class="dropdown-menu Options">
                                     <div class="opciones">
@@ -89,7 +89,7 @@
                                 </div>
                               </td>
                               {% if pago.pagoMantenimiento%}
-                                <td id="{{pago.id}}33" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoMantenimiento.numeroReciboMantenimiento}}
+                                <td id="{{pago.id}}33" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoMantenimiento.numeroReciboMantenimiento}}
                                   <div class="dropdown">
                                     <div id="{{pago.id}}33O" class="dropdown-menu Options">
                                       <div class="opciones">
@@ -107,7 +107,7 @@
                                 </td>
                               {% else %}
                                 {% if pago.prima%}
-                                    <td id="{{pago.id}}33" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.prima.numeroReciboPrima}}
+                                    <td id="{{pago.id}}33" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.prima.numeroReciboPrima}}
                                       <div class="dropdown">
                                         <div id="{{pago.id}}33O" class="dropdown-menu Options">
                                           <div class="opciones">
@@ -125,7 +125,7 @@
                                     </td>
                                 {% else %}
                                     {% if pago.pagoFinanciamiento%}
-                                        <td id="{{pago.id}}33" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoFinanciamiento.numeroReciboFinanciamiento}}
+                                        <td id="{{pago.id}}33" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoFinanciamiento.numeroReciboFinanciamiento}}
                                           <div class="dropdown">
                                             <div id="{{pago.id}}33O" class="dropdown-menu Options">
                                               <div class="opciones">
@@ -142,7 +142,7 @@
                                           </div>
                                         </td>
                                     {% else %}
-                                        <td id="{{pago.id}}33" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">
+                                        <td id="{{pago.id}}33" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">
                                           <div class="dropdown">
                                             <div id="{{pago.id}}33O" class="dropdown-menu Options">
                                               <div class="opciones">
@@ -163,7 +163,7 @@
                               {% endif %}
 
                               {% if pago.pagoMantenimiento%}
-                              <td id="{{pago.id}}44" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">Mantenimiento
+                              <td id="{{pago.id}}44" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">Mantenimiento
                                 <div class="dropdown">
                                   <div id="{{pago.id}}44O" class="dropdown-menu Options">
                                     <div class="opciones">
@@ -181,7 +181,7 @@
                               </td>
                             {% else %}
                               {% if pago.prima%}
-                                  <td id="{{pago.id}}44" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">Prima
+                                  <td id="{{pago.id}}44" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">Prima
                                     <div class="dropdown">
                                       <div id="{{pago.id}}44O" class="dropdown-menu Options">
                                         <div class="opciones">
@@ -199,7 +199,7 @@
                                   </td>
                               {% else %}
                                   {% if pago.pagoFinanciamiento%}
-                                      <td id="{{pago.id}}44" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">Financiamiento
+                                      <td id="{{pago.id}}44" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">Financiamiento
                                         <div class="dropdown">
                                           <div id="{{pago.id}}44O" class="dropdown-menu Options">
                                             <div class="opciones">
@@ -216,7 +216,7 @@
                                         </div>
                                       </td>
                                   {% else %}
-                                      <td id="{{pago.id}}44" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">
+                                      <td id="{{pago.id}}44" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">
                                         <div class="dropdown">
                                           <div id="{{pago.id}}44O" class="dropdown-menu Options">
                                             <div class="opciones">
@@ -237,7 +237,7 @@
                             {% endif %}
                                 
                             {% if pago.pagoMantenimiento%}
-                            <td id="{{pago.id}}55" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoMantenimiento.estadoCuenta.detalleVenta.lote.identificador}}
+                            <td id="{{pago.id}}55" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoMantenimiento.estadoCuenta.detalleVenta.lote.identificador}}
                               <div class="dropdown">
                                 <div id="{{pago.id}}55O" class="dropdown-menu Options">
                                   <div class="opciones">
@@ -255,7 +255,7 @@
                             </td>
                             {% else %}
                               {% if pago.prima%}
-                              <td id="{{pago.id}}55" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.prima.detalleVenta.lote.identificador}}
+                              <td id="{{pago.id}}55" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.prima.detalleVenta.lote.identificador}}
                                 <div class="dropdown">
                                   <div id="{{pago.id}}55O" class="dropdown-menu Options">
                                     <div class="opciones">
@@ -273,7 +273,7 @@
                               </td>
                               {% else %}
                                   {% if pago.pagoFinanciamiento%}
-                                  <td id="{{pago.id}}55" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoFinanciamiento.estadoCuenta.detalleVenta.lote.identificador}}
+                                  <td id="{{pago.id}}55" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoFinanciamiento.estadoCuenta.detalleVenta.lote.identificador}}
                                     <div class="dropdown">
                                       <div id="{{pago.id}}55O" class="dropdown-menu Options">
                                         <div class="opciones">
@@ -290,7 +290,7 @@
                                     </div>
                                   </td>
                                   {% else %}
-                                      <td id="{{pago.id}}55" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">
+                                      <td id="{{pago.id}}55" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">
                                         <div class="dropdown">
                                           <div id="{{pago.id}}55O" class="dropdown-menu Options">
                                             <div class="opciones">
@@ -362,9 +362,7 @@
                 </div>
                   <p>{{form.resumenPrima}} Pagos de Prima</p>  
                   <p>{{form.resumenPagoM}} Pagos Por Mantenimiento</p>
-                  <p>{{form.resumenPagoF}} Pagos Por Financiamiento</p>
-                
-                
+                  <p>{{form.resumenPagoF}} Pagos Por Financiamiento</p>                
             </div>
           <div class="modal-footer">
               <button type="submit" class="btn btn-default"> <b>Imprimir</b></button>
@@ -384,7 +382,7 @@
 <script src="{% static 'js/dataTables/jquery.dataTables.min.js'%}"></script>
 <script src="{% static 'js/dataTables/dataTables.bootstrap.min.js'%}"></script>
 <script type= application/javascript>
-    $('#dataTables-example').on( 'click', 'tbody .linkDetallePago', function () {
+    $('#dataTables-example tr td').dblclick(function () {
       window.location.href = $(this).data('href');
     });
     $('#dataTables-example tr td').contextmenu(function () {

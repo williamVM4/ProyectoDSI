@@ -145,10 +145,28 @@ input[type=number] { -moz-appearance:textfield; }
 }
 
 .linkDetalle { cursor: pointer; }
-.linkDetallePago { cursor:pointer; }
 
 .mt-5{
     margin-top: 5em;
+}
+
+.tablaDetalleVenta{
+  height:140px;
+  overflow:scroll;
+  margin-left: 10px;
+}
+
+thead tr th { 
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: white;
+  color: black;
+}
+
+.panel-heading{
+  background-color: white !important;
+  color: black !important;
 }
 
 .encabezado-propietario{
