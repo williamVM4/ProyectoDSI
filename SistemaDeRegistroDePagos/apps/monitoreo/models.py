@@ -12,7 +12,7 @@ class condicionesPago(models.Model):
     mantenimientoCuota = models.DecimalField(max_digits=8, decimal_places=2)
     multaMantenimiento = models.DecimalField(max_digits=8, decimal_places=2)
     multaFinanciamiento = models.DecimalField(max_digits=8, decimal_places=2)
-
+    estado = models.BooleanField(default=True)
     def __str__(self):
         return self.detalleVenta
 
@@ -45,7 +45,6 @@ class cuotaAmortizacion(models.Model):
     interesGenerado = models.DecimalField(max_digits=8, decimal_places=2)
     interesPagado = models.DecimalField(max_digits=8, decimal_places=2)
     comision = models.DecimalField(max_digits=8, decimal_places=2)
-    mantenimiento = models.DecimalField(max_digits=8, decimal_places=2)
     subTotal = models.DecimalField(max_digits=8, decimal_places=2)
     abonoCapital = models.DecimalField(max_digits=8, decimal_places=2)
     saldoCapital = models.DecimalField(max_digits=8, decimal_places=2)
@@ -54,5 +53,6 @@ class cuotaAmortizacion(models.Model):
         return self.numeroCuota
 
 class estadoCuenta(models.Model):
-    detalleVenta = models.ForeignKey('inventario.detalleVenta',blank=True, on_delete=models.CASCADE)
-    cuotaAmortizacion = models.ForeignKey(cuotaAmortizacion, on_delete=models.CASCADE, null=True)
+    condicionesPago = models.ForeignKey(condicionesPago,blank=True, on_delete=models.CASCADE)
+    fechaRegistro=models.DateField(auto_now_add=True,blank=True)
+    nombre = models.CharField(max_length=20,blank=True)
