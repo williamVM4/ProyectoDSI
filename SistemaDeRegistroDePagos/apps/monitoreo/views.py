@@ -30,9 +30,8 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
         except Exception:
             messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
             return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
-        try:
-            estado = estadoCuenta.objects.get(detalleVenta=self.kwargs['pk'])
-        except Exception:
+        estado = estadoCuenta.objects.filter(condicionesPago__detalleVenta__id=self.kwargs['pk']).exists()
+        if estado is False:
             messages.error(self.request, 'Ocurrió un error el lote no tiene estado de cuenta generado. Verifique que ingreso las condiciones de pago')
             return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['pk']}))    
         return super().dispatch(request, *args, **kwargs)
@@ -43,8 +42,9 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
         context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None)
         id = self.kwargs.get('pk', None)
-        estado = estadoCuenta.objects.get(detalleVenta=id)
-        condicion=condicionesPago.objects.get(detalleVenta=id)
+        condicion=condicionesPago.objects.get(detalleVenta__id=id, estado=True)
+        print(condicion.id)
+        estado = estadoCuenta.objects.get(condicionesPago__id=condicion.id)
         pagosm = pago.objects.filter(pagoMantenimiento__estadoCuenta=estado).order_by('-fechaRegistro')
         pagosCuotas = pagoCuotaMantenimiento.objects.filter(estadoCuenta=estado).order_by('-id')
         pagosp = pago.objects.filter(prima__detalleVenta=id)

@@ -153,10 +153,16 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+#Url al que te redirige cuando te logeas
 LOGIN_REDIRECT_URL = '/'
+#Url a la que redirige cuando te deslogeas
 LOGOUT_REDIRECT_URL = '/login/'
+#Url para el login 
 LOGIN_URL = '/login/'
 
+#Para cerrar la sesion caundo se cierre el navegador
 SESSION_EXPIRE_AT_BROWSER_CLOSE=True
+#Se usa para que aparezcan los separadores por miles
 USE_THOUSAND_SEPARATOR = True
+#Cambiar el separador decimal por .
 DECIMAL_SEPARATOR =  '.'

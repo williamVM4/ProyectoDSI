@@ -119,7 +119,7 @@ class LoteForm(ModelForm):
     
     def clean_matriculaLote(self):
         data = self.cleaned_data["matriculaLote"]
-        existe = lote.objects.filter(matriculaLote=data).exists
+        existe = lote.objects.filter(matriculaLote=data).exists()
         if existe is True:
             raise ValidationError("Ya existe un lote registrado con la matricula ingresada.")
         return data

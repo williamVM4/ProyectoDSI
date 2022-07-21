@@ -6,11 +6,6 @@ from inspect import _void
 from multiprocessing import context
 import re
 'from tkinter import FALSE'
-from urllib import response
-from xml.dom.minidom import Identified
-from django.forms import NullBooleanField
-from django.http import request
-from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView,FormView, ListView, DetailView, UpdateView
@@ -206,7 +201,7 @@ class agregarPrima(GroupRequiredMixin,CreateView):
                 messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' no tiene propietarios registrados')
                 return self.render_to_response(self.get_context_data(form=form, form2=self.second_form_class(self.request.POST), form3 = self.third_form_class(self.request.POST)))
             "validacion de que no tenga estado de cuenta"
-            est = estadoCuenta.objects.filter(detalleVenta = detalle).exists()
+            est = estadoCuenta.objects.filter(condicionesPago__detalleVenta = detalle).exists()
             if est is True:
                 messages.error(self.request, 'Ocurrió un error, el lote '+detalle.lote.identificador+' tiene un estado de cuenta generado. Ya no puede registrar más primas')
                 return self.render_to_response(self.get_context_data(form=form, form2=self.second_form_class(self.request.POST), form3 = self.third_form_class(self.request.POST)))  

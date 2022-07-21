@@ -202,12 +202,9 @@
                 <div class="col-md-12">
                     <div class="panel panel-default" oncontextmenu="return false">
                         <div class="panel-heading">
-                            {%if condiciones%}
-                            {%else%}
                             <div class="pull-right">
                                 <a type="button" class="btn btn-primary btn-block" href="{% url 'agregarCondicionP' idp=idp idv=object.id %}">Agregar</a>
                             </div>
-                            {%endif%}
                             <h4> Condiciones de Pago</h4>
                         </div>
                         <div class="table-responsive tablaDetalleVenta">
@@ -238,7 +235,7 @@
                                                         <div class="opciones">
                                                             <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                             <a id="itemOpciones" class="dropdown-item btn-block" onclick="confirmacionEliminarCondiciones()"><b></b> Eliminar</a>
-                                                            <form id="eliminarCondiciones" method="POST" action="">
+                                                            <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
                                                                 {% csrf_token %}
                                                             </form>
                                                         </div>
@@ -254,7 +251,7 @@
                                                         <div class="opciones">
                                                             <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                             <a id="itemOpciones" class="dropdown-item btn-block" onclick="confirmacionEliminarCondiciones()"><b></b> Eliminar</a>
-                                                            <form id="eliminarCondiciones" method="POST" action="">
+                                                            <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
                                                                 {% csrf_token %}
                                                             </form>
                                                         </div>
@@ -270,7 +267,7 @@
                                                         <div class="opciones">
                                                             <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                             <a id="itemOpciones" class="dropdown-item btn-block" onclick="confirmacionEliminarCondiciones()"><b></b> Eliminar</a>
-                                                            <form id="eliminarCondiciones" method="POST" action="">
+                                                            <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
                                                                 {% csrf_token %}
                                                             </form>
                                                         </div>
@@ -286,7 +283,7 @@
                                                         <div class="opciones">
                                                             <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                             <a id="itemOpciones" class="dropdown-item btn-block" onclick="confirmacionEliminarCondiciones()"><b></b> Eliminar</a>
-                                                            <form id="eliminarCondiciones" method="POST" action="">
+                                                            <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
                                                                 {% csrf_token %}
                                                             </form>
                                                         </div>
@@ -302,7 +299,7 @@
                                                         <div class="opciones">
                                                             <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                             <a id="itemOpciones" class="dropdown-item btn-block" onclick="confirmacionEliminarCondiciones()"><b></b> Eliminar</a>
-                                                            <form id="eliminarCondiciones" method="POST" action="">
+                                                            <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
                                                                 {% csrf_token %}
                                                             </form>
                                                         </div>
@@ -318,7 +315,7 @@
                                                         <div class="opciones">
                                                             <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                             <a id="itemOpciones" class="dropdown-item btn-block" onclick="confirmacionEliminarCondiciones()"><b></b> Eliminar</a>
-                                                            <form id="eliminarCondiciones" method="POST" action="">
+                                                            <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
                                                                 {% csrf_token %}
                                                             </form>
                                                         </div>
@@ -334,7 +331,7 @@
                                                         <div class="opciones">
                                                             <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                             <a id="itemOpciones" class="dropdown-item btn-block" onclick="confirmacionEliminarCondiciones()"><b></b> Eliminar</a>
-                                                            <form id="eliminarCondiciones" method="POST" action="">
+                                                            <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
                                                                 {% csrf_token %}
                                                             </form>
                                                         </div>
@@ -350,7 +347,7 @@
                                                         <div class="opciones">
                                                             <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                             <a id="itemOpciones" class="dropdown-item btn-block" onclick="confirmacionEliminarCondiciones()"><b></b> Eliminar</a>
-                                                            <form id="eliminarCondiciones" method="POST" action="">
+                                                            <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
                                                                 {% csrf_token %}
                                                             </form>
                                                         </div>
@@ -366,7 +363,7 @@
                                                         <div class="opciones">
                                                             <!--Marca error pero es por la sintaxis que no la reconoce, pero si funciona-->
                                                             <a id="itemOpciones" class="dropdown-item btn-block" onclick="confirmacionEliminarCondiciones()"><b></b> Eliminar</a>
-                                                            <form id="eliminarCondiciones" method="POST" action="">
+                                                            <form id="eliminarCondiciones" method="POST" action="{% url 'eliminarCondicionesP' idp=idp idv=object.id pk=c.id %}">
                                                                 {% csrf_token %}
                                                             </form>
                                                         </div>

@@ -1,10 +1,6 @@
 from contextlib import redirect_stderr
 import decimal
 import math
-from operator import truediv
-from pickle import TRUE
-from pydoc import render_doc
-from sre_constants import SUCCESS
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, FormView, ListView, DetailView, UpdateView, DeleteView
@@ -19,8 +15,9 @@ from django.contrib import messages
 from .forms import *
 
 
-#------------------------Views de lote-------------------------------
-"""Vista donde se muestra la lista de todos los lotes del proyecto turistico"""
+#----------------------------Views de lote-------------------------------
+"""Vista donde se muestra la lista de todos los lotes del proyecto turistico
+    Se hereda de GroupRequiredMixin para validar los grupos que tienen acceso a la vista"""
 class gestionarLotes(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     template_name = 'inventario/Lote/gestionarLotes.html'
@@ -28,62 +25,64 @@ class gestionarLotes(GroupRequiredMixin,ListView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         """Validacion de que exista proyecto"""
-        try:
-            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
-        except Exception:
+        proyecto = proyectoTuristico.objects.filter(pk=self.kwargs['idp']).exists()
+        if proyecto is False:
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        """Se recuperan los parametros necesarios pasados por url"""
+        "id del proyecto pasado por url"
         id = self.kwargs.get('idp', None)
-        """Se envia por contexto id del proyecto, listado de lotes y listado de detalles de venta"""
+        "id del proyecto"
         context['idp'] = id
+        "Lista de lotes filtrada por proyecto turistico"
         context['lotes'] = lote.objects.filter(proyectoTuristico__id=id)
+        "Lista de los detalles de venta activos de cada lote del proyecto turistico"
         context['detalles'] = detalleVenta.objects.filter(lote__proyectoTuristico__id=id, estado=True)
         return context
 
-"""Vista donde se muestra el detalle de generalidades del lote y de la venta"""
+
+"""Vista donde se muestra el detalle de las generalidades de la venta del lote"""
 class detalleLote(GroupRequiredMixin,DetailView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     template_name = 'inventario/Lote/detalleLote.html'
     model = detalleVenta
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        """Validacion de que el proyecto turistico exista"""
-        try:
-            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
-        except Exception:
-            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+        "Validacion de que el proyecto turistico de la url exista"
+        proyecto = proyectoTuristico.objects.filter(pk=self.kwargs['idp']).exists()
+        if proyecto is False:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
-        """Validacion de que el lote exista"""
-        try:
-            lot = detalleVenta.objects.get(pk=self.kwargs['pk'])
-        except Exception:
+        "Validacion de que exista el detalle de venta de la url"
+        det = detalleVenta.objects.filter(pk=self.kwargs['pk']).exists()
+        if det is False:
             messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
             return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        """Se recuperan los parametros necesarios pasados por url"""
+        "id del proyecto turistico"
         idp = self.kwargs.get('idp', None)
+        "id del detalle de venta"
         id = self.kwargs.get('pk', None)
-        """Se obtiene el detalle de venta por medio del id del lote para poder imprimir todos los datos
-        y se envian por contexto al template"""
-        sumPrima=0.00
-        cuotaFinanciamiento=0.0
-        det = detalleVenta.objects.get(pk=id)
-        pagosp = pago.objects.filter(prima__detalleVenta=det.id)
-        condicion=condicionesPago.objects.filter(detalleVenta_id = det.id).exists()
+        sumPrima=0.00 #Para guardar lo acumulado en primas
+        cuotaFinanciamiento=0.0 #Calculo de la cuota por financiamiento
+        det = detalleVenta.objects.get(pk=id) # se obtiene el detalle de venta
+        pagosp = pago.objects.filter(prima__detalleVenta=det.id) # se obtienen las primas para realizar la sumatorias
+        "Se verifica si existe condiciones de pago activas para el calculo de cuota por financiamiento"
+        condicion=condicionesPago.objects.filter(detalleVenta_id = det.id, estado=True).exists()
         if condicion==True:
             condicionObj=condicionesPago.objects.get(detalleVenta_id = det.id, estado=True)
             cuotaFinanciamiento=condicionObj.cuotaKi + condicionObj.comisionCuota
-            estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id).exists()
-            if estadosDeCuentaM==True:
-                estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id)
+        "Verficar si no da problemas"
+        estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id).exists()
+        if estadosDeCuentaM==True:
+            estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id)
+        "Sumatoria de primas"
         for pagoObject in pagosp:
             if pagoObject.prima !=None:
                 sumPrima=sumPrima+float(pagoObject.monto)
@@ -91,7 +90,7 @@ class detalleLote(GroupRequiredMixin,DetailView):
         context['id'] = id
         context['asignaciones'] = asignacionLote.objects.filter(detalleVenta_id = det.id)  
         context['primas'] = prima.objects.filter(detalleVenta_id = det.id)
-        context['condiciones'] = condicionesPago.objects.filter(detalleVenta_id = det.id)
+        context['condiciones'] = condicionesPago.objects.filter(detalleVenta_id = det.id).order_by('-estado')
         context['pagos'] = pago.objects.filter() 
         context['detalleV'] = det
         context['sumPrima'] = round(sumPrima,2)
@@ -99,39 +98,6 @@ class detalleLote(GroupRequiredMixin,DetailView):
         context['estadosDeCuentaM'] = estadosDeCuentaM    
         return context 
 
-"""Vista donde se muestra la lista de todas las ventas de un lote en especifico"""
-class asignacionesLote(GroupRequiredMixin,ListView):
-    group_required = [u'Configurador del sistema',u'Administrador del sistema']
-    template_name = 'inventario/Asignaciones/asignacionLote.html'
-    model = detalleVenta
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        """Validacion de que exista el proyecto turistico y el lote"""
-        try:
-            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
-        except Exception:
-            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
-            return HttpResponseRedirect(reverse_lazy('home'))
-        try:
-            lot = lote.objects.get(pk=self.kwargs['pk'])
-        except Exception:
-            messages.error(self.request, 'Ocurrió un error, asegurese de que el lote existe')
-            return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
-        return super().dispatch(request, *args, **kwargs)
-    
-    def get_context_data(self, **kwargs):
-        context=super().get_context_data(**kwargs)
-        """Se recogen los parametros de la url y se envia la lista de detalles de venta, asignaciones
-        y condiciones de pago por contexto"""
-        idp = self.kwargs.get('idp', None)
-        id = self.kwargs.get('pk', None)
-        context['idp'] = idp
-        context['id'] = id
-        context['detalles'] = detalleVenta.objects.filter(lote__matriculaLote=id).order_by('-estado')
-        context['asignaciones'] = asignacionLote.objects.filter(detalleVenta__lote__matriculaLote = id)
-        context['condiciones'] = condicionesPago.objects.filter(detalleVenta__lote__matriculaLote = id)
-        context['lote'] = lote.objects.filter(matriculaLote = id)[0]
-        return context
 
 """Vista de formulario para agregar lote"""
 class agregarLote(GroupRequiredMixin,CreateView):
@@ -141,48 +107,38 @@ class agregarLote(GroupRequiredMixin,CreateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        """ Validacion de que exista el proyecto Turistico"""
-        try:
-            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
-        except Exception:
+        "Validacion de que el proyecto turistico de la url exista"
+        proyecto = proyectoTuristico.objects.filter(pk=self.kwargs['idp']).exists()
+        if proyecto is False:
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
     
     def get_url_redirect(self, **kwargs):
-        """ Url de exito de formulario con el parametro que necesita"""
+        """ Url de exito de formulario con el parametro id del proyecto"""
         idp = self.kwargs.get('idp', None) 
         return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
 
     def get_context_data(self, **kwargs):
-        """ Se envia por contexto el id del proyecto al template"""
         context=super().get_context_data(**kwargs)
-        idp = self.kwargs.get('idp', None)
+        idp = self.kwargs.get('idp', None) #id del proyecto
         context['idp'] = idp         
         return context
         
     def get_form(self, form_class = None, **kwargs):
-        """Para deshabilitar campos"""
         form = super().get_form(form_class)
-        form.fields['areaVCuadrada'].disabled = True 
+        form.fields['areaVCuadrada'].disabled = True #deshabilitar el campo varas cuadradas
         return form
 
     def form_valid(self, form, **kwargs):
-        """Se recoge el paramtro del proyecto turistico de la url"""
-        idp = self.kwargs.get('idp', None) 
-        lote = form.save(commit=False)
-        try:
-            lote.proyectoTuristico = proyectoTuristico.objects.get(id=idp)
-            lote.identificador = str(lote.numeroLote)+str(lote.poligono)
-            lote.areaVCuadrada = lote.areaMCuadrado * decimal.Decimal(1.431)
-            lote.save()
-            messages.success(self.request, 'Lote guardado con éxito')
-        except Exception:
-            lote.delete()
-            messages.error(self.request, 'Ocurrió un error al guardar el lote.')
+        lote = form.save(commit=False) #objeto del formulario
+        lote.identificador = str(lote.numeroLote)+str(lote.poligono) #Concatenar numero y poligono para el identificador
+        lote.areaVCuadrada = lote.areaMCuadrado * decimal.Decimal(1.431) #Calculo de las varas cuadradas
+        lote.save()
+        messages.success(self.request, 'Lote guardado con éxito')
         return HttpResponseRedirect(self.get_url_redirect())
 
-
+#----------------------------Fin Views de lote------------------------------------
 #--------------------Views de detalle de venta-------------------------------------
 """Vista donde se muestra la tabla de lotes del proyecto y un boton para visualizar el historico de ventas"""
 class historicoVentas(GroupRequiredMixin,ListView):
@@ -191,21 +147,50 @@ class historicoVentas(GroupRequiredMixin,ListView):
     model = lote
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        """Validacion de que exista proyecto"""
-        try:
-            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
-        except Exception:
+        "Validacion de que el proyecto turistico de la url exista"
+        proyecto = proyectoTuristico.objects.filter(pk=self.kwargs['idp']).exists()
+        if proyecto is False:
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        """Se recogen los parametros por url y se envia por contexto el listado de lostes del proyecto"""
         id = self.kwargs.get('idp', None) 
-        context['idp'] = id
-        context['lotes'] = lote.objects.filter(proyectoTuristico__id=id)
+        context['idp'] = id #id del proyecto turistico
+        context['lotes'] = lote.objects.filter(proyectoTuristico__id=id) #Lista de lotes por proyecto turistico
         return context
+
+
+"""Vista donde se muestra el historico de ventas de un lote en especifico"""
+class historicoVentasLote(GroupRequiredMixin,DetailView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    template_name = 'inventario/Asignaciones/asignacionLote.html'
+    model = lote
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        "Validacion de que el proyecto turistico de la url exista"
+        proyecto = proyectoTuristico.objects.filter(pk=self.kwargs['idp']).exists()
+        if proyecto is False:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        "Validacion de que el lote de la url exista"
+        lot = lote.objects.filter(pk=self.kwargs['pk']).exists()
+        if lot is False:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el lote existe')
+            return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) #id del proyecto turistico
+        id = self.kwargs.get('pk', None)# id del lote
+        context['idp'] = idp #id del proyecto turistico
+        context['detalles'] = detalleVenta.objects.filter(lote__matriculaLote=id).order_by('-estado') #listado de detalles de venta, primero se muestra el activo
+        #context['asignaciones'] = asignacionLote.objects.filter(detalleVenta__lote__matriculaLote = id) #listado de 
+        context['condiciones'] = condicionesPago.objects.filter(detalleVenta__lote__matriculaLote = id)
+        return context
+
 
 """Vista de formulario para agregar un detalle de venta"""
 class agregarDetalleVenta(GroupRequiredMixin,CreateView):
@@ -214,26 +199,24 @@ class agregarDetalleVenta(GroupRequiredMixin,CreateView):
     form_class = DetalleVentaForm
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        """Validacion de que exista el proyecto turistico y el lote"""
-        try:
-            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
-        except Exception:
-            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+        "Validacion de que el proyecto turistico de la url exista"
+        proyecto = proyectoTuristico.objects.filter(pk=self.kwargs['idp']).exists()
+        if proyecto is False:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
-        try:
-            lot = lote.objects.get(pk=self.kwargs['idl'])
-        except Exception:
+        "Validacion de que el lote de la url exista"
+        lot = lote.objects.filter(pk=self.kwargs['idl']).exists()
+        if lot is False:
             messages.error(self.request, 'Ocurrió un error, asegurese de que el lote existe')
             return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        """Se obtienen parametros de la url del id del proyecto y del lote y se envian por contexto"""
         idp = self.kwargs.get('idp', None)
         idl = self.kwargs.get('idl', None)
-        context['idp'] = idp
-        context['idl'] = idl           
+        context['idp'] = idp #id del proyecto
+        context['idl'] = idl #id del lote         
         return context
 
     def form_valid(self, form, **kwargs):
@@ -265,20 +248,18 @@ class consultarPropietarios(GroupRequiredMixin,ListView):
     model = propietario
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        """Validacion de que exista proyecto"""
-        try:
-            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
-        except Exception:
+        "Validacion de que el proyecto turistico de la url exista"
+        proyecto = proyectoTuristico.objects.filter(pk=self.kwargs['idp']).exists()
+        if proyecto is False:
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        """Se recuperan los parametros necesarios pasados por url y se envia por contexto la lista
-        de propietarios por proyecto turistico"""
         id = self.kwargs.get('idp', None) 
-        context['idp'] = id
+        context['idp'] = id #id del proyecto turistico
+        "Lista de propietarios filtrada por proyecto turistico y ordenados por dui"
         context['propietarios'] = asignacionProyecto.objects.filter(proyectoTuristico__id=id).order_by('-dui')
         return context
 
@@ -288,21 +269,19 @@ class detallePropietario(GroupRequiredMixin,DetailView):
     model = propietario
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        """Validacion de que exista proyecto"""
-        try:
-            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
-        except Exception:
+        "Validacion de que el proyecto turistico de la url exista"
+        proyecto = proyectoTuristico.objects.filter(pk=self.kwargs['idp']).exists()
+        if proyecto is False:
             messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        """Se recuperan los parametros necesarios pasados por url y se envia por contexto la lista
-        de propietarios por proyecto turistico"""
-        id = self.kwargs.get('idp', None)
+        id = self.kwargs.get('idp', None) 
         idPropietario = self.kwargs.get('pk', None)
-        context['idp'] = id
+        context['idp'] = id #id del proyecto turistico
+        "Lista de asignaciones de lotes a las que pertenece el propietario"
         context['lotes'] = asignacionLote.objects.filter(propietario__id = idPropietario)
         return context
 
@@ -313,23 +292,22 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
     form_class = PropietarioForm
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        """Validacion de que exista el proyecto turistico y el detalle de venta"""
-        try:
-            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
-        except Exception:
-            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+        "Validacion de que el proyecto turistico de la url exista"
+        proyecto = proyectoTuristico.objects.filter(pk=self.kwargs['idp']).exists()
+        if proyecto is False:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
-        try:
-            det = detalleVenta.objects.get(pk=self.kwargs['id'])
-        except Exception:
+        "validacion de que exista el detalle de venta"
+        det = detalleVenta.objects.filter(pk=self.kwargs['id']).exists()
+        if det is False:
             messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
             return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
     
     """Metodo para obtener la url de exito del formulario con los parametros necesarios"""
     def get_url_redirect(self, **kwargs):
-        idp = self.kwargs.get('idp', None) 
-        id = self.kwargs.get('id', None) 
+        idp = self.kwargs.get('idp', None) #id del proyecto turistico 
+        id = self.kwargs.get('id', None) #id del detalle de venta
         try:
             detalleVenta.objects.get(pk = id)
             return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})
@@ -341,14 +319,14 @@ class agregarPropietario(GroupRequiredMixin,CreateView):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('id', None)
         idp = self.kwargs.get('idp', None) 
-        context['idp'] = idp  
-        context['id'] = id
+        context['idp'] = idp  #id del proyecto turistico
+        context['id'] = id #id del detalle de venta
         return context
     
     "Enviar parametros a formulario"
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['idp'] = self.kwargs.get('idp', None)
+        kwargs['idp'] = self.kwargs.get('idp', None) #Se envia id del proyecto turistico al form para validacion en el formulario
         return kwargs
 
     def form_valid(self, form, **kwargs):
@@ -379,15 +357,14 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        """Validación de que exista el proyecto y el detalle de venta"""
-        try:
-            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
-        except Exception:
-            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+        "Validacion de que el proyecto turistico de la url exista"
+        proyecto = proyectoTuristico.objects.filter(pk=self.kwargs['idp']).exists()
+        if proyecto is False:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
             return HttpResponseRedirect(reverse_lazy('home'))
-        try:
-            lot = detalleVenta.objects.get(pk=self.kwargs['id'])
-        except Exception:
+        "validacion de que exista el detalle de venta"
+        det = detalleVenta.objects.filter(pk=self.kwargs['id']).exists()
+        if det is False:
             messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
             return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
         return super().dispatch(request, *args, **kwargs)
@@ -395,8 +372,8 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
     """Metodo para obtener la url de exito del formulario con los parametros necesarios"""
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        id = self.kwargs.get('id', None)
-        idp = self.kwargs.get('idp', None)
+        id = self.kwargs.get('id', None)#id del detalle de la venta
+        idp = self.kwargs.get('idp', None)#id del proyecto turistico
         try:
             detalleVenta.objects.get(pk = id)
             return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})
@@ -407,14 +384,14 @@ class seleccionarPropietario(GroupRequiredMixin,FormView):
         context=super().get_context_data(**kwargs)
         id = self.kwargs.get('id', None)
         idp = self.kwargs.get('idp', None) 
-        context['idp'] = idp  
-        context['id'] = id     
+        context['idp'] = idp #id del proyecto turistico
+        context['id'] = id  #id del detalle de la venta
         return context
     
     "Enviar parametros a formulario"
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['idp'] = self.kwargs.get('idp', None)
+        kwargs['idp'] = self.kwargs.get('idp', None) #id del proyecto turistico para validacion en form
         return kwargs
 
     def form_valid(self, form, **kwargs):
@@ -492,10 +469,10 @@ class proyectoTuristicoView(ListView):
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        "Se envia por contexto el id del proyecto"
         idp = self.kwargs.get('idp', None) 
-        context['idp'] = idp
+        context['idp'] = idp #id del proyecto turistico
         return context
+
 
 "Vista del formulario para agregar nuevo proyecto turistico"
 class agregarProyectoTuristico(GroupRequiredMixin,CreateView):
@@ -515,6 +492,7 @@ class agregarProyectoTuristico(GroupRequiredMixin,CreateView):
         proyecto.save()
         messages.success(self.request, 'Proyecto guardado con exito')
         return HttpResponseRedirect(self.get_url_redirect())
+
 
 """Vista de formulario para modificar proyecto turistico"""
 class ModificarProyectoTuristico(GroupRequiredMixin, UpdateView):
@@ -575,9 +553,10 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
             return HttpResponseRedirect(reverse_lazy('home'))
         except detalleVenta.DoesNotExist:
             messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe y esté activo')
-            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']})) 
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
+
         "Validacion de que no exista condiciones de pago existentes para esa venta"
-        condicion = condicionesPago.objects.filter(detalleVenta__id=self.kwargs['idv']).exists()
+        condicion = condicionesPago.objects.filter(detalleVenta__id=self.kwargs['idv'], estado=True).exists()
         if condicion is True:
             messages.error(self.request, 'Ocurrió un error, el lote ya tiene condiciones de pago registradas')
             return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['idv']}))
@@ -595,16 +574,16 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
     "Url de exito del formulario"
     def get_url_redirect(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        idp = self.kwargs.get('idp', None) 
-        idv = self.kwargs.get('idv', None)         
+        idp = self.kwargs.get('idp', None) #id del proyecto
+        idv = self.kwargs.get('idv', None) #id del detalle de venta
         return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': idv})
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         idv = self.kwargs.get('idv', None)
         idp = self.kwargs.get('idp', None) 
-        context['idp'] = idp  
-        context['idv'] = idv  
+        context['idp'] = idp  #id del proyecto
+        context['idv'] = idv  #id del detalle de venta
         return context
 
     def get_form(self, form_class = None, **kwargs):
@@ -638,7 +617,7 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
             condicion.detalleVenta = detalle
             "Se crea las condiciones de pago y el estado de cuenta"
             condicion.save()
-            estado = estadoCuenta(detalleVenta=detalle)
+            estado = estadoCuenta(condicionesPago=condicion, nombre="Mantenimiento")
             estado.save()
             messages.success(self.request, 'Condicion de pago guardado con exito, estado de cuenta generado.')
         except Exception:
@@ -688,7 +667,7 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
         form.fields['montoFinanciamiento'].disabled = True 
         form.fields['cuotaKi'].disabled = True
         detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
-        estado = estadoCuenta.objects.get(detalleVenta_id = detallev.id)
+        estado = estadoCuenta.objects.get(condicionesPago__detalleVenta__id = detallev.id)
         try:
             cuota = pagoMantenimiento.objects.filter(estadoCuenta_id = estado.id)
             for c in cuota:
@@ -706,41 +685,24 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
         idp = self.kwargs.get('idp', None) 
         id = self.kwargs.get('idv', None) 
         if form.is_valid():
+            condiciones=condicionesPago.objects.filter(detalleVenta__id = id)
+            for cond in condiciones:
+                cond.estado = False
+                cond.save()
             condicion = form.save(commit=False)
             ultimo_id = condicionesPago.objects.latest('id')
             condicion.id = (ultimo_id.id + 1)
+            tasau = (condicion.tasaInteres / 100) /12
+            condicion.cuotaKi = condicion.montoFinanciamiento*((tasau *decimal.Decimal((math.pow((1+tasau),condicion.plazo))))/decimal.Decimal((math.pow((1+tasau),condicion.plazo))-1));
+            condicion.cuotaKi = round(condicion.cuotaKi, 2)
             condicion.save()
+            estado = estadoCuenta(condicionesPago=condicion, nombre="Mantenimiento")
+            estado.save()
             messages.success(self.request, 'Las condiciones de pago fueron actualizada exitosamente')
         else: 
             messages.error(self.request, 'Ocurrió un error, no se actualizo las condiciones de pago')
         return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})) 
-
-    # def post(self, request, *args, **kwargs):
-    #     condicion = self.get_object()
-    #     form = self.form_class(request.POST, instance = condicion)
-
-    #     #form = form.save(commit=False) 
-    #     detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
-    #     estado = estadoCuenta.objects.get(detalleVenta_id = detallev.id)
-    #     try:
-    #         cuota = pagoMantenimiento.objects.filter(estadoCuenta_id = estado.id)
-    #         for c in cuota:
-    #             if estado.id == c.estadoCuenta_id:
-    #                 form.fields['fechaEscrituracion'].disabled = True
-    #                 form.fields['plazo'].disabled = True
-    #     except Exception:
-    #         form.fields['fechaEscrituracion'].disabled = False
-    #         form.fields['plazo'].disabled = False
-    #     form.fields['montoFinanciamiento'].disabled = True 
-    #     form.fields['cuotaKi'].disabled = True
-    #     idp = self.kwargs.get('idp', None) 
-    #     id = self.kwargs.get('idv', None) 
-    #     if form.is_valid():
-    #         form.save()
-    #         messages.success(self.request, 'Las condiciones de pago fueron actualizada exitosamente')
-    #     else: 
-    #         messages.error(self.request, 'Ocurrió un error, no se actualizo las condiciones de pago')
-    #     return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id}))  
+ 
     
 #eliminar condiciones de pago
 class eliminarCondicionesP(GroupRequiredMixin, DeleteView):
