@@ -78,12 +78,12 @@ class detalleLote(GroupRequiredMixin,DetailView):
         det = detalleVenta.objects.get(pk=id)
         pagosp = pago.objects.filter(prima__detalleVenta=det.id)
         condicion=condicionesPago.objects.filter(detalleVenta_id = det.id).exists()
-        estadosDeCuentaM=estadoCuenta.objects.filter(detalleVenta_id = det.id).exists()
-        if estadosDeCuentaM==True:
-            estadosDeCuentaM=estadoCuenta.objects.filter(detalleVenta_id = det.id)
         if condicion==True:
-            condicionObj=condicionesPago.objects.get(detalleVenta_id = det.id)
+            condicionObj=condicionesPago.objects.get(detalleVenta_id = det.id, estado=True)
             cuotaFinanciamiento=condicionObj.cuotaKi + condicionObj.comisionCuota
+            estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id).exists()
+            if estadosDeCuentaM==True:
+                estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id)
         for pagoObject in pagosp:
             if pagoObject.prima !=None:
                 sumPrima=sumPrima+float(pagoObject.monto)
@@ -680,9 +680,6 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(modificarCondicionesP, self).get_context_data(**kwargs)
         pk = self.kwargs.get('pk', None)
-        condiciones = self.model.objects.get(id = pk)      
-        if 'form' not in context:
-            context['form'] = self.form_class()
         context['pk'] = pk   
         return context
 
@@ -704,32 +701,46 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
             form.fields['plazo'].disabled = False
             return form
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object
-        id_condicion = kwargs['pk']
-        condicion = self.model.objects.get(id = id_condicion)
-        form = self.form_class(request.POST, instance = condicion)
-        detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
-        estado = estadoCuenta.objects.get(detalleVenta_id = detallev.id)
-        try:
-            cuota = pagoMantenimiento.objects.filter(estadoCuenta_id = estado.id)
-            for c in cuota:
-                if estado.id == c.estadoCuenta_id:
-                    form.fields['fechaEscrituracion'].disabled = True
-                    form.fields['plazo'].disabled = True
-        except Exception:
-            form.fields['fechaEscrituracion'].disabled = False
-            form.fields['plazo'].disabled = False
-        form.fields['montoFinanciamiento'].disabled = True 
-        form.fields['cuotaKi'].disabled = True
+    def form_valid(self, form, *args, **kwargs):
+        """If the form is valid, save the associated model."""
         idp = self.kwargs.get('idp', None) 
         id = self.kwargs.get('idv', None) 
         if form.is_valid():
-            form.save()
+            condicion = form.save(commit=False)
+            ultimo_id = condicionesPago.objects.latest('id')
+            condicion.id = (ultimo_id.id + 1)
+            condicion.save()
             messages.success(self.request, 'Las condiciones de pago fueron actualizada exitosamente')
         else: 
             messages.error(self.request, 'Ocurrió un error, no se actualizo las condiciones de pago')
-        return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id}))  
+        return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})) 
+
+    # def post(self, request, *args, **kwargs):
+    #     condicion = self.get_object()
+    #     form = self.form_class(request.POST, instance = condicion)
+
+    #     #form = form.save(commit=False) 
+    #     detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
+    #     estado = estadoCuenta.objects.get(detalleVenta_id = detallev.id)
+    #     try:
+    #         cuota = pagoMantenimiento.objects.filter(estadoCuenta_id = estado.id)
+    #         for c in cuota:
+    #             if estado.id == c.estadoCuenta_id:
+    #                 form.fields['fechaEscrituracion'].disabled = True
+    #                 form.fields['plazo'].disabled = True
+    #     except Exception:
+    #         form.fields['fechaEscrituracion'].disabled = False
+    #         form.fields['plazo'].disabled = False
+    #     form.fields['montoFinanciamiento'].disabled = True 
+    #     form.fields['cuotaKi'].disabled = True
+    #     idp = self.kwargs.get('idp', None) 
+    #     id = self.kwargs.get('idv', None) 
+    #     if form.is_valid():
+    #         form.save()
+    #         messages.success(self.request, 'Las condiciones de pago fueron actualizada exitosamente')
+    #     else: 
+    #         messages.error(self.request, 'Ocurrió un error, no se actualizo las condiciones de pago')
+    #     return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id}))  
     
 #eliminar condiciones de pago
 class eliminarCondicionesP(GroupRequiredMixin, DeleteView):
