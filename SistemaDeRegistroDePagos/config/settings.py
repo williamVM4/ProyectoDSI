@@ -125,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'es'
+LANGUAGE_CODE = 'es-MX'
 
 TIME_ZONE = 'UTC'
 
@@ -156,3 +156,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL = '/login/'
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE=True
+USE_THOUSAND_SEPARATOR = True
+DECIMAL_SEPARATOR =  '.'
