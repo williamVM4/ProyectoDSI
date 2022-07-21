@@ -16,28 +16,26 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Estado de Cuenta</h1>
+                    <h1 class="page-header">Estado de Cuenta de Mantenimiento</h1>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <!-- Resumen de Ingresos -->
                             <h4 class="encabezado-propietario"><b>Resumen de Pagos</b></h4>
-                            <div class="col-md-6">
-                                <p><b>Prima:</b> $ {{sumPrima}}</p>
+                            <div class="col-md-12">
                                 <p><b>Mantenimiento:</b> $ {{sumMantenimiento}}</p>
-                                <p><b>Recargo por Mantenimiento:</b> $ {{sumRecargoMantenimiento}}</p>
+                                <p><b>Recargo:</b> $ {{sumRecargoMantenimiento}}</p>
                                 <p><b>Otros pagos:</b> $ {{sumOtros}}</p>
-                                <p><b>Descuento por recargo:</b> $ {{sumDescuento}}</p>
-                            </div>
-                            <div class="col-md-6">
+                                <p><b>Descuento:</b> $ {{sumDescuento}}</p>
+                                <p><br></p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-7">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <!-- Último Pago -->
@@ -94,6 +92,7 @@
                                             <th>Recargo</th>
                                             <th>Otros</th>
                                             <th>Descuento</th>
+                                            <th>Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -107,6 +106,7 @@
                                             <td>{{pago.recargo}}</td>
                                             <td>{{pago.otros}}</td>
                                             <td>{{pago.descuento}}</td>
+                                            <td>{{pago.total}}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
