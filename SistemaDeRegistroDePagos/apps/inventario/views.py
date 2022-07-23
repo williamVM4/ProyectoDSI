@@ -81,7 +81,7 @@ class detalleLote(GroupRequiredMixin,DetailView):
         "Verficar si no da problemas"
         estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id).exists()
         if estadosDeCuentaM==True:
-            estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id)
+            estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id).order_by('-id')
         "Sumatoria de primas"
         for pagoObject in pagosp:
             if pagoObject.prima !=None:
@@ -132,8 +132,9 @@ class agregarLote(GroupRequiredMixin,CreateView):
 
     def form_valid(self, form, **kwargs):
         lote = form.save(commit=False) #objeto del formulario
-        lote.identificador = str(lote.numeroLote)+str(lote.poligono) #Concatenar numero y poligono para el identificador
-        lote.areaVCuadrada = lote.areaMCuadrado * decimal.Decimal(1.431) #Calculo de las varas cuadradas
+        lote.identificador = str(lote.poligono) + str(lote.numeroLote) #Concatenar numero y poligono para el identificador
+        lote.areaVCuadrada = lote.areaMCuadrado * decimal.Decimal(1.4308) #Calculo de las varas cuadradas
+        lote.proyectoTuristico=proyectoTuristico.objects.get(pk=self.kwargs['idp'])
         lote.save()
         messages.success(self.request, 'Lote guardado con éxito')
         return HttpResponseRedirect(self.get_url_redirect())

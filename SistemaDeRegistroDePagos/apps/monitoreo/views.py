@@ -43,7 +43,6 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
         idp = self.kwargs.get('idp', None)
         id = self.kwargs.get('pk', None)
         condicion=condicionesPago.objects.get(detalleVenta__id=id, estado=True)
-        print(condicion.id)
         estado = estadoCuenta.objects.get(condicionesPago__id=condicion.id)
         pagosm = pago.objects.filter(pagoMantenimiento__estadoCuenta=estado).order_by('-fechaRegistro')
         pagosCuotas = pagoCuotaMantenimiento.objects.filter(estadoCuenta=estado).order_by('-id')
