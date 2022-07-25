@@ -353,7 +353,7 @@
                                                 </div>
                                                 {% endif %}
                                             </td>
-                                            <td id="{{c.id}}8888" class="linkDetallePago" data-href=""> $ {{ cuotaFinanciamiento }}
+                                            <td id="{{c.id}}8888" class="linkDetallePago" data-href=""> $ {{ c.cuotaFinanciamiento }}
                                                 {% if c.estado %}
                                                 <div class="dropdown">
                                                     <div id="{{c.id}}8888O" class="dropdown-menu Options">
@@ -415,7 +415,7 @@
                                     {% if estadosDeCuentaM %}
                                         {% for estadoDeCuentaM in estadosDeCuentaM %}
                                         <tr>
-                                            <td id="{{estadoDeCuentaM.id}}11111" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp pk=estadoDeCuentaM.condicionesPago.id %}">[ {{estadoDeCuentaM.fechaRegistro|date:"d/F/Y" }} ] - {{estadoDeCuentaM.nombre}} - 
+                                            <td id="{{estadoDeCuentaM.id}}11111" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id%}">[ {{estadoDeCuentaM.fechaRegistro|date:"d/F/Y" }} ] - {{estadoDeCuentaM.nombre}} - 
                                                 {% if estadoDeCuentaM.condicionesPago.estado %}
                                                     Activo
                                                 {% else %}
@@ -424,7 +424,7 @@
                                                 <div  class="dropdown">
                                                     <div id="{{estadoDeCuentaM.id}}11111O" class="dropdown-menu Options">
                                                         <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp pk=estadoDeCuentaM.condicionesPago.id %}"><b></b> Ver</a>
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id%}"><b></b> Ver</a>
                                                         </div>
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Imprimir</a>
@@ -455,7 +455,7 @@
                                     {% if estadosDeCuentaM %}
                                         {% for estadoDeCuentaM in estadosDeCuentaM %}
                                         <tr>
-                                            <td id="{{estadoDeCuentaM.id}}11111" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp pk=estadoDeCuentaM.condicionesPago.id %}">[ {{estadoDeCuentaM.fechaRegistro|date:"d/F/Y" }} ] - {{estadoDeCuentaM.nombre}} - 
+                                            <td id="{{estadoDeCuentaM.id}}11111" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id %}">[ {{estadoDeCuentaM.fechaRegistro|date:"d/F/Y" }} ] - {{estadoDeCuentaM.nombre}} - 
                                                 {% if estadoDeCuentaM.condicionesPago.estado %}
                                                     Activo
                                                 {% else %}
@@ -464,7 +464,7 @@
                                                 <div  class="dropdown">
                                                     <div id="{{estadoDeCuentaM.id}}11111O" class="dropdown-menu Options">
                                                         <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp pk=estadoDeCuentaM.condicionesPago.id %}"><b></b> Ver</a>
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id %}"><b></b> Ver</a>
                                                         </div>
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Imprimir</a>
@@ -495,7 +495,7 @@
                                     {% if estadosDeCuentaM %}
                                         {% for estadoDeCuentaM in estadosDeCuentaM %}
                                         <tr>
-                                            <td id="{{estadoDeCuentaM.id}}11111" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp pk=estadoDeCuentaM.condicionesPago.id %}">[ {{estadoDeCuentaM.fechaRegistro|date:"d/F/Y" }} ] - {{estadoDeCuentaM.nombre}} - 
+                                            <td id="{{estadoDeCuentaM.id}}11111" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id %}">[ {{estadoDeCuentaM.fechaRegistro|date:"d/F/Y" }} ] - {{estadoDeCuentaM.nombre}} - 
                                                 {% if estadoDeCuentaM.condicionesPago.estado %}
                                                     Activo
                                                 {% else %}
@@ -504,7 +504,7 @@
                                                 <div  class="dropdown">
                                                     <div id="{{estadoDeCuentaM.id}}11111O" class="dropdown-menu Options">
                                                         <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp pk=estadoDeCuentaM.condicionesPago.id %}"><b></b> Ver</a>
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id %}"><b></b> Ver</a>
                                                         </div>
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Imprimir</a>

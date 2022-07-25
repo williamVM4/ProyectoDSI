@@ -80,6 +80,7 @@ class pagoCuotaMantenimiento(models.Model):
     numeroReciboMantenimiento = models.CharField(max_length=30)
     fechaRegistro=models.DateTimeField(auto_now_add=True,blank=True)
     estadoCuenta = models.ForeignKey('monitoreo.estadoCuenta',blank=True, on_delete=models.CASCADE)
+    condicionesPago = models.ForeignKey('monitoreo.condicionesPago',blank=True, on_delete=models.CASCADE)
     fechaPago = models.DateField()
     fechaCorte = models.DateField()
     concepto = models.CharField(max_length=100,blank=True, default="")
