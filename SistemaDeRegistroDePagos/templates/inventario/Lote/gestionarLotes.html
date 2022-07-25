@@ -54,113 +54,87 @@
                                     </thead>
                                     <tbody>
                                         {% for lote in lotes %}
-                                        <tr>
                                             {% for detalle in detalles %}
-                                            {% if detalle.lote == lote %}
-                                            <td id="{{lote.id}}11" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalle.id %}">{{ lote.poligono}}
-                                            {%endif%}
-                                            {% empty %}
-                                            <td id="{{lote.id}}11" class="linkDetalle" data-href="javascript:mensaje()">{{ lote.poligono}}
+                                                {% if detalle.lote == lote %}
+                                                    <tr>
+                                                        <td id="{{detalle.id}}11" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalle.id %}">{{ lote.poligono}}
+                                                            <div class="dropdown">
+                                                                <div id="{{detalle.id}}11O" class="dropdown-menu Options">
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"><b></b> Agregar Venta</a>
+                                                                    </div>
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar Lote</a>
+                                                                    </div>
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar Lote</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td id="{{detalle.id}}22" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalle.id %}">{{ lote.numeroLote}}
+                                                            <div class="dropdown">
+                                                                <div id="{{detalle.id}}22O" class="dropdown-menu Options">
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"><b></b> Agregar Venta</a>
+                                                                    </div>
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar Lote</a>
+                                                                    </div>
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar Lote</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td id="{{detalle.id}}33" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalle.id %}">{{ lote.matriculaLote}}
+                                                            <div class="dropdown">
+                                                                <div id="{{detalle.id}}33O" class="dropdown-menu Options">
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"><b></b> Agregar Venta</a>
+                                                                    </div>
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar Lote</a>
+                                                                    </div>
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar Lote</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td id="{{detalle.id}}44" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalle.id %}">{{ lote.areaMCuadrado}}
+                                                            <div class="dropdown">
+                                                                <div id="{{detalle.id}}44O" class="dropdown-menu Options">
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"><b></b> Agregar Venta</a>
+                                                                    </div>
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar Lote</a>
+                                                                    </div>
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar Lote</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td id="{{detalle.id}}55" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalle.id %}">{{ lote.areaVCuadrada}}
+                                                            <div class="dropdown">
+                                                                <div id="{{detalle.id}}55O" class="dropdown-menu Options">
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"><b></b> Agregar Venta</a>
+                                                                    </div>
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar Lote</a>
+                                                                    </div>
+                                                                    <div class="opciones">
+                                                                        <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar Lote</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                {%endif%}
                                             {%endfor%}
-                                                <div class="dropdown">
-                                                    <div id="{{lote.id}}11O" class="dropdown-menu Options">
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"><b></b> Agregar Venta</a>
-                                                        </div>
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar Lote</a>
-                                                        </div>
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar Lote</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            {% for detalle in detalles %}
-                                            {% if detalle.lote == lote %}
-                                            <td id="{{lote.id}}22" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalle.id %}">{{ lote.numeroLote}}
-                                            {%endif%}
-                                            {% empty %}
-                                            <td id="{{lote.id}}22" class="linkDetalle" data-href="javascript:mensaje()">{{ lote.numeroLote}}
-                                            {%endfor%}
-                                                <div class="dropdown">
-                                                    <div id="{{lote.id}}22O" class="dropdown-menu Options">
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"><b></b> Agregar Venta</a>
-                                                        </div>
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar Lote</a>
-                                                        </div>
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar Lote</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            {% for detalle in detalles %}
-                                            {% if detalle.lote == lote %}
-                                            <td id="{{lote.id}}33" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalle.id %}">{{ lote.matriculaLote}}
-                                            {%endif%}
-                                            {% empty %}
-                                            <td id="{{lote.id}}33" class="linkDetalle" data-href="javascript:mensaje()">{{ lote.matriculaLote}}
-                                            {%endfor%}
-                                                <div class="dropdown">
-                                                    <div id="{{lote.id}}33O" class="dropdown-menu Options">
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"><b></b> Agregar Venta</a>
-                                                        </div>
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar Lote</a>
-                                                        </div>
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar Lote</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            {% for detalle in detalles %}
-                                            {% if detalle.lote == lote %}
-                                            <td id="{{lote.id}}44" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalle.id %}">{{ lote.areaMCuadrado}}
-                                            {%endif%}
-                                            {% empty %}
-                                            <td id="{{lote.id}}44" class="linkDetalle" data-href="javascript:mensaje()">{{ lote.areaMCuadrado}}
-                                            {%endfor%}
-                                                <div class="dropdown">
-                                                    <div id="{{lote.id}}44O" class="dropdown-menu Options">
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"><b></b> Agregar Venta</a>
-                                                        </div>
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar Lote</a>
-                                                        </div>
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar Lote</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            {% for detalle in detalles %}
-                                            {% if detalle.lote == lote %}
-                                            <td id="{{lote.id}}55" class="linkDetalle" data-href="{% url 'detalleLote' idp=idp pk=detalle.id %}">{{ lote.areaVCuadrada}}
-                                            {%endif%}
-                                            {% empty %}
-                                            <td id="{{lote.id}}55" class="linkDetalle" data-href="javascript:mensaje()">{{ lote.areaVCuadrada}}
-                                            {%endfor%}
-                                                <div class="dropdown">
-                                                    <div id="{{lote.id}}55O" class="dropdown-menu Options">
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'agregarDetalleVenta' idp=idp idl=lote.matriculaLote %}"><b></b> Agregar Venta</a>
-                                                        </div>
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Editar Lote</a>
-                                                        </div>
-                                                        <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Eliminar Lote</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
                                         {%endfor%}
                                     </tbody>
                                 </table>

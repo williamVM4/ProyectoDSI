@@ -147,9 +147,9 @@
                                     {% for pago in pagos %}
                                     <tr>
                                         {% if pago.prima.detalleVenta_id == detalleV.id %}
-                                            <td id="{{pago.id}}11" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{ pago.fechaPago}}
+                                            <td id="{{pago.id}}111" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{ pago.fechaPago}}
                                                 <div class="dropdown">
-                                                    <div id="{{pago.id}}11O" class="dropdown-menu Options">
+                                                    <div id="{{pago.id}}111O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarPrima' idp=idp idv=object.id pk=pago.prima_id %}"><b></b> Editar</a>
                                                         </div>
@@ -160,9 +160,9 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td id="{{pago.id}}22" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{ pago.prima_id}}
+                                            <td id="{{pago.id}}222" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{ pago.prima_id}}
                                                 <div class="dropdown">
-                                                    <div id="{{pago.id}}22O" class="dropdown-menu Options">
+                                                    <div id="{{pago.id}}222O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarPrima' idp=idp idv=object.id pk=pago.prima_id %}"><b></b> Editar</a>
                                                         </div>
@@ -173,9 +173,9 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td id="{{pago.id}}33" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">$ {{ pago.monto}}
+                                            <td id="{{pago.id}}333" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">$ {{ pago.monto}}
                                                 <div class="dropdown">
-                                                    <div id="{{pago.id}}33O" class="dropdown-menu Options">
+                                                    <div id="{{pago.id}}333O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarPrima' idp=idp idv=object.id pk=pago.prima_id %}"><b></b> Editar</a>
                                                         </div>
@@ -186,7 +186,7 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td id="{{pago.id}}33" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{ pago.prima.conceptoPrima}}</td>
+                                            <td id="{{pago.id}}333" class="linkDetallePago" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{ pago.prima.conceptoPrima}}</td>
                                         {% endif %}
                                     </tr>
                                     {%endfor%}
@@ -212,23 +212,25 @@
                                 <thead>
                                     <tr>
                                         <th>Fecha de Escrituración</th>
-                                        <th>Monto Financiamiento</th>
+                                        <th>Monto Financ.</th>
                                         <th>Plazo</th>
-                                        <th>Interes</th>
+                                        <th>Ínteres</th>
                                         <th>Comisión</th>
                                         <th>Mantenimiento</th>
-                                        <th>Multa de Mantenimiento</th>
+                                        <th>Multa Manten.</th>
                                         <th>Financiamiento</th>
-                                        <th>Multa de Financiamiento</th>
+                                        <th>Multa Financ.</th>
+                                        <th>Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for c in condiciones %}
                                     <tr>
                                         {% if c.detalleVenta_id == detalleV.id %}
-                                            <td id="{{c.detalleVenta_id}}11" class="linkDetallePago" data-href=""> {{ c.fechaEscrituracion }}
+                                            <td id="{{c.id}}1111" class="linkDetallePago" data-href=""> {{ c.fechaEscrituracion }}
+                                                {% if c.estado %}
                                                 <div class="dropdown">
-                                                    <div id="{{c.detalleVenta_id}}11O" class="dropdown-menu Options">
+                                                    <div id="{{c.id}}1111O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b></b> Editar</a>
                                                         </div>
@@ -241,10 +243,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endif %}
                                             </td>
-                                            <td id="{{c.detalleVenta_id}}22" class="linkDetallePago" data-href=""> $ {{ c.montoFinanciamiento }}
+                                            <td id="{{c.id}}2222" class="linkDetallePago" data-href=""> $ {{ c.montoFinanciamiento }}
+                                                {% if c.estado %}
                                                 <div class="dropdown">
-                                                    <div id="{{c.detalleVenta_id}}22O" class="dropdown-menu Options">
+                                                    <div id="{{c.id}}2222O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b></b> Editar</a>
                                                         </div>
@@ -257,10 +261,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endif %}
                                             </td>
-                                            <td id="{{c.detalleVenta_id}}33" class="linkDetallePago" data-href=""> {{ c.plazo }} meses
+                                            <td id="{{c.id}}3333" class="linkDetallePago" data-href=""> {{ c.plazo }} Meses
+                                                {% if c.estado %}
                                                 <div class="dropdown">
-                                                    <div id="{{c.detalleVenta_id}}33O" class="dropdown-menu Options">
+                                                    <div id="{{c.id}}3333O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b></b> Editar</a>
                                                         </div>
@@ -273,10 +279,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endif %}
                                             </td>
-                                            <td id="{{c.detalleVenta_id}}44" class="linkDetallePago" data-href=""> {{ c.tasaInteres }} %
+                                            <td id="{{c.id}}4444" class="linkDetallePago" data-href=""> {{ c.tasaInteres }} %
+                                                {% if c.estado %}
                                                 <div class="dropdown">
-                                                    <div id="{{c.detalleVenta_id}}44O" class="dropdown-menu Options">
+                                                    <div id="{{c.id}}4444O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b></b> Editar</a>
                                                         </div>
@@ -289,10 +297,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endif %}
                                             </td>
-                                            <td id="{{c.detalleVenta_id}}55" class="linkDetallePago" data-href=""> $ {{ c.comisionCuota }}
+                                            <td id="{{c.id}}5555" class="linkDetallePago" data-href=""> $ {{ c.comisionCuota }}
+                                                {% if c.estado %}
                                                 <div class="dropdown">
-                                                    <div id="{{c.detalleVenta_id}}55O" class="dropdown-menu Options">
+                                                    <div id="{{c.id}}5555O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b></b> Editar</a>
                                                         </div>
@@ -305,10 +315,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endif %}
                                             </td>
-                                            <td id="{{c.detalleVenta_id}}66" class="linkDetallePago" data-href=""> $ {{ c.mantenimientoCuota }}
+                                            <td id="{{c.id}}6666" class="linkDetallePago" data-href=""> $ {{ c.mantenimientoCuota }}
+                                                {% if c.estado %}
                                                 <div class="dropdown">
-                                                    <div id="{{c.detalleVenta_id}}66O" class="dropdown-menu Options">
+                                                    <div id="{{c.id}}6666O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b></b> Editar</a>
                                                         </div>
@@ -321,10 +333,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endif %}
                                             </td>
-                                            <td id="{{c.detalleVenta_id}}77" class="linkDetallePago" data-href=""> $ {{ c.multaMantenimiento }}
+                                            <td id="{{c.id}}7777" class="linkDetallePago" data-href=""> $ {{ c.multaMantenimiento }}
+                                                {% if c.estado %}
                                                 <div class="dropdown">
-                                                    <div id="{{c.detalleVenta_id}}77O" class="dropdown-menu Options">
+                                                    <div id="{{c.id}}7777O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b></b> Editar</a>
                                                         </div>
@@ -337,10 +351,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endif %}
                                             </td>
-                                            <td id="{{c.detalleVenta_id}}88" class="linkDetallePago" data-href=""> $ {{ cuotaFinanciamiento }}
+                                            <td id="{{c.id}}8888" class="linkDetallePago" data-href=""> $ {{ c.cuotaFinanciamiento }}
+                                                {% if c.estado %}
                                                 <div class="dropdown">
-                                                    <div id="{{c.detalleVenta_id}}88O" class="dropdown-menu Options">
+                                                    <div id="{{c.id}}8888O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b></b> Editar</a>
                                                         </div>
@@ -353,10 +369,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endif %}
                                             </td>
-                                            <td id="{{c.detalleVenta_id}}99" class="linkDetallePago" data-href=""> $ {{ c.multaFinanciamiento }}
+                                            <td id="{{c.id}}9999" class="linkDetallePago" data-href=""> $ {{ c.multaFinanciamiento }}
+                                                {% if c.estado %}
                                                 <div class="dropdown">
-                                                    <div id="{{c.detalleVenta_id}}99O" class="dropdown-menu Options">
+                                                    <div id="{{c.id}}9999O" class="dropdown-menu Options">
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'modificarCondicionesP' idp=idp idv=object.id pk=c.id %}"><b></b> Editar</a>
                                                         </div>
@@ -369,6 +387,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endif %}
+                                            </td>
+                                            <td id="{{c.id}}9999" class="linkDetallePago" data-href="">
+                                                {% if c.estado %}
+                                                    Activo
+                                                {% else %}
+                                                    Inactivo
+                                                {% endif %}
                                             </td>
                                         {% endif %}
                                     </tr>
@@ -378,7 +404,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="panel panel-default" oncontextmenu="return false">
                         <div class="panel-heading">
                             <h4>Estados de Cuenta de Mantenimiento</h4>
@@ -389,11 +415,16 @@
                                     {% if estadosDeCuentaM %}
                                         {% for estadoDeCuentaM in estadosDeCuentaM %}
                                         <tr>
-                                            <td id="{{estadoDeCuentaM.id}}111" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp pk=object.id %}">Estado de Cuenta de Mantenimiento {{estadoDeCuentaM.id}}
+                                            <td id="{{estadoDeCuentaM.id}}11111" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id%}">[ {{estadoDeCuentaM.fechaRegistro|date:"d/F/Y" }} ] - {{estadoDeCuentaM.nombre}} - 
+                                                {% if estadoDeCuentaM.condicionesPago.estado %}
+                                                    Activo
+                                                {% else %}
+                                                    Inactivo
+                                                {% endif %}
                                                 <div  class="dropdown">
-                                                    <div id="{{estadoDeCuentaM.id}}111O" class="dropdown-menu Options">
+                                                    <div id="{{estadoDeCuentaM.id}}11111O" class="dropdown-menu Options">
                                                         <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp pk=object.id %}"><b></b> Ver</a>
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id%}"><b></b> Ver</a>
                                                         </div>
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Imprimir</a>
@@ -413,7 +444,7 @@
                         <!--div-->
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="panel panel-default" oncontextmenu="return false">
                         <div class="panel-heading">
                             <h4>Estados de Cuenta de Financiamiento</h4>
@@ -424,11 +455,16 @@
                                     {% if estadosDeCuentaM %}
                                         {% for estadoDeCuentaM in estadosDeCuentaM %}
                                         <tr>
-                                            <td id="{{estadoDeCuentaM.id}}222" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp pk=object.id %}">Estado de Cuenta de Mantenimiento {{estadoDeCuentaM.id}}
+                                            <td id="{{estadoDeCuentaM.id}}11111" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id %}">[ {{estadoDeCuentaM.fechaRegistro|date:"d/F/Y" }} ] - {{estadoDeCuentaM.nombre}} - 
+                                                {% if estadoDeCuentaM.condicionesPago.estado %}
+                                                    Activo
+                                                {% else %}
+                                                    Inactivo
+                                                {% endif %}
                                                 <div  class="dropdown">
-                                                    <div id="{{estadoDeCuentaM.id}}222O" class="dropdown-menu Options">
+                                                    <div id="{{estadoDeCuentaM.id}}11111O" class="dropdown-menu Options">
                                                         <div class="opciones">
-                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp pk=object.id %}"><b></b> Ver</a>
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id %}"><b></b> Ver</a>
                                                         </div>
                                                         <div class="opciones">
                                                             <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Imprimir</a>
@@ -448,7 +484,46 @@
                         <!--div-->
                     </div>
                 </div>
-            </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default" oncontextmenu="return false">
+                        <div class="panel-heading">
+                            <h4>Tablas de Amortización</h4>
+                        </div>
+                        <div class="table-responsive tablaDetalleVenta">
+                            <table class="table table-hover" id="dataTables-example">
+                                <tbody>
+                                    {% if estadosDeCuentaM %}
+                                        {% for estadoDeCuentaM in estadosDeCuentaM %}
+                                        <tr>
+                                            <td id="{{estadoDeCuentaM.id}}11111" class="linkDetalle" data-href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id %}">[ {{estadoDeCuentaM.fechaRegistro|date:"d/F/Y" }} ] - {{estadoDeCuentaM.nombre}} - 
+                                                {% if estadoDeCuentaM.condicionesPago.estado %}
+                                                    Activo
+                                                {% else %}
+                                                    Inactivo
+                                                {% endif %}
+                                                <div  class="dropdown">
+                                                    <div id="{{estadoDeCuentaM.id}}11111O" class="dropdown-menu Options">
+                                                        <div class="opciones">
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="{% url 'estadoCuenta' idp=idp idv=estadoDeCuentaM.condicionesPago.detalleVenta.id pk=estadoDeCuentaM.condicionesPago.id %}"><b></b> Ver</a>
+                                                        </div>
+                                                        <div class="opciones">
+                                                            <a id="itemOpciones" class="dropdown-item btn-block" href="#"><b></b> Imprimir</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {%endfor%}
+                                    {%endif%}
+                                </tbody>
+                            </table>
+                            <br>
+                            <br>
+                            <br>
+                        </div>
+                        <!--div-->
+                    </div>
+                </div>
             
         </div>
         <!-- Modal -->

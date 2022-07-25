@@ -25,12 +25,17 @@
                         <div class="panel-body">
                             <!-- Resumen de Ingresos -->
                             <h4 class="encabezado-propietario"><b>Resumen de Pagos</b></h4>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <p><b>Mantenimiento:</b> $ {{sumMantenimiento}}</p>
                                 <p><b>Recargo:</b> $ {{sumRecargoMantenimiento}}</p>
                                 <p><b>Otros pagos:</b> $ {{sumOtros}}</p>
                                 <p><b>Descuento:</b> $ {{sumDescuento}}</p>
                                 <p><br></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>CUOTAS ASIGNADAS</h4>
+                                <p><b>Cuota de Mantenimiento:</b> $ {{condicion.mantenimientoCuota}}</p>
+                                <p><b>Cuota de Recargo:</b> $ {{condicion.multaMantenimiento}}</p>
                             </div>
                         </div>
                     </div>

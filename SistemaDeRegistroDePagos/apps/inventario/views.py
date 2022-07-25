@@ -12,6 +12,7 @@ from apps.monitoreo.models import estadoCuenta
 from apps.inventario.models import asignacionLote, asignacionProyecto, detalleVenta, lote, proyectoTuristico
 from apps.autenticacion.mixins import *
 from django.contrib import messages
+from django.db.models import Sum
 from .forms import *
 
 
@@ -70,18 +71,14 @@ class detalleLote(GroupRequiredMixin,DetailView):
         "id del detalle de venta"
         id = self.kwargs.get('pk', None)
         sumPrima=0.00 #Para guardar lo acumulado en primas
-        cuotaFinanciamiento=0.0 #Calculo de la cuota por financiamiento
         det = detalleVenta.objects.get(pk=id) # se obtiene el detalle de venta
         pagosp = pago.objects.filter(prima__detalleVenta=det.id) # se obtienen las primas para realizar la sumatorias
         "Se verifica si existe condiciones de pago activas para el calculo de cuota por financiamiento"
-        condicion=condicionesPago.objects.filter(detalleVenta_id = det.id, estado=True).exists()
-        if condicion==True:
-            condicionObj=condicionesPago.objects.get(detalleVenta_id = det.id, estado=True)
-            cuotaFinanciamiento=condicionObj.cuotaKi + condicionObj.comisionCuota
+        condiciones=condicionesPago.objects.filter(detalleVenta_id = det.id).annotate(cuotaFinanciamiento=Sum('cuotaKi')+Sum('comisionCuota')).order_by('-id')
         "Verficar si no da problemas"
         estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id).exists()
         if estadosDeCuentaM==True:
-            estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id)
+            estadosDeCuentaM=estadoCuenta.objects.filter(condicionesPago__detalleVenta__id = det.id).order_by('-id')
         "Sumatoria de primas"
         for pagoObject in pagosp:
             if pagoObject.prima !=None:
@@ -90,11 +87,10 @@ class detalleLote(GroupRequiredMixin,DetailView):
         context['id'] = id
         context['asignaciones'] = asignacionLote.objects.filter(detalleVenta_id = det.id)  
         context['primas'] = prima.objects.filter(detalleVenta_id = det.id)
-        context['condiciones'] = condicionesPago.objects.filter(detalleVenta_id = det.id).order_by('-estado')
+        context['condiciones'] = condiciones
         context['pagos'] = pago.objects.filter() 
         context['detalleV'] = det
         context['sumPrima'] = round(sumPrima,2)
-        context['cuotaFinanciamiento'] = round(cuotaFinanciamiento,2)
         context['estadosDeCuentaM'] = estadosDeCuentaM    
         return context 
 
@@ -132,8 +128,9 @@ class agregarLote(GroupRequiredMixin,CreateView):
 
     def form_valid(self, form, **kwargs):
         lote = form.save(commit=False) #objeto del formulario
-        lote.identificador = str(lote.numeroLote)+str(lote.poligono) #Concatenar numero y poligono para el identificador
-        lote.areaVCuadrada = lote.areaMCuadrado * decimal.Decimal(1.431) #Calculo de las varas cuadradas
+        lote.identificador = str(lote.poligono) + str(lote.numeroLote) #Concatenar numero y poligono para el identificador
+        lote.areaVCuadrada = lote.areaMCuadrado * decimal.Decimal(1.4308) #Calculo de las varas cuadradas
+        lote.proyectoTuristico=proyectoTuristico.objects.get(pk=self.kwargs['idp'])
         lote.save()
         messages.success(self.request, 'Lote guardado con éxito')
         return HttpResponseRedirect(self.get_url_redirect())
@@ -613,11 +610,11 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
             tasau = (condicion.tasaInteres / 100) /12
             condicion.cuotaKi = condicion.montoFinanciamiento*((tasau *decimal.Decimal((math.pow((1+tasau),condicion.plazo))))/decimal.Decimal((math.pow((1+tasau),condicion.plazo))-1));
             condicion.cuotaKi = round(condicion.cuotaKi, 2)
-            detalle = detalleVenta.objects.get(pk = idv)
+            detalle = detalleVenta.objects.get(id = idv)
             condicion.detalleVenta = detalle
             "Se crea las condiciones de pago y el estado de cuenta"
             condicion.save()
-            estado = estadoCuenta(condicionesPago=condicion, nombre="Mantenimiento")
+            estado = estadoCuenta(condicionesPago_id=condicion.id, nombre="Mantenimiento")
             estado.save()
             messages.success(self.request, 'Condicion de pago guardado con exito, estado de cuenta generado.')
         except Exception:
@@ -656,6 +653,12 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
     template_name = 'inventario/CondicionesDePago/agregarCondicionPago.html'
     form_class = condicionPagoForm
 
+    def get_url_redirect(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None) #id del proyecto
+        idv = self.kwargs.get('idv', None) #id del detalle de venta
+        return reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': idv})
+
     def get_context_data(self, **kwargs):
         context = super(modificarCondicionesP, self).get_context_data(**kwargs)
         pk = self.kwargs.get('pk', None)
@@ -666,8 +669,8 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
         form = super().get_form(form_class)
         form.fields['montoFinanciamiento'].disabled = True 
         form.fields['cuotaKi'].disabled = True
-        detallev= detalleVenta.objects.get(id = self.kwargs['idv'])
-        estado = estadoCuenta.objects.get(condicionesPago__detalleVenta__id = detallev.id)
+        condicion = condicionesPago.objects.get(id=self.kwargs['pk'])
+        estado = estadoCuenta.objects.get(condicionesPago=condicion)
         try:
             cuota = pagoMantenimiento.objects.filter(estadoCuenta_id = estado.id)
             for c in cuota:
@@ -683,9 +686,9 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
     def form_valid(self, form, *args, **kwargs):
         """If the form is valid, save the associated model."""
         idp = self.kwargs.get('idp', None) 
-        id = self.kwargs.get('idv', None) 
+        idv = self.kwargs.get('idv', None) 
         if form.is_valid():
-            condiciones=condicionesPago.objects.filter(detalleVenta__id = id)
+            condiciones=condicionesPago.objects.filter(detalleVenta__id = idv)
             for cond in condiciones:
                 cond.estado = False
                 cond.save()
@@ -696,12 +699,12 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
             condicion.cuotaKi = condicion.montoFinanciamiento*((tasau *decimal.Decimal((math.pow((1+tasau),condicion.plazo))))/decimal.Decimal((math.pow((1+tasau),condicion.plazo))-1));
             condicion.cuotaKi = round(condicion.cuotaKi, 2)
             condicion.save()
-            estado = estadoCuenta(condicionesPago=condicion, nombre="Mantenimiento")
+            estado = estadoCuenta(condicionesPago_id=condicion.id, nombre="Mantenimiento")
             estado.save()
             messages.success(self.request, 'Las condiciones de pago fueron actualizada exitosamente')
         else: 
             messages.error(self.request, 'Ocurrió un error, no se actualizo las condiciones de pago')
-        return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': idp, 'pk': id})) 
+        return HttpResponseRedirect(self.get_url_redirect()) 
  
     
 #eliminar condiciones de pago

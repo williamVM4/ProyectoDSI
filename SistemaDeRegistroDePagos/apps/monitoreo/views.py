@@ -26,11 +26,11 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
             messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
             return HttpResponseRedirect(reverse_lazy('home'))
         try:
-            lot = detalleVenta.objects.get(pk=self.kwargs['pk'])
+            lot = detalleVenta.objects.get(pk=self.kwargs['idv'])
         except Exception:
             messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
             return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
-        estado = estadoCuenta.objects.filter(condicionesPago__detalleVenta__id=self.kwargs['pk']).exists()
+        estado = estadoCuenta.objects.filter(condicionesPago__detalleVenta__id=self.kwargs['idv']).exists()
         if estado is False:
             messages.error(self.request, 'Ocurrió un error el lote no tiene estado de cuenta generado. Verifique que ingreso las condiciones de pago')
             return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['pk']}))    
@@ -41,20 +41,21 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         idp = self.kwargs.get('idp', None)
+        idv = self.kwargs.get('idv', None)
         id = self.kwargs.get('pk', None)
-        condicion=condicionesPago.objects.get(detalleVenta__id=id, estado=True)
-        print(condicion.id)
+        condicion=condicionesPago.objects.get(id=id)
         estado = estadoCuenta.objects.get(condicionesPago__id=condicion.id)
         pagosm = pago.objects.filter(pagoMantenimiento__estadoCuenta=estado).order_by('-fechaRegistro')
-        pagosCuotas = pagoCuotaMantenimiento.objects.filter(estadoCuenta=estado).order_by('-id')
-        pagosp = pago.objects.filter(prima__detalleVenta=id)
+        ultimoPagos=pagoMantenimiento.objects.filter(estadoCuenta=estado).order_by('-fechaRegistro')
+        ultimoPagoM=ultimoPagos[0]
+        pagosp = pago.objects.filter(prima__detalleVenta=idv)
         sumPrima=0.00
         sumMantenimiento=0.00
         sumRecargoMantenimiento=0.00
         sumOtros=0.00
         sumDescuento=0.00
 
-        pagosCuotas=pagoCuotaMantenimiento.objects.annotate(total=Sum('mantenimiento')+Sum('recargo') + Sum('otros')+ Sum('descuento')).order_by('-id')
+        pagosCuotas=pagoCuotaMantenimiento.objects.filter(estadoCuenta=estado, condicionesPago=condicion).annotate(total=Sum('mantenimiento')+Sum('recargo') + Sum('otros')+ Sum('descuento')).order_by('-id')
         
         try:
             saldoUltimoPago=pagosCuotas[0].mantenimiento
@@ -76,9 +77,15 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
         for pagoObject in pagosm:
             sumDescuento=sumDescuento+float(pagoObject.pagoMantenimiento.descuento)
         if saldoUltimoPago !=0:
-            saldoUltimoPago=condicion.mantenimientoCuota-saldoUltimoPago
+            if ultimoPagoM.abono!=0:
+                saldoUltimoPago=condicion.mantenimientoCuota-saldoUltimoPago
+            else:
+                saldoUltimoPago=0.00
         if saldoUltimoRecargo !=0:
-            saldoUltimoRecargo=condicion.multaMantenimiento-saldoUltimoRecargo
+            if ultimoPagoM.saldoRecargo!=0:
+                saldoUltimoRecargo=condicion.multaMantenimiento-saldoUltimoRecargo
+            else:
+                saldoUltimoRecargo=0.00
 
         context['idp'] = idp
         context['id'] = id  
@@ -92,6 +99,7 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
         context['sumRecargoMantenimiento'] = round(sumRecargoMantenimiento,2)
         context['sumOtros'] = round(sumOtros,2)
         context['sumDescuento'] = round(sumDescuento,2)
+        context['condicion'] = condicion
         return context
 
 class EstadoCuentaReporte(TemplateView):
