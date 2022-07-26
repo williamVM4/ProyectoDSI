@@ -47,7 +47,13 @@ class estadoCuentaView(GroupRequiredMixin,ListView):
         estado = estadoCuenta.objects.get(condicionesPago__id=condicion.id)
         pagosm = pago.objects.filter(pagoMantenimiento__estadoCuenta=estado).order_by('-fechaRegistro')
         ultimoPagos=pagoMantenimiento.objects.filter(estadoCuenta=estado).order_by('-fechaRegistro')
-        ultimoPagoM=ultimoPagos[0]
+        try:
+            ultimoPagoM=ultimoPagos[0]
+        except Exception:
+            saldoUltimoPago =0
+            saldoUltimoRecargo =0
+            pass
+
         pagosp = pago.objects.filter(prima__detalleVenta=idv)
         sumPrima=0.00
         sumMantenimiento=0.00
