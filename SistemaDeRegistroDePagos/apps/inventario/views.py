@@ -692,11 +692,21 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
                 cond.save()
             condicion = form.save(commit=False)
             ultimo_id = condicionesPago.objects.latest('id')
-            condicion.id = (ultimo_id.id + 1)
             tasau = (condicion.tasaInteres / 100) /12
             condicion.cuotaKi = condicion.montoFinanciamiento*((tasau *decimal.Decimal((math.pow((1+tasau),condicion.plazo))))/decimal.Decimal((math.pow((1+tasau),condicion.plazo))-1));
             condicion.cuotaKi = round(condicion.cuotaKi, 2)
-            condicion.save()
+            condicionNew = condicionesPago(
+                detalleVenta=condicion.detalleVenta,
+                fechaEscrituracion=condicion.fechaEscrituracion,
+                montoFinanciamiento=condicion.montoFinanciamiento,
+                plazo=condicion.plazo,
+                tasaInteres=condicion.tasaInteres, 
+                cuotaKi=condicion.cuotaKi, 
+                comisionCuota=condicion.comisionCuota,
+                mantenimientoCuota=condicion.mantenimientoCuota, 
+                multaMantenimiento=condicion.multaMantenimiento,
+                multaFinanciamiento=condicion.multaFinanciamiento)
+            condicionNew.save()
             estado = estadoCuenta(condicionesPago_id=condicion.id, nombre="Mantenimiento")
             estado.save()
             messages.success(self.request, 'Las condiciones de pago fueron actualizada exitosamente')
