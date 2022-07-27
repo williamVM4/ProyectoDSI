@@ -713,6 +713,7 @@ class eliminarCondicionesP(GroupRequiredMixin, DeleteView):
     model = condicionesPago
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        "validacion de que exista el proyecto turistico"
         try:
             proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
         except Exception:
@@ -730,10 +731,13 @@ class eliminarCondicionesP(GroupRequiredMixin, DeleteView):
             return reverse_lazy('gestionarLotes', kwargs={'idp': idp})
 
     def post(self,request,*args,**kwargs):
+        #obtener objeto del deleteview
         condicion = self.get_object()
-        print(condicion.id)
+        #Obtener objetos relacionados a las condiciones de pago y los pagos relacionados
         estados = estadoCuenta.objects.filter(condicionesPago = condicion)
         pagosM = pagoCuotaMantenimiento.objects.filter(condicionesPago = condicion)
+        #falta obtener los datos de las tablas pagosM y pagos
+        "elimicacion de objetos"
         for pago in pagosM:
             pago.delete()
         for estado in estados:
