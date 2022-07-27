@@ -60,8 +60,8 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                                        {% for lote in lotes%}
                                                         <tr>
-                                                            {% for lote in lotes%}
                                                             <td>{{lote.detalleVenta.lote.identificador}}</td>
                                                             {% if lote.detalleVenta.estado is True%}
                                                             <td>Activo</td>
@@ -69,9 +69,8 @@
                                                             <td>Inactivo</td>
                                                             {% endif %}
                                                             {% comment %} {% empty %} {% endcomment %}
-                                                            {%endfor%}
-                                                            
                                                         </tr>
+                                                        {%endfor%}
                                                     </tbody>
                                                 </table>
                                             </div>
