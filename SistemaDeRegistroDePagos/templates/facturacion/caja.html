@@ -237,7 +237,7 @@
                             {% endif %}
                                 
                             {% if pago.pagoMantenimiento%}
-                            <td id="{{pago.id}}55" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoMantenimiento.estadoCuenta.detalleVenta.lote.identificador}}
+                            <td id="{{pago.id}}55" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoMantenimiento.estadoCuenta.condicionesPago.detalleVenta.lote.identificador}}
                               <div class="dropdown">
                                 <div id="{{pago.id}}55O" class="dropdown-menu Options">
                                   <div class="opciones">
@@ -273,7 +273,7 @@
                               </td>
                               {% else %}
                                   {% if pago.pagoFinanciamiento%}
-                                  <td id="{{pago.id}}55" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoFinanciamiento.estadoCuenta.detalleVenta.lote.identificador}}
+                                  <td id="{{pago.id}}55" class="linkDetalle" data-href="{% url 'detallePago' idp=idp pk=pago.id %}">{{pago.pagoFinanciamiento.estadoCuenta.condicionesPago.detalleVenta.lote.identificador}}
                                     <div class="dropdown">
                                       <div id="{{pago.id}}55O" class="dropdown-menu Options">
                                         <div class="opciones">
@@ -332,6 +332,7 @@
             <div class="modal-body">
                 <a class="btn btn-default btn-block" href="{% url 'agregarprima' idp=idp %}"> Prima </a>
                 <a class="btn btn-default btn-block" href="{% url 'agregarPagoMantenimiento' idp=idp %}"> Pago por mantenimiento </a>
+                <a class="btn btn-default btn-block" href="{% url 'agregarPagoFinanciamiento' idp=idp %}"> Pago por financiamiento </a>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

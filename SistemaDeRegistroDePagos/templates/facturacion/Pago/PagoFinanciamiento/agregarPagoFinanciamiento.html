@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block head %} {% endblock %}
+
+{% block content %} 
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="form-panel panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Agregar pago por financiamiento</h3>
+                </div>
+                <div class="panel-body">
+                    <form id = "formulario" role="form" action="." method="POST">
+                        {% csrf_token %}
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p class="label-form">{{form3.matricula.label}}</p>
+                                        {{form3.matricula|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el número del recibo del mantenimiento'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form3.matricula.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">Número de recibo de mantenimiento</p>
+                                        {{form.numeroReciboMantenimiento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el número del recibo de pago'|attr:'min:0'|attr:'max:99999'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.numeroReciboMantenimiento.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">Fecha de pago</p>
+                                        {{form2.fechaPago|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la fecha de pago'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.fechaPago.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">{{form2.monto.label}}</p>
+                                        <div class="input-group"><span class="input-group-addon">$</span>
+                                        {{form2.monto|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto del pago'|attr:'min:0'}}</div>
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.monto.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">Tipo de pago</p>
+                                        {{form2.tipoPago|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.tipoPago.help_text}}</p></div>
+                                    </div>
+                                    <div id="referencia" class="form-group oculto">
+                                        <p class="label-form">Referencia del comprobante de pago</p>
+                                        {{form2.referencia|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese la referencia del comprobante del banco'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.referencia.help_text}}</p></div>
+                                    </div>
+                                    <div id="cuentaBancaria" class="form-group oculto">
+                                        <p class="label-form">Cuenta bancaria</p>
+                                        {{form2.cuentaBancaria|add_class:' form-control'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.cuentaBancaria.help_text}}</p></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p class="label-form">Concepto por otros pagos</p>
+                                        {{form.conceptoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el concepto por otros pagos'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.conceptoOtros.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">Monto por otros pagos</p>
+                                        <div class="input-group"><span class="input-group-addon">$</span>
+                                        {{form.montoOtros|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por otros pagos'|attr:'min:0'}}</div>
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.montoOtros.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">Concepto de descuento por recargo</p>
+                                        {{form.conceptoDescuento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el concepto por descuento'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.conceptoDescuento.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">Monto de descuento por recargo</p>
+                                        <div class="input-group"><span class="input-group-addon">$</span>
+                                        {{form.descuento|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese el monto por descuento'|attr:'min:0'}}</div>
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form.descuento.help_text}}</p></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="label-form">Observaciones</p>
+                                        {{form2.observaciones|add_class:'form-control'|attr:'rows:9' |attr:'colm:40'|attr:'autocomplete:off'|attr:'placeholder:'}}
+                                        <div class ="help-block"><p class="text-muted label-help-form">{{form2.observaciones.help_text}}</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary btn-block"> Agregar </button>
+                            </div>
+                            <div class="col-md-2">
+                                <a class="btn btn-danger btn-block" href="{% url 'caja' idp=idp %}"> Cancelar </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script type= application/javascript>
+    {%if form.errors%}
+        var errors = '';
+        {%for field in form%}
+          {% for error in field.errors %}
+            errors += '{{ error }}\n';
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          errors += '{{ error }}\n';
+        {% endfor %}
+        Swal.fire({
+            icon: 'error',
+            text: errors,
+          })
+    {% endif %}
+    {%if messages%}
+        var msg = '';
+        var msg1 = '';
+        {%for message in messages%}
+        {% if 'error' in message.tags %}
+            msg += '{{ message }}\n';
+          {% endif %}
+        {% endfor %}
+        if(msg != ''){
+        Swal.fire({
+            icon: 'error',
+            text: msg,
+            //footer: '<a href="">Why do I have this issue?</a>'
+          })
+        }
+    {% endif %} 
+
+    $('#id_tipoPago').on('change',function(){
+        var selectValor = $(this).val();
+        if (selectValor == '2') {
+            $('#referencia').removeClass('oculto');
+            $('#cuentaBancaria').removeClass('oculto');
+        }else {
+            $('#referencia').addClass('oculto');
+            $('#cuentaBancaria').addClass('oculto');
+        }
+    });
+
+    $('form').submit(function(event) { 
+        let date = new Date();
+        now = date.toISOString().split('T')[0];
+        if($('#id_fechaPago').val() > now) {
+            Swal.fire({
+                icon: 'error',
+                text: 'La fecha de pago no puede ser mayor a la actual',
+              })
+            return false;
+        }
+        if($('#id_tipoPago').val() == '2') {
+            if($('#id_referencia').val() == '') {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Debe ingresar la referencia',
+                  })
+                return false;
+            }
+        }
+        if($('#id_tipoPago').val() == '2') {
+            if($('#id_cuentaBancaria').val() == '') {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Debe ingresar la cuenta bancaria',
+                  })
+                return false;
+            }
+        }
+    });
+
+  </script>
+{% endblock %}

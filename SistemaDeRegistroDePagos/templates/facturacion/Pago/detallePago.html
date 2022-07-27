@@ -64,13 +64,13 @@
                                                 <p><b>Fecha de Pago:</b> {{pago.fechaPago}}</p>
                                                 <p><b>Lote:</b> 
                                                     {% if pago.pagoMantenimiento%}
-                                                        {{pago.pagoMantenimiento.estadoCuenta.detalleVenta.lote.identificador}}
+                                                        {{pago.pagoMantenimiento.estadoCuenta.condicionesPago.detalleVenta.lote.identificador}}
                                                     {% else %}
                                                         {% if pago.prima%}
                                                             {{pago.prima.detalleVenta.lote.identificador}}
                                                         {% else %}
                                                             {% if pago.pagoFinanciamiento%}
-                                                                {{pago.pagoFinanciamiento.estadoCuenta.detalleVenta.lote.identificador}}
+                                                                {{pago.pagoFinanciamiento.estadoCuenta.condicionesPago.detalleVenta.lote.identificador}}
                                                             {% endif %}
                                                         {% endif %}
                                                     {% endif %}
