@@ -7,7 +7,7 @@ from django.views.generic import TemplateView, CreateView, FormView, ListView, D
 from django.contrib.auth import login
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from apps.facturacion.models import pago, pagoMantenimiento, prima
+from apps.facturacion.models import pago, pagoMantenimiento, prima, pagoCuotaMantenimiento
 from apps.monitoreo.models import estadoCuenta
 from apps.inventario.models import asignacionLote, asignacionProyecto, detalleVenta, lote, proyectoTuristico
 from apps.autenticacion.mixins import *
@@ -732,7 +732,13 @@ class eliminarCondicionesP(GroupRequiredMixin, DeleteView):
     def post(self,request,*args,**kwargs):
         condicion = self.get_object()
         print(condicion.id)
-        #condicion.delete()
+        estados = estadoCuenta.objects.filter(condicionesPago = condicion)
+        pagosM = pagoCuotaMantenimiento.objects.filter(condicionesPago = condicion)
+        for pago in pagosM:
+            pago.delete()
+        for estado in estados:
+            estado.delete()
+        condicion.delete()
         return HttpResponseRedirect(self.get_url_redirect())
 
 
