@@ -18,6 +18,7 @@ from apps.inventario.models import *
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from crum import get_current_user
+from django_serverside_datatable.views import ServerSideDatatableView
 from django.http.response import HttpResponse
 from openpyxl import Workbook
 from openpyxl.styles import *
@@ -447,10 +448,13 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
             condicionAnterior = condiciones[1]
             estadoCA = estadoCuenta.objects.get(condicionesPago = condicionAnterior)
             listadoPagosCA=pagoMantenimiento.objects.filter(estadoCuenta=estadoCA).order_by('-fechaRegistro')
-            ultimoPagoListadoCA=listadoPagosCA[0]
-            ultimoPagoCA=pago.objects.get(pagoMantenimiento = ultimoPagoListadoCA)
-            fechaCorte=ultimoPagoCA.pagoMantenimiento.fechaUltimoMtto
-            fechaUltimoRecargo=ultimoPagoCA.pagoMantenimiento.fechaUltimoRecargo
+            try:
+                ultimoPagoListadoCA=listadoPagosCA[0]
+                ultimoPagoCA=pago.objects.get(pagoMantenimiento = ultimoPagoListadoCA)
+                fechaCorte=ultimoPagoCA.pagoMantenimiento.fechaUltimoMtto
+                fechaUltimoRecargo=ultimoPagoCA.pagoMantenimiento.fechaUltimoRecargo
+            except Exception:
+                pass
 
         #Validacion de la fecha de pago
         if fechaPago<fechaUltimoPago:
@@ -524,62 +528,66 @@ def calculoMantenimiento(self,form, condicion, condiciones, stringCondicionAnter
         condicionAnterior = condiciones[1]
         estadoCA = estadoCuenta.objects.get(condicionesPago = condicionAnterior)
         listadoPagosCA=pagoMantenimiento.objects.filter(estadoCuenta=estadoCA).order_by('-fechaRegistro')
-        ultimoPagoListadoCA=listadoPagosCA[0]
-        ultimoPagoCA=pago.objects.get(pagoMantenimiento = ultimoPagoListadoCA)
-        fechaUltimoPagoCA=ultimoPagoCA.fechaPago
-        fechaCorteCA=ultimoPagoCA.pagoMantenimiento.fechaUltimoMtto
-        saldoUltimaCuotaCA=ultimoPagoCA.pagoMantenimiento.abono
-        fechaUltimoRecargoCA=ultimoPagoCA.pagoMantenimiento.fechaUltimoRecargo
-        saldoUltimoRecargoCA=ultimoPagoCA.pagoMantenimiento.saldoRecargo
-        mantenimientoCuotaCA=condicionAnterior.mantenimientoCuota
-        multaMantenimientoCA=condicionAnterior.multaMantenimiento
-        
-        if monto>0:
-            if saldoUltimoRecargoCA !=0 and saldoUltimaCuotaCA !=0:
-                fechaCorte=fechaCorteCA
-                fechaUltimoRecargo=fechaUltimoRecargoCA
-                if monto>(saldoUltimaCuotaCA+saldoUltimoRecargoCA) and saldoUltimaCuotaCA !=0 and saldoUltimoRecargoCA !=0:
-                    stringRecargo+="Compl. Recargo "+printFecha(fechaUltimoRecargoCA)+"   $ "+str(round(multaMantenimientoCA-saldoUltimoRecargoCA,2))+"\n"
-                    monto-=multaMantenimientoCA-saldoUltimoRecargoCA
-                    stringMantenimiento+="Compl. Cuota "+printFecha(fechaCorteCA)+"   $ "+str(round(mantenimientoCuotaCA-saldoUltimaCuotaCA,2))+"\n"
-                    monto-=mantenimientoCuotaCA-saldoUltimaCuotaCA
-                    ultimoPagoCA.pagoMantenimiento.abono -= saldoUltimaCuotaCA
-                    ultimoPagoCA.pagoMantenimiento.saldoRecargo -= saldoUltimoRecargoCA
-                    ultimoPagoCA.pagoMantenimiento.save()
-                    registoCuotaM(recibo,estadoCA, condicionAnterior,fechaPago,fechaCorteCA,"Compl. Cuota y Recargo "+printFecha(fechaCorteCA),mantenimientoCuotaCA-saldoUltimaCuotaCA,multaMantenimientoCA-saldoUltimoRecargoCA,0,0)
-                else:
-                    if monto>saldoUltimoRecargoCA and monto<(saldoUltimaCuotaCA+saldoUltimoRecargoCA):
+        #Comprobamos que existan las pagos de la condicion anterior
+        try:
+            ultimoPagoListadoCA=listadoPagosCA[0]
+            ultimoPagoCA=pago.objects.get(pagoMantenimiento = ultimoPagoListadoCA)
+            fechaUltimoPagoCA=ultimoPagoCA.fechaPago
+            fechaCorteCA=ultimoPagoCA.pagoMantenimiento.fechaUltimoMtto
+            saldoUltimaCuotaCA=ultimoPagoCA.pagoMantenimiento.abono
+            fechaUltimoRecargoCA=ultimoPagoCA.pagoMantenimiento.fechaUltimoRecargo
+            saldoUltimoRecargoCA=ultimoPagoCA.pagoMantenimiento.saldoRecargo
+            mantenimientoCuotaCA=condicionAnterior.mantenimientoCuota
+            multaMantenimientoCA=condicionAnterior.multaMantenimiento
+            
+            if monto>0:
+                if saldoUltimoRecargoCA !=0 and saldoUltimaCuotaCA !=0:
+                    fechaCorte=fechaCorteCA
+                    fechaUltimoRecargo=fechaUltimoRecargoCA
+                    if monto>(saldoUltimaCuotaCA+saldoUltimoRecargoCA) and saldoUltimaCuotaCA !=0 and saldoUltimoRecargoCA !=0:
                         stringRecargo+="Compl. Recargo "+printFecha(fechaUltimoRecargoCA)+"   $ "+str(round(multaMantenimientoCA-saldoUltimoRecargoCA,2))+"\n"
                         monto-=multaMantenimientoCA-saldoUltimoRecargoCA
-                        stringMantenimiento+="Ab. Cuota "+printFecha(fechaCorteCA)+"   $ "+str(round(monto,2))+"\n"
-                        monto-=monto
-                        ultimoPagoCA.pagoMantenimiento.abono +=monto
+                        stringMantenimiento+="Compl. Cuota "+printFecha(fechaCorteCA)+"   $ "+str(round(mantenimientoCuotaCA-saldoUltimaCuotaCA,2))+"\n"
+                        monto-=mantenimientoCuotaCA-saldoUltimaCuotaCA
+                        ultimoPagoCA.pagoMantenimiento.abono -= saldoUltimaCuotaCA
                         ultimoPagoCA.pagoMantenimiento.saldoRecargo -= saldoUltimoRecargoCA
                         ultimoPagoCA.pagoMantenimiento.save()
-                        registoCuotaM(recibo,estadoCA, condicionAnterior,fechaPago,fechaCorteCA,"Compl. Recargo y Ab. Cuota "+printFecha(fechaCorteCA),monto,multaMantenimientoCA-saldoUltimoRecargoCA,0,0)
-                    elif monto<saldoUltimoRecargoCA:
-                        stringRecargo+="Ab. Recargo "+printFecha(fechaUltimoRecargoCA)+"   $ "+str(round(monto,2))+"\n"
-                        monto-=monto
-                        ultimoPagoCA.pagoMantenimiento.saldoRecargo +=monto
+                        registoCuotaM(recibo,estadoCA, condicionAnterior,fechaPago,fechaCorteCA,"Compl. Cuota y Recargo "+printFecha(fechaCorteCA),mantenimientoCuotaCA-saldoUltimaCuotaCA,multaMantenimientoCA-saldoUltimoRecargoCA,0,0)
+                    else:
+                        if monto>saldoUltimoRecargoCA and monto<(saldoUltimaCuotaCA+saldoUltimoRecargoCA):
+                            stringRecargo+="Compl. Recargo "+printFecha(fechaUltimoRecargoCA)+"   $ "+str(round(multaMantenimientoCA-saldoUltimoRecargoCA,2))+"\n"
+                            monto-=multaMantenimientoCA-saldoUltimoRecargoCA
+                            stringMantenimiento+="Ab. Cuota "+printFecha(fechaCorteCA)+"   $ "+str(round(monto,2))+"\n"
+                            monto-=monto
+                            ultimoPagoCA.pagoMantenimiento.abono +=monto
+                            ultimoPagoCA.pagoMantenimiento.saldoRecargo -= saldoUltimoRecargoCA
+                            ultimoPagoCA.pagoMantenimiento.save()
+                            registoCuotaM(recibo,estadoCA, condicionAnterior,fechaPago,fechaCorteCA,"Compl. Recargo y Ab. Cuota "+printFecha(fechaCorteCA),monto,multaMantenimientoCA-saldoUltimoRecargoCA,0,0)
+                        elif monto<saldoUltimoRecargoCA:
+                            stringRecargo+="Ab. Recargo "+printFecha(fechaUltimoRecargoCA)+"   $ "+str(round(monto,2))+"\n"
+                            monto-=monto
+                            ultimoPagoCA.pagoMantenimiento.saldoRecargo +=monto
+                            ultimoPagoCA.pagoMantenimiento.save()
+                            registoCuotaM(recibo,estadoCA, condicionAnterior,fechaPago,fechaCorteCA,"Ab. Recargo "+printFecha(fechaCorteCA),0,multaMantenimientoCA-saldoUltimoRecargoCA,0,0)
+                elif saldoUltimaCuotaCA !=0 and saldoUltimoRecargoCA ==0:
+                    fechaPago=fechaUltimoPagoCA
+                    fechaCorte=fechaCorteCA
+                    fechaUltimoRecargoCA=fechaUltimoRecargo
+                    if monto>saldoUltimaCuotaCA:
+                        stringMantenimiento+="Compl. Cuota "+printFecha(fechaCorteCA)+"   $ "+str(round(mantenimientoCuotaCA-saldoUltimaCuotaCA,2))+"\n"
+                        monto-=mantenimientoCuotaCA-saldoUltimaCuotaCA
+                        ultimoPagoCA.pagoMantenimiento.abono -= saldoUltimaCuotaCA
                         ultimoPagoCA.pagoMantenimiento.save()
-                        registoCuotaM(recibo,estadoCA, condicionAnterior,fechaPago,fechaCorteCA,"Ab. Recargo "+printFecha(fechaCorteCA),0,multaMantenimientoCA-saldoUltimoRecargoCA,0,0)
-            elif saldoUltimaCuotaCA !=0 and saldoUltimoRecargoCA ==0:
-                fechaPago=fechaUltimoPagoCA
-                fechaCorte=fechaCorteCA
-                fechaUltimoRecargoCA=fechaUltimoRecargo
-                if monto>saldoUltimaCuotaCA:
-                    stringMantenimiento+="Compl. Cuota "+printFecha(fechaCorteCA)+"   $ "+str(round(mantenimientoCuotaCA-saldoUltimaCuotaCA,2))+"\n"
-                    monto-=mantenimientoCuotaCA-saldoUltimaCuotaCA
-                    ultimoPagoCA.pagoMantenimiento.abono -= saldoUltimaCuotaCA
-                    ultimoPagoCA.pagoMantenimiento.save()
-                    registoCuotaM(recibo,estadoCA, condicionAnterior,fechaPago,fechaCorteCA,"Compl. Cuota "+printFecha(fechaCorteCA),mantenimientoCuotaCA-saldoUltimaCuotaCA,0,0,0)
-                elif monto<saldoUltimaCuotaCA:
-                    stringMantenimiento+="Ab. Cuota "+printFecha(fechaCorteCA)+"   $ "+str(round(mantenimientoCuota-saldoUltimaCuotaCA,2))+"\n"
-                    monto-=monto
-                    ultimoPagoCA.pagoMantenimiento.abono +=monto
-                    ultimoPagoCA.pagoMantenimiento.save()
-                    registoCuotaM(recibo,estadoCA, condicionAnterior,fechaPago,fechaCorteCA,"Ab. Cuota "+printFecha(fechaCorteCA),monto,0,0,0)
-        
+                        registoCuotaM(recibo,estadoCA, condicionAnterior,fechaPago,fechaCorteCA,"Compl. Cuota "+printFecha(fechaCorteCA),mantenimientoCuotaCA-saldoUltimaCuotaCA,0,0,0)
+                    elif monto<saldoUltimaCuotaCA:
+                        stringMantenimiento+="Ab. Cuota "+printFecha(fechaCorteCA)+"   $ "+str(round(mantenimientoCuota-saldoUltimaCuotaCA,2))+"\n"
+                        monto-=monto
+                        ultimoPagoCA.pagoMantenimiento.abono +=monto
+                        ultimoPagoCA.pagoMantenimiento.save()
+                        registoCuotaM(recibo,estadoCA, condicionAnterior,fechaPago,fechaCorteCA,"Ab. Cuota "+printFecha(fechaCorteCA),monto,0,0,0)
+        except Exception:
+            pass
+            
     #Calculo del mantenimiento 
     yaInicio=""
     cantVecesRC=0

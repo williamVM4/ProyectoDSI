@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from apps.inventario.models import asignacionLote, detalleVenta, proyectoTuristico
 from apps.monitoreo.models import estadoCuenta, condicionesPago
 from apps.facturacion.models import pago, pagoMantenimiento, pagoCuotaMantenimiento
+from django_serverside_datatable.views import ServerSideDatatableView
 from apps.autenticacion.mixins import *
 from django.contrib import messages
 from .forms import *
@@ -15,6 +16,10 @@ from openpyxl.styles import *
 from django.http.response import HttpResponse
 from django.db.models import Sum
 from decimal import Decimal
+
+class ItemListView(ServerSideDatatableView):
+    columns = ['fechaPago', 'fechaCorte','numeroReciboMantenimiento', 'concepto','mantenimiento','recargo','otros','descuento','total']
+    queryset = pagoCuotaMantenimiento.objects.all().annotate(total=Sum('mantenimiento')+Sum('recargo') + Sum('otros')+ Sum('descuento'))
 
 class estadoCuentaViewM(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']

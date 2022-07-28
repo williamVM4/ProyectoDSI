@@ -12,5 +12,5 @@ urlpatterns = [
     path('agregarcuenta/<str:idp>/',agregarCuentaBancaria.as_view(),name='agregarCuentaB'),
     path('recibo/<str:idp>/<str:pk>/',Recibo.as_view(),name='recibo'),
     path('eliminarPrima/<str:idp>/<str:idv>/<str:id>/',EliminarPrima.as_view(),name='eliminarPrima'),
-    path('modificarPrima/<str:idp>/<str:idv>/<str:pk>/',ModificarPrima.as_view(), name='modificarPrima')
+    path('modificarPrima/<str:idp>/<str:idv>/<str:pk>/',ModificarPrima.as_view(), name='modificarPrima'),
 ]

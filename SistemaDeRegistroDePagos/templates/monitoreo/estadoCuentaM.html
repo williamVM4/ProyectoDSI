@@ -88,35 +88,21 @@
                         <div class="row pt-2">
                             <div class="col-md-12">
                               <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                <table id="items-table" class="table table-striped table-bordered table-hover">
                                     <thead>
-                                        <tr>
-                                            <th>Fecha de Pago</th>
-                                            <th>Fecha de Corte</th>
-                                            <th>Recibo</th>
-                                            <th>Concepto</th>
-                                            <th>Mantenimiento</th>
-                                            <th>Recargo</th>
-                                            <th>Otros</th>
-                                            <th>Descuento</th>
-                                            <th>Total</th>
-                                        </tr>
+                                      <tr>
+                                        <th>Fecha de Pago</th>
+                                        <th>Fecha de Corte</th>
+                                        <th>Recibo</th>
+                                        <th>Concepto</th>
+                                        <th>Mantenimiento</th>
+                                        <th>Recargo</th>
+                                        <th>Otros</th>
+                                        <th>Descuento</th>
+                                        <th>Total</th>
+                                      </tr>
                                     </thead>
-                                    <tbody>
-                                        {% for pago in pagosCuotas%}
-                                        <tr>
-                                            <td>{{pago.fechaPago}}</td>
-                                            <td>{{pago.fechaCorte}}</td>
-                                            <td>{{pago.numeroReciboMantenimiento}}</td>
-                                            <td>{{pago.concepto}}</td>
-                                            <td>{{pago.mantenimiento}}</td>
-                                            <td>{{pago.recargo}}</td>
-                                            <td>{{pago.otros}}</td>
-                                            <td>{{pago.descuento}}</td>
-                                            <td>{{pago.total}}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
                               </div>
                             </div>
@@ -137,6 +123,23 @@
 <script src="{% static 'js/dataTables/jquery.dataTables.min.js'%}"></script>
 <script src="{% static 'js/dataTables/dataTables.bootstrap.min.js'%}"></script>
 <script type= application/javascript>
+    $(document).ready(function () {
+        $('#items-table').dataTable({
+            serverSide: true,
+            sAjaxSource: "http://127.0.0.1:8000/data/",  // new url
+                                columns: [
+                                    {name: "fechaPago", data: 0},
+                                    {name: "fechaCorte", data: 1},
+                                    {name: "numeroReciboMantenimiento", data: 2},
+                                    {name: "concepto", data: 3},
+                                    {name: "mantenimiento", data: 4},
+                                    {name: "recargo", data: 5},
+                                    {name: "otros", data: 6},
+                                    {name: "descuento", data: 7},
+                                    {name: "total", data: 8},
+                                ],
+        });
+    });
     {%if messages%}
         var msg = '';
         var msg1 = '';

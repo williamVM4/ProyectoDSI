@@ -691,7 +691,6 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
                 cond.estado = False
                 cond.save()
             condicion = form.save(commit=False)
-            ultimo_id = condicionesPago.objects.latest('id')
             tasau = (condicion.tasaInteres / 100) /12
             condicion.cuotaKi = condicion.montoFinanciamiento*((tasau *decimal.Decimal((math.pow((1+tasau),condicion.plazo))))/decimal.Decimal((math.pow((1+tasau),condicion.plazo))-1))
             condicion.cuotaKi = round(condicion.cuotaKi, 2)
