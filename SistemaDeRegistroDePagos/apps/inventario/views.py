@@ -611,9 +611,9 @@ class agregarCondicionP(GroupRequiredMixin,CreateView):
         condicion.cuotaKi = round(condicion.cuotaKi, 2)
         detalle = detalleVenta.objects.get(id = idv)
         condicion.detalleVenta = detalle
-        "Se crea las condiciones de pago y el estado de cuenta"
         condicion.save()
-        estado = estadoCuenta(condicionesPago_id=condicion.id, nombre="Mantenimiento")
+        "Se crea las condiciones de pago y el estado de cuenta"
+        estado = estadoCuenta(condicionesPago=condicion, nombre="Mantenimiento")
         estado.save()
         messages.success(self.request, 'Condicion de pago guardado con exito, estado de cuenta generado.')
 
@@ -693,7 +693,7 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
             condicion = form.save(commit=False)
             ultimo_id = condicionesPago.objects.latest('id')
             tasau = (condicion.tasaInteres / 100) /12
-            condicion.cuotaKi = condicion.montoFinanciamiento*((tasau *decimal.Decimal((math.pow((1+tasau),condicion.plazo))))/decimal.Decimal((math.pow((1+tasau),condicion.plazo))-1));
+            condicion.cuotaKi = condicion.montoFinanciamiento*((tasau *decimal.Decimal((math.pow((1+tasau),condicion.plazo))))/decimal.Decimal((math.pow((1+tasau),condicion.plazo))-1))
             condicion.cuotaKi = round(condicion.cuotaKi, 2)
             condicionNew = condicionesPago(
                 detalleVenta=condicion.detalleVenta,
@@ -707,7 +707,7 @@ class modificarCondicionesP(GroupRequiredMixin, UpdateView):
                 multaMantenimiento=condicion.multaMantenimiento,
                 multaFinanciamiento=condicion.multaFinanciamiento)
             condicionNew.save()
-            estado = estadoCuenta(condicionesPago_id=condicion.id, nombre="Mantenimiento")
+            estado = estadoCuenta(condicionesPago=condicionNew, nombre="Mantenimiento")
             estado.save()
             messages.success(self.request, 'Las condiciones de pago fueron actualizada exitosamente')
         else: 
