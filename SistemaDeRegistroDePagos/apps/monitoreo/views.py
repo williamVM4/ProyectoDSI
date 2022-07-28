@@ -16,7 +16,99 @@ from django.http.response import HttpResponse
 from django.db.models import Sum
 from decimal import Decimal
 
-class estadoCuentaView(GroupRequiredMixin,ListView):
+class estadoCuentaViewM(GroupRequiredMixin,ListView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el proyecto existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        try:
+            lot = detalleVenta.objects.get(pk=self.kwargs['idv'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, asegurese de que el detalle de la venta existe')
+            return HttpResponseRedirect(reverse_lazy('gestionarLotes', kwargs={'idp': self.kwargs['idp']}))
+        estado = estadoCuenta.objects.filter(condicionesPago__detalleVenta__id=self.kwargs['idv']).exists()
+        if estado is False:
+            messages.error(self.request, 'Ocurrió un error el lote no tiene estado de cuenta generado. Verifique que ingreso las condiciones de pago')
+            return HttpResponseRedirect(reverse_lazy('detalleLote', kwargs={'idp': self.kwargs['idp'], 'pk': self.kwargs['pk']}))    
+        return super().dispatch(request, *args, **kwargs)
+    template_name = 'monitoreo/estadoCuentaM.html'
+    model = detalleVenta
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None)
+        idv = self.kwargs.get('idv', None)
+        id = self.kwargs.get('pk', None)
+        condicion=condicionesPago.objects.get(id=id)
+        estado = estadoCuenta.objects.get(condicionesPago__id=condicion.id)
+        pagosm = pago.objects.filter(pagoMantenimiento__estadoCuenta=estado).order_by('-fechaRegistro')
+        ultimoPagos=pagoMantenimiento.objects.filter(estadoCuenta=estado).order_by('-fechaRegistro')
+        try:
+            ultimoPagoM=ultimoPagos[0]
+        except Exception:
+            saldoUltimoPago =0
+            saldoUltimoRecargo =0
+            pass
+
+        pagosp = pago.objects.filter(prima__detalleVenta=idv)
+        sumPrima=0.00
+        sumMantenimiento=0.00
+        sumRecargoMantenimiento=0.00
+        sumOtros=0.00
+        sumDescuento=0.00
+
+        pagosCuotas=pagoCuotaMantenimiento.objects.filter(estadoCuenta=estado, condicionesPago=condicion).annotate(total=Sum('mantenimiento')+Sum('recargo') + Sum('otros')+ Sum('descuento')).order_by('-id')
+        
+        try:
+            saldoUltimoPago=pagosCuotas[0].mantenimiento
+            saldoUltimoRecargo=pagosCuotas[0].recargo
+            pagoUltimaCuota=pagosCuotas[0]
+        except Exception:
+            pagoUltimaCuota=pagoCuotaMantenimiento(numeroReciboMantenimiento="N/A", fechaRegistro="N/A",fechaPago="N/A", fechaCorte="N/A", concepto="N/A", mantenimiento=0.00, recargo=0.00, otros=0.00,descuento=0.00)
+            saldoUltimoPago=0.00
+            saldoUltimoRecargo=0.00
+        for pagoObject in pagosp:
+            if pagoObject.prima !=None:
+                sumPrima=sumPrima+float(pagoObject.monto)
+        for pagoObject in pagosm:
+            sumMantenimiento=sumMantenimiento+float(pagoObject.pagoMantenimiento.mantenimiento)
+        for pagoObject in pagosm:
+            sumRecargoMantenimiento=sumRecargoMantenimiento+float(pagoObject.pagoMantenimiento.recargoMtto)
+        for pagoObject in pagosm:
+            sumOtros=sumOtros+float(pagoObject.pagoMantenimiento.montoOtros)
+        for pagoObject in pagosm:
+            sumDescuento=sumDescuento+float(pagoObject.pagoMantenimiento.descuento)
+        if saldoUltimoPago !=0:
+            if ultimoPagoM.abono!=0:
+                saldoUltimoPago=condicion.mantenimientoCuota-saldoUltimoPago
+            else:
+                saldoUltimoPago=0.00
+        if saldoUltimoRecargo !=0:
+            if ultimoPagoM.saldoRecargo!=0:
+                saldoUltimoRecargo=condicion.multaMantenimiento-saldoUltimoRecargo
+            else:
+                saldoUltimoRecargo=0.00
+
+        context['idp'] = idp
+        context['id'] = id  
+        context['pagosm'] = pagosm
+        context['pagosCuotas'] = pagosCuotas
+        context['pagoUltimaCuota'] = pagoUltimaCuota
+        context['saldoUltimoPago'] = saldoUltimoPago
+        context['saldoUltimoRecargo'] = saldoUltimoRecargo
+        context['sumPrima'] = round(sumPrima,2)
+        context['sumMantenimiento'] = round(sumMantenimiento,2)
+        context['sumRecargoMantenimiento'] = round(sumRecargoMantenimiento,2)
+        context['sumOtros'] = round(sumOtros,2)
+        context['sumDescuento'] = round(sumDescuento,2)
+        context['condicion'] = condicion
+        return context
+
+class estadoCuentaViewF(GroupRequiredMixin,ListView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema']
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

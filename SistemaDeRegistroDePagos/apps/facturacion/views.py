@@ -108,10 +108,10 @@ class caja(GroupRequiredMixin, FormView):
                     lote = p.prima.detalleVenta.lote.identificador
                     concepto = 'Prima'
                 if p.pagoFinanciamiento != None:
-                    lote = p.pagoFinanciamiento.estadoCuenta.detalleVenta.lote.identificador
+                    lote = p.pagoFinanciamiento.estadoCuenta.condicionesPago.detalleVenta.lote.identificador
                     concepto = 'Pago Financiamiento'
                 if p.pagoMantenimiento != None:
-                    lote = p.pagoMantenimiento.estadoCuenta.detalleVenta.lote.identificador
+                    lote = p.pagoMantenimiento.estadoCuenta.condicionesPago.detalleVenta.lote.identificador
                     concepto = 'Pago Mantenimiento'
                 if p.prima == None and p.pagoFinanciamiento == None and p.pagoMantenimiento == None:
                     messages.error(self.request, 'x')
@@ -249,6 +249,49 @@ class detallePago(GroupRequiredMixin,DetailView):
         return context
 
 "Vista de formulario para agregar pago por mantenimiento"
+class agregarPagoFinanciamiento(GroupRequiredMixin,CreateView):
+    group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            proyecto = proyectoTuristico.objects.get(pk=self.kwargs['idp'])
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, el proyecto no existe')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        return super().dispatch(request, *args, **kwargs)
+
+    model = pagoFinanciamiento
+    form_class = agregarPagoFinanciamientoForm
+    second_form_class = pagoForm
+    third_form_class = lotePagoForm
+    template_name = 'facturacion/Pago/PagoFinanciamiento/agregarPagoFinanciamiento.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(agregarPagoMantenimiento, self).get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None)
+        if 'form2' not in context:
+            context['form2'] = self.second_form_class(id = idp)
+        if 'form3' not in context:
+            context['form3'] = self.third_form_class(id = idp)
+        context['idp'] = idp
+        return context 
+    
+    def get_url_redirect(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        idp = self.kwargs.get('idp', None)
+        return reverse_lazy('caja', kwargs={'idp': idp})
+
+    def form_valid(self, form, **kwargs):
+        context=super().get_context_data(**kwargs)
+        
+        lotef = self.third_form_class(self.request.POST).data['matricula']
+        detalle = detalleVenta.objects.get(id = lotef)
+        condiciones=condicionesPago.objects.filter(detalleVenta=detalle).order_by('-id')
+        condicion=condiciones[0]
+
+        return HttpResponseRedirect(self.get_url_redirect())
+
+"Vista de formulario para agregar pago por mantenimiento"
 class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
     group_required = [u'Configurador del sistema',u'Administrador del sistema',u'Operador del sistema']
     @method_decorator(login_required)
@@ -287,7 +330,13 @@ class agregarPagoMantenimiento(GroupRequiredMixin,CreateView):
         lotef = self.third_form_class(self.request.POST).data['matricula']
         detalle = detalleVenta.objects.get(id = lotef)
         condiciones=condicionesPago.objects.filter(detalleVenta=detalle).order_by('-id')
-        condicion=condiciones[0]
+
+        #Validación de que exista la condición de pago
+        try:
+            condicion=condiciones[0]
+        except Exception:
+            messages.error(self.request, 'Ocurrió un error, No se puede registrar el pago porque no se ha establecido la condición de pago para el lote '+detalle.lote.identificador)
+            return self.render_to_response(self.get_context_data(form=form))
 
         #Validacion de asignacion
         try:
@@ -1236,7 +1285,7 @@ class Recibo(TemplateView):
                 pagoMRecibo = pagoMantenimiento.objects.get(numeroReciboMantenimiento = pagoRecibo.pagoMantenimiento_id)
                 usuario = User.objects.get(id = pagoMRecibo.usuarioCreacion_id)
                 estadoC = estadoCuenta.objects.get(id = pagoMRecibo.estadoCuenta_id)
-                detalle = detalleVenta.objects.get(id = estadoC.detalleVenta_id)
+                detalle = detalleVenta.objects.get(id = estadoC.condicionesPago.detalleVenta_id)
                 asigna = asignacionLote.objects.filter(detalleVenta_id = detalle.id)
                 nombre = ""
                 cantidad = 1

@@ -81,7 +81,30 @@ class agregarPagoMantenimientoForm(ModelForm):
             'descuento': ('Campo Opcional'),
         }
         #error_messages={'required':_("First name is required.")}
-        
+
+class agregarPagoFinanciamientoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(agregarPagoMantenimientoForm, self).__init__(*args, **kwargs)
+            self.fields['numeroReciboMantenimiento'] = forms.IntegerField()
+
+    class Meta:
+        model = pagoMantenimiento
+        fields = {'numeroReciboMantenimiento','conceptoOtros','montoOtros','conceptoDescuento','descuento'}
+        label= {
+            'numeroReciboMantenimiento': ('Número de Recibo'),
+            'conceptoOtros': ('Concepto por Otros Pagos'),
+            'montoOtros': ('Monto por Otros Pagos'),
+            'conceptoDescuento': ('Concepto por Descuento de Recargo'),
+            'descuento': ('Monto por Descuento de Recargo'),
+        }
+        help_texts = {
+            'numeroReciboMantenimiento': ('Campo Obligatorio'),
+            'conceptoOtros': ('Campo Opcional'),
+            'montoOtros': ('Campo Opcional'),
+            'conceptoDescuento': ('Campo Opcional'),
+            'descuento': ('Campo Opcional'),
+        }
+        #error_messages={'required':_("First name is required.")}
 
 class lotePagoForm(forms.Form):
     matricula = forms.ModelChoiceField(queryset=detalleVenta.objects.all(),label='Lote',help_text = 'Campo Obligatorio. Se muestran solo los lotes que tiene una venta activa')

@@ -16,7 +16,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Estado de Cuenta de Mantenimiento</h1>
+                    <h1 class="page-header">Estado de Cuenta de Financiamiento</h1>
                 </div>
             </div>
             <div class="row">
@@ -30,7 +30,6 @@
                                 <p><b>Recargo:</b> $ {{sumRecargoMantenimiento}}</p>
                                 <p><b>Otros pagos:</b> $ {{sumOtros}}</p>
                                 <p><b>Descuento:</b> $ {{sumDescuento}}</p>
-                                <p><br></p>
                                 <p><br></p>
                             </div>
                             <div class="col-md-7">
@@ -47,18 +46,17 @@
                             <!-- Último Pago -->
                             <h4 class="encabezado-propietario"><b>Último Pago</b></h4>
                             <div class="col-md-6">
-                                <p><b>Fecha Pago:</b> {{pagoUltimaCuota.fechaPago|date:"d/F/y"}}</p>
-                                <p><b>Fecha Corte:</b> {{pagoUltimaCuota.fechaCorte|date:"d/F/y"}}</p>
-                                <p><b>Concepto:</b></p>
-                                <p> {{pagoUltimaCuota.concepto}}</p>
-                                <p><b>Saldo Mantenimiento:</b> $ {{saldoUltimoPago}}</p>
+                                <p><b>Fecha Pago:</b> {{pagoUltimaCuota.fechaPago}}</p>
+                                <p><b>Fecha Corte:</b> {{pagoUltimaCuota.fechaCorte}}</p>
+                                <p><b>Concepto:</b> {{pagoUltimaCuota.concepto}}</p>
+                                <p><b>Saldo Financiamiento:</b> $ {{saldoUltimoPago}}</p>
                                 <p><b>Saldo Recargo:</b> $ {{saldoUltimoRecargo}}</p>
                             </div>
                             <div class="col-md-6">
                                 <p><b>Recibo:</b> {{pagoUltimaCuota.numeroReciboMantenimiento}}</p>
-                                <p><b>Mantenimiento:</b> $ {{pagoUltimaCuota.mantenimiento}}</p>
+                                <p><b>Ínteres:</b> $ {{pagoUltimaCuota.mantenimiento}}</p>
+                                <p><b>Capital:</b> $ {{pagoUltimaCuota.mantenimiento}}</p>
                                 <p><b>Recargo:</b> $ {{pagoUltimaCuota.recargo}}</p>
-                                <p><b>Otros:</b> $ {{pagoUltimaCuota.otros}}</p>
                                 <p><b>Descuento:</b> $ {{pagoUltimaCuota.descuento}}</p>
                             </div>
                         </div>
@@ -95,11 +93,13 @@
                                             <th>Fecha de Corte</th>
                                             <th>Recibo</th>
                                             <th>Concepto</th>
-                                            <th>Mantenimiento</th>
+                                            <th>Ínteres</th>
+                                            <th>Capital</th>
+                                            <th>Comisión</th>
                                             <th>Recargo</th>
-                                            <th>Otros</th>
                                             <th>Descuento</th>
                                             <th>Total</th>
+                                            <th>Saldo Financiamiento</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -114,6 +114,8 @@
                                             <td>{{pago.otros}}</td>
                                             <td>{{pago.descuento}}</td>
                                             <td>{{pago.total}}</td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
